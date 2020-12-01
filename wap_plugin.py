@@ -179,6 +179,9 @@ class WAPlugin:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def clickOK(self):
+        self.dlg.label.setText ('OK detected')
+        print("Holis")
 
     def run(self):
         """Run method that performs all the real work"""
@@ -188,6 +191,7 @@ class WAPlugin:
         if self.first_start == True:
             self.first_start = False
             self.dlg = WAPluginDialog()
+            self.dlg.pushButton.clicked.connect(self.clickOK)
 
         # show the dialog
         self.dlg.show()
