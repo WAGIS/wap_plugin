@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QDate, QTime, QDateTime, Qt
 from qgis.PyQt.QtGui import QIcon 
 from qgis.PyQt.QtWidgets import QAction, QApplication
 
@@ -69,6 +69,12 @@ class WAPlugin:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+
+        # Default Values
+        self.waterProductivityVar = "GBWP"
+        self.resolutionVar = "100m"  #"250m" or "100m" , maybe "30m" works for some area
+        self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
+        self.endSeasonVar: "2015-18"  # "YYYY-DK" (Dekad)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -202,68 +208,103 @@ class WAPlugin:
         else:
             print('Fail to get accessToken')
 
+    def waterProductivityChange(self, i):
+        if i is 0:
+            print("Selected GBWP")
+            self.waterProductivityVar = "GBWP"
+        elif i is 1:
+            print("Selected NBWP")
+            self.waterProductivityVar = "NBWP"
+
+    def resolutionListChange(self, i):
+        if i is 0:
+            print("Selected 30 Meters")
+            self.resolutionVar = "30m"
+        elif i is 1:
+            print("Selected 100 Meters")
+            self.resolutionVar = "100m"
+        elif i is 2:
+            print("Selected 200 Meters")
+            self.resolutionVar = "200m"
+
+    def onStartDateChanged(self, qDate):
+        # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
+        self.startSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
+        print("Set Start Date: ", self.startSeasonVar)
+
+    def onEndDateChanged(self, qDate):
+        # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
+        self.endSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
+        print("Set End Date: ", self.endSeasonVar)
+
     def clickOK(self):
         self.dlg.connectLabel.setText ('OK detected')
         self.wapor_connect()
 
     def test(self):
+        # print("Inside Test function")
         url=r'https://io.apps.fao.org/gismgr/api/v1/query/'
         request_json ={
-        "type": "CustomWaterProductivity",
-        "params": {
-            "waterProductivity": "GBWP", #"GBWP" or "NBWP"
-            "resolution": "100m", #"250m" or "100m" , maybe "30m" works for some area
-            "startSeason": "2015-01", # "YYYY-DK" (Dekad)
-            "endSeason": "2015-18", # "YYYY-DK" (Dekad)
-            "shape": {
-            "type": "Polygon", #define coordinates of the area in geojson format
-            "coordinates": [
-                [
-                [
-                    37.20642480347329,
-                    9.879461495912246
-                ],
-                [
-                    36.49808605470977,
-                    7.56804031573655
-                ],
-                [
-                    37.84020157868276,
-                    5.219338148783827
-                ],
-                [
-                    40.0770607853044,
-                    5.293900122337882
-                ],
-                [
-                    41.97839111093279,
-                    7.232511434743303
-                ],
-                [
-                    41.68014321671657,
-                    8.313660051277097
-                ],
-                [
-                    39.89065585141926,
-                    7.605321302513577
-                ],
-                [
-                    38.5858213142233,
-                    7.344354395074386
-                ],
-                [
-                    38.51125934066925,
-                    8.649188932270341
-                ],
-                [
-                    37.20642480347329,
-                    9.879461495912246
+            "type": "CustomWaterProductivity",
+            "params": {
+                "waterProductivity": "GBWP",  #"GBWP" or "NBWP"
+                "resolution": "100m", #"250m" or "100m" , maybe "30m" works for some area
+                "startSeason": "2015-01", # "YYYY-DK" (Dekad)
+                "endSeason": "2015-18", # "YYYY-DK" (Dekad)
+                "shape": {
+                "type": "Polygon", #define coordinates of the area in geojson format
+                "coordinates": [
+                    [
+                    [
+                        37.20642480347329,
+                        9.879461495912246
+                    ],
+                    [
+                        36.49808605470977,
+                        7.56804031573655
+                    ],
+                    [
+                        37.84020157868276,
+                        5.219338148783827
+                    ],
+                    [
+                        40.0770607853044,
+                        5.293900122337882
+                    ],
+                    [
+                        41.97839111093279,
+                        7.232511434743303
+                    ],
+                    [
+                        41.68014321671657,
+                        8.313660051277097
+                    ],
+                    [
+                        39.89065585141926,
+                        7.605321302513577
+                    ],
+                    [
+                        38.5858213142233,
+                        7.344354395074386
+                    ],
+                    [
+                        38.51125934066925,
+                        8.649188932270341
+                    ],
+                    [
+                        37.20642480347329,
+                        9.879461495912246
+                    ]
+                    ]
                 ]
-                ]
-            ]
+                }
             }
         }
-        }
+
+        request_json["params"]["waterProductivity"] = self.waterProductivityVar
+        request_json["params"]["resolution"] = self.resolutionVar
+        request_json["params"]["startSeason"] = self.startSeasonVar
+        request_json["params"]["endSeason"] = self.endSeasonVar
 
         request_headers = {
                     'Authorization': "Bearer " + self.AccessToken}
@@ -284,19 +325,19 @@ class WAPlugin:
                                 job_url)
             response.json()
 
-        while True:
-            QApplication.processEvents()
-            response = requests.get(job_url)
-            response_json=response.json()
-            if response_json['response']['status']=='COMPLETED':
-                gbwp = response_json['response']['output']['bwpDownloadUrl']
-                tbp = response_json['response']['output']['tbpDownloadUrl']
-                aeti = response_json['response']['output']['wtrDownloadUrl']
-                self.dlg.downloadLabel.setText ('OK detected')
-                break
-        print('Link to download GBWP',gbwp)
-        print('Link to download TBP',tbp)
-        print('Link to download AETI',aeti)
+        # while True:
+        #     QApplication.processEvents()
+        #     response = requests.get(job_url)
+        #     response_json=response.json()
+        #     if response_json['response']['status']=='COMPLETED':
+        #         gbwp = response_json['response']['output']['bwpDownloadUrl']
+        #         tbp = response_json['response']['output']['tbpDownloadUrl']
+        #         aeti = response_json['response']['output']['wtrDownloadUrl']
+        #         self.dlg.downloadLabel.setText ('OK detected')
+        #         break
+        # print('Link to download GBWP',gbwp)
+        # print('Link to download TBP',tbp)
+        # print('Link to download AETI',aeti)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -308,6 +349,12 @@ class WAPlugin:
             self.dlg = WAPluginDialog()
             self.dlg.connectButton.clicked.connect(self.clickOK)
             self.dlg.downloadButton.clicked.connect(self.test)
+            self.dlg.waterProductivity.currentIndexChanged.connect(self.waterProductivityChange)
+            self.dlg.resolutionList.currentIndexChanged.connect(self.resolutionListChange)
+            self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
+            self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
+
+            
 
         # show the dialog
         self.dlg.show()
