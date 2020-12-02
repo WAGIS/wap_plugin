@@ -13,33 +13,72 @@
   <property name="windowTitle">
    <string>WAPlugin</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="connectLabel">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>110</y>
-     <width>111</width>
-     <height>16</height>
+     <x>340</x>
+     <y>120</y>
+     <width>151</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Waiting for Ok . . . </string>
+    <string>Waiting for connection . . . </string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="connectButton">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>200</y>
+     <x>360</x>
+     <y>190</y>
      <width>93</width>
      <height>28</height>
     </rect>
    </property>
    <property name="text">
-    <string>OK</string>
+    <string>Connect</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="downloadButton">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>190</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Download</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="downloadLabel">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>120</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Nothing in memory</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>40</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>PushButton</string>
    </property>
   </widget>
  </widget>

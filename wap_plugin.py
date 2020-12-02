@@ -22,8 +22,8 @@
  ***************************************************************************/
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon 
+from qgis.PyQt.QtWidgets import QAction, QApplication
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -31,7 +31,7 @@ from .resources import *
 from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
-
+# from PyQt5.QtGui import *
 import requests
 import json
 
@@ -196,15 +196,107 @@ class WAPlugin:
 
         resp_json = resp.json()
         if resp_json['message']=='OK':
-            AccessToken=resp_json['response']['accessToken']
+            self.AccessToken=resp_json['response']['accessToken']
             print('SUCCESS: Access granted')
             print('Access expires in 3600s')
         else:
             print('Fail to get accessToken')
 
     def clickOK(self):
-        self.dlg.label.setText ('OK detected')
+        self.dlg.connectLabel.setText ('OK detected')
         self.wapor_connect()
+
+    def test(self):
+        url=r'https://io.apps.fao.org/gismgr/api/v1/query/'
+        request_json ={
+        "type": "CustomWaterProductivity",
+        "params": {
+            "waterProductivity": "GBWP", #"GBWP" or "NBWP"
+            "resolution": "100m", #"250m" or "100m" , maybe "30m" works for some area
+            "startSeason": "2015-01", # "YYYY-DK" (Dekad)
+            "endSeason": "2015-18", # "YYYY-DK" (Dekad)
+            "shape": {
+            "type": "Polygon", #define coordinates of the area in geojson format
+            "coordinates": [
+                [
+                [
+                    37.20642480347329,
+                    9.879461495912246
+                ],
+                [
+                    36.49808605470977,
+                    7.56804031573655
+                ],
+                [
+                    37.84020157868276,
+                    5.219338148783827
+                ],
+                [
+                    40.0770607853044,
+                    5.293900122337882
+                ],
+                [
+                    41.97839111093279,
+                    7.232511434743303
+                ],
+                [
+                    41.68014321671657,
+                    8.313660051277097
+                ],
+                [
+                    39.89065585141926,
+                    7.605321302513577
+                ],
+                [
+                    38.5858213142233,
+                    7.344354395074386
+                ],
+                [
+                    38.51125934066925,
+                    8.649188932270341
+                ],
+                [
+                    37.20642480347329,
+                    9.879461495912246
+                ]
+                ]
+            ]
+            }
+        }
+        }
+
+        request_headers = {
+                    'Authorization': "Bearer " + self.AccessToken}
+
+
+        response = requests.post(
+                        url,
+                        json=request_json,
+                        headers=request_headers)
+        response_json=response.json()
+        print(response_json)
+
+        if response_json['message']=='OK':
+            job_url = response_json['response']['links'][0]['href']
+        else:
+            print('Fail to get job url')
+            response = requests.get(
+                                job_url)
+            response.json()
+
+        while True:
+            QApplication.processEvents()
+            response = requests.get(job_url)
+            response_json=response.json()
+            if response_json['response']['status']=='COMPLETED':
+                gbwp = response_json['response']['output']['bwpDownloadUrl']
+                tbp = response_json['response']['output']['tbpDownloadUrl']
+                aeti = response_json['response']['output']['wtrDownloadUrl']
+                self.dlg.downloadLabel.setText ('OK detected')
+                break
+        print('Link to download GBWP',gbwp)
+        print('Link to download TBP',tbp)
+        print('Link to download AETI',aeti)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -214,7 +306,8 @@ class WAPlugin:
         if self.first_start == True:
             self.first_start = False
             self.dlg = WAPluginDialog()
-            self.dlg.pushButton.clicked.connect(self.clickOK)
+            self.dlg.connectButton.clicked.connect(self.clickOK)
+            self.dlg.downloadButton.clicked.connect(self.test)
 
         # show the dialog
         self.dlg.show()
