@@ -32,6 +32,9 @@ from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
 
+import requests
+import json
+
 class WAPlugin:
     """QGIS Plugin Implementation."""
 
@@ -179,9 +182,29 @@ class WAPlugin:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def wapor_connect(self):
+        APIToken='1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'
+
+        request_url='https://io.apps.fao.org/gismgr/api/v1/iam/sign-in/'
+        request_headers = {'X-GISMGR-API-KEY': APIToken}
+
+        resp = requests.post(
+                        request_url,
+                        headers=request_headers)
+
+        print('Trying to access WaPOR Database . . .')
+
+        resp_json = resp.json()
+        if resp_json['message']=='OK':
+            AccessToken=resp_json['response']['accessToken']
+            print('SUCCESS: Access granted')
+            print('Access expires in 3600s')
+        else:
+            print('Fail to get accessToken')
+
     def clickOK(self):
         self.dlg.label.setText ('OK detected')
-        print("Holis")
+        self.wapor_connect()
 
     def run(self):
         """Run method that performs all the real work"""
