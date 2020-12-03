@@ -34,6 +34,7 @@ import os.path
 # from PyQt5.QtGui import *
 import requests
 import json
+import os  
 
 class WAPlugin:
     """QGIS Plugin Implementation."""
@@ -70,11 +71,14 @@ class WAPlugin:
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
 
+        # Path of the code Directory
+        self.scriptDir = os.path.dirname(os.path.realpath(__file__))
+
         # Default Values
         self.waterProductivityVar = "GBWP"
         self.resolutionVar = "100m"  #"250m" or "100m" , maybe "30m" works for some area
         self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
-        self.endSeasonVar: "2015-18"  # "YYYY-DK" (Dekad)
+        self.endSeasonVar = "2015-18"  # "YYYY-DK" (Dekad)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -243,64 +247,13 @@ class WAPlugin:
 
     def test(self):
         # print("Inside Test function")
-        url=r'https://io.apps.fao.org/gismgr/api/v1/query/'
-        request_json ={
-            "type": "CustomWaterProductivity",
-            "params": {
-                "waterProductivity": "GBWP",  #"GBWP" or "NBWP"
-                "resolution": "100m", #"250m" or "100m" , maybe "30m" works for some area
-                "startSeason": "2015-01", # "YYYY-DK" (Dekad)
-                "endSeason": "2015-18", # "YYYY-DK" (Dekad)
-                "shape": {
-                "type": "Polygon", #define coordinates of the area in geojson format
-                "coordinates": [
-                    [
-                    [
-                        37.20642480347329,
-                        9.879461495912246
-                    ],
-                    [
-                        36.49808605470977,
-                        7.56804031573655
-                    ],
-                    [
-                        37.84020157868276,
-                        5.219338148783827
-                    ],
-                    [
-                        40.0770607853044,
-                        5.293900122337882
-                    ],
-                    [
-                        41.97839111093279,
-                        7.232511434743303
-                    ],
-                    [
-                        41.68014321671657,
-                        8.313660051277097
-                    ],
-                    [
-                        39.89065585141926,
-                        7.605321302513577
-                    ],
-                    [
-                        38.5858213142233,
-                        7.344354395074386
-                    ],
-                    [
-                        38.51125934066925,
-                        8.649188932270341
-                    ],
-                    [
-                        37.20642480347329,
-                        9.879461495912246
-                    ]
-                    ]
-                ]
-                }
-            }
-        }
+        path = os.path.join(self.scriptDir, "json", "test.json") 
+        testJsonFile = open(path,) 
+        request_json = json.load(testJsonFile) 
 
+        url=r'https://io.apps.fao.org/gismgr/api/v1/query/'
+
+        # Update json with current settings
         request_json["params"]["waterProductivity"] = self.waterProductivityVar
         request_json["params"]["resolution"] = self.resolutionVar
         request_json["params"]["startSeason"] = self.startSeasonVar
@@ -308,7 +261,6 @@ class WAPlugin:
 
         request_headers = {
                     'Authorization': "Bearer " + self.AccessToken}
-
 
         response = requests.post(
                         url,
@@ -341,7 +293,6 @@ class WAPlugin:
 
     def run(self):
         """Run method that performs all the real work"""
-
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
