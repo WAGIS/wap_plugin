@@ -158,6 +158,20 @@
     </item>
     <item>
      <widget class="QDateEdit" name="startDate">
+      <property name="maximumDate">
+       <date>
+        <year>2030</year>
+        <month>12</month>
+        <day>31</day>
+       </date>
+      </property>
+      <property name="minimumDate">
+       <date>
+        <year>2000</year>
+        <month>9</month>
+        <day>14</day>
+       </date>
+      </property>
       <property name="currentSection">
        <enum>QDateTimeEdit::YearSection</enum>
       </property>
@@ -230,6 +244,19 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="loadButton">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>270</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
   </widget>
  </widget>
  <resources/>

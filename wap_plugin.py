@@ -72,7 +72,7 @@ class WAPlugin:
         self.first_start = None
 
         # Path of the code Directory
-        self.scriptDir = os.path.dirname(os.path.realpath(__file__))
+        self.cwd = os.path.dirname(os.path.realpath(__file__))
 
         # Default Values
         self.waterProductivityVar = "GBWP"
@@ -247,7 +247,7 @@ class WAPlugin:
 
     def test(self):
         # print("Inside Test function")
-        path = os.path.join(self.scriptDir, "json", "test.json") 
+        path = os.path.join(self.cwd, "json", "test.json") 
         testJsonFile = open(path,) 
         request_json = json.load(testJsonFile) 
 
@@ -277,19 +277,25 @@ class WAPlugin:
                                 job_url)
             response.json()
 
-        # while True:
-        #     QApplication.processEvents()
-        #     response = requests.get(job_url)
-        #     response_json=response.json()
-        #     if response_json['response']['status']=='COMPLETED':
-        #         gbwp = response_json['response']['output']['bwpDownloadUrl']
-        #         tbp = response_json['response']['output']['tbpDownloadUrl']
-        #         aeti = response_json['response']['output']['wtrDownloadUrl']
-        #         self.dlg.downloadLabel.setText ('OK detected')
-        #         break
-        # print('Link to download GBWP',gbwp)
-        # print('Link to download TBP',tbp)
-        # print('Link to download AETI',aeti)
+        while True:
+            QApplication.processEvents()
+            response = requests.get(job_url)
+            response_json=response.json()
+            if response_json['response']['status']=='COMPLETED':
+                gbwp = response_json['response']['output']['bwpDownloadUrl']
+                tbp = response_json['response']['output']['tbpDownloadUrl']
+                aeti = response_json['response']['output']['wtrDownloadUrl']
+                self.dlg.downloadLabel.setText ('OK detected')
+                break
+        print('Link to download GBWP',gbwp)
+        print('Link to download TBP',tbp)
+        print('Link to download AETI',aeti)
+    
+    def load(self):
+        layer_dir = os.path.join(self.cwd, "layers", "L2_GBWP_1501-1518.tif")
+        rlayer = self.iface.addRasterLayer(layer_dir, "layer name you like")
+        if not rlayer:
+            print("Layer failed to load!")
 
     def run(self):
         """Run method that performs all the real work"""
@@ -300,6 +306,7 @@ class WAPlugin:
             self.dlg = WAPluginDialog()
             self.dlg.connectButton.clicked.connect(self.clickOK)
             self.dlg.downloadButton.clicked.connect(self.test)
+            self.dlg.loadButton.clicked.connect(self.load)
             self.dlg.waterProductivity.currentIndexChanged.connect(self.waterProductivityChange)
             self.dlg.resolutionList.currentIndexChanged.connect(self.resolutionListChange)
             self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
