@@ -1,4 +1,5 @@
-# WAP Pluginn: WaPOR Hackathon Team 17
+# WAP Pluginn: WaPOR Hackathon Team 17 ![]![](./img/WaPlugin_Logo.png)
+
 ## Requirements for contributors
 * QGIS 3.10
 
