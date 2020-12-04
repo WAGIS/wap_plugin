@@ -358,11 +358,11 @@ class WAPlugin:
         print('Link to download AETI',aeti)
         url= aeti
         file_name = url.rsplit('/', 1)[1]
-        url_dir = os.path.join(self.cwd, "layers", file_name)
-        wget.download(url, url_dir)
+        file_dir = os.path.join(self.cwd, "layers", file_name)
+        wget.download(url, file_dir)
         while True:
             QApplication.processEvents()
-            if os.path.isfile(file_name):
+            if os.path.isfile(file_dir):
                 self.dlg.downloadLabel.setText ('File in memory')
                 self.dlg.downloadButton.setEnabled(True)
                 break
