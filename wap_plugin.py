@@ -364,9 +364,9 @@ class WAPlugin:
             QApplication.processEvents()
             if os.path.isfile(file_name):
                 self.dlg.downloadLabel.setText ('File in memory')
-        self.dlg.downloadButton.setEnabled(True)
+                self.dlg.downloadButton.setEnabled(True)
+                break
         
-    
     def load(self):
         layer_dir = os.path.join(self.cwd, "layers", "L2_GBWP_1501-1518.tif")
         rlayer = self.iface.addRasterLayer(layer_dir, "layer name you like")
@@ -390,8 +390,6 @@ class WAPlugin:
             self.dlg.resolutionList.currentIndexChanged.connect(self.resolutionListChange)
             self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
-
-            
 
         # show the dialog
         self.dlg.show()
