@@ -11,3 +11,9 @@
 2. Clone or download the git repository
 3. Execute the file *compile.bat*
     *If there is a different version of QGIS (3.10) modify the compiler with the actual version*
+
+
+## Installing new pip packages
+
+1. Open OSGeo4W Shell
+2. Run python -m pip install [Package Name]
