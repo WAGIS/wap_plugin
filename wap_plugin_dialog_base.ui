@@ -6,256 +6,282 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>312</height>
+    <width>486</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>WAPlugin</string>
   </property>
-  <widget class="QLabel" name="connectLabel">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>350</x>
-     <y>240</y>
-     <width>151</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Waiting for connection . . . </string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="connectButton">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>270</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Connect</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
-     <width>251</width>
-     <height>31</height>
+     <y>10</y>
+     <width>441</width>
+     <height>241</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Water Productivity:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="waterProductivity">
-      <item>
+   <property name="title">
+    <string>GroupBox</string>
+   </property>
+   <widget class="QPushButton" name="loadButton">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>200</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Load</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>261</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="downloadButton">
        <property name="text">
-        <string>GBWP</string>
+        <string>Download</string>
        </property>
-      </item>
-      <item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="downloadLabel">
        <property name="text">
-        <string>NBWP</string>
+        <string>Nothing in memory</string>
        </property>
-      </item>
-     </widget>
-    </item>
-   </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="connectLabel">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>30</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Waiting for connection . . . </string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>381</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Start Session:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDateEdit" name="startDate">
+       <property name="maximumDate">
+        <date>
+         <year>2030</year>
+         <month>12</month>
+         <day>31</day>
+        </date>
+       </property>
+       <property name="minimumDate">
+        <date>
+         <year>2000</year>
+         <month>9</month>
+         <day>14</day>
+        </date>
+       </property>
+       <property name="currentSection">
+        <enum>QDateTimeEdit::YearSection</enum>
+       </property>
+       <property name="displayFormat">
+        <string>yyyy-dd</string>
+       </property>
+       <property name="calendarPopup">
+        <bool>false</bool>
+       </property>
+       <property name="currentSectionIndex">
+        <number>0</number>
+       </property>
+       <property name="date">
+        <date>
+         <year>2015</year>
+         <month>1</month>
+         <day>1</day>
+        </date>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>&quot;YYYY-DK&quot; (Dekad)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Water Productivity:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="waterProductivity">
+       <item>
+        <property name="text">
+         <string>GBWP</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>NBWP</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="connectButton">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>70</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Connect</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>150</y>
+      <width>381</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>End Session</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDateEdit" name="endDate">
+       <property name="displayFormat">
+        <string>yyyy-dd</string>
+       </property>
+       <property name="calendarPopup">
+        <bool>false</bool>
+       </property>
+       <property name="date">
+        <date>
+         <year>2015</year>
+         <month>1</month>
+         <day>18</day>
+        </date>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>&quot;YYYY-DK&quot; (Dekad)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Resolution:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="resolutionList">
+       <item>
+        <property name="text">
+         <string>30 Meters</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>100 Meters</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>200 Meters</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>70</y>
-     <width>251</width>
-     <height>31</height>
+     <y>260</y>
+     <width>441</width>
+     <height>71</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Resolution:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="resolutionList">
-      <item>
-       <property name="text">
-        <string>30 Meters</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>100 Meters</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>200 Meters</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>200</y>
-     <width>261</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
-    <item>
-     <widget class="QPushButton" name="downloadButton">
-      <property name="text">
-       <string>Download</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="downloadLabel">
-      <property name="text">
-       <string>Nothing in memory</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>110</y>
-     <width>381</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
-    <item>
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Start Session:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QDateEdit" name="startDate">
-      <property name="maximumDate">
-       <date>
-        <year>2030</year>
-        <month>12</month>
-        <day>31</day>
-       </date>
-      </property>
-      <property name="minimumDate">
-       <date>
-        <year>2000</year>
-        <month>9</month>
-        <day>14</day>
-       </date>
-      </property>
-      <property name="currentSection">
-       <enum>QDateTimeEdit::YearSection</enum>
-      </property>
-      <property name="displayFormat">
-       <string>yyyy-dd</string>
-      </property>
-      <property name="calendarPopup">
-       <bool>false</bool>
-      </property>
-      <property name="currentSectionIndex">
-       <number>0</number>
-      </property>
-      <property name="date">
-       <date>
-        <year>2015</year>
-        <month>1</month>
-        <day>1</day>
-       </date>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>&quot;YYYY-DK&quot; (Dekad)</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>150</y>
-     <width>381</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_5">
-    <item>
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>End Session</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QDateEdit" name="endDate">
-      <property name="displayFormat">
-       <string>yyyy-dd</string>
-      </property>
-      <property name="calendarPopup">
-       <bool>false</bool>
-      </property>
-      <property name="date">
-       <date>
-        <year>2015</year>
-        <month>1</month>
-        <day>18</day>
-       </date>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_6">
-      <property name="text">
-       <string>&quot;YYYY-DK&quot; (Dekad)</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QPushButton" name="loadButton">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>270</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Load</string>
+   <property name="title">
+    <string>GroupBox</string>
    </property>
   </widget>
  </widget>

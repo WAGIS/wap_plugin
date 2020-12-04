@@ -34,6 +34,7 @@ import os.path
 # from PyQt5.QtGui import *
 import requests
 import json
+import wget
 import os  
 
 class WAPlugin:
@@ -51,6 +52,7 @@ class WAPlugin:
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
+
         # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
@@ -73,6 +75,7 @@ class WAPlugin:
 
         # Path of the code Directory
         self.cwd = os.path.dirname(os.path.realpath(__file__))
+        self.layer_folder_dir = os.path.join(self.cwd, "layers")
 
         # Default Values
         self.waterProductivityVar = "GBWP"
@@ -209,6 +212,8 @@ class WAPlugin:
             self.AccessToken=resp_json['response']['accessToken']
             print('SUCCESS: Access granted')
             print('Access expires in 3600s')
+            self.dlg.downloadButton.setEnabled(True)
+
         else:
             print('Fail to get accessToken')
 
@@ -254,10 +259,67 @@ class WAPlugin:
         url=r'https://io.apps.fao.org/gismgr/api/v1/query/'
 
         # Update json with current settings
-        request_json["params"]["waterProductivity"] = self.waterProductivityVar
-        request_json["params"]["resolution"] = self.resolutionVar
-        request_json["params"]["startSeason"] = self.startSeasonVar
-        request_json["params"]["endSeason"] = self.endSeasonVar
+        # request_json["params"]["waterProductivity"] = self.waterProductivityVar
+        # request_json["params"]["resolution"] = self.resolutionVar
+        # request_json["params"]["startSeason"] = self.startSeasonVar
+        # request_json["params"]["endSeason"] = self.endSeasonVar
+
+        request_json = {
+                        "type": "CustomWaterProductivity",
+                        "params": {
+                            "waterProductivity": "GBWP", #"GBWP" or "NBWP"
+                            "resolution": "100m", #"250m" or "100m" , maybe "30m" works for some area
+                            "startSeason": "2015-01", # "YYYY-DK" (Dekad)
+                            "endSeason": "2015-18", # "YYYY-DK" (Dekad)
+                            "shape": {
+                            "type": "Polygon", #define coordinates of the area in geojson format
+                            "coordinates": [
+                                [
+                                [
+                                    37.20642480347329,
+                                    9.879461495912246
+                                ],
+                                [
+                                    36.49808605470977,
+                                    7.56804031573655
+                                ],
+                                [
+                                    37.84020157868276,
+                                    5.219338148783827
+                                ],
+                                [
+                                    40.0770607853044,
+                                    5.293900122337882
+                                ],
+                                [
+                                    41.97839111093279,
+                                    7.232511434743303
+                                ],
+                                [
+                                    41.68014321671657,
+                                    8.313660051277097
+                                ],
+                                [
+                                    39.89065585141926,
+                                    7.605321302513577
+                                ],
+                                [
+                                    38.5858213142233,
+                                    7.344354395074386
+                                ],
+                                [
+                                    38.51125934066925,
+                                    8.649188932270341
+                                ],
+                                [
+                                    37.20642480347329,
+                                    9.879461495912246
+                                ]
+                                ]
+                            ]
+                            }
+                        }
+                        }
 
         request_headers = {
                     'Authorization': "Bearer " + self.AccessToken}
@@ -277,6 +339,9 @@ class WAPlugin:
                                 job_url)
             response.json()
 
+        print('Waiting WaPOR')
+        self.dlg.downloadButton.setEnabled(False)
+        self.dlg.downloadLabel.setText ('Waiting WaPOR')
         while True:
             QApplication.processEvents()
             response = requests.get(job_url)
@@ -285,11 +350,22 @@ class WAPlugin:
                 gbwp = response_json['response']['output']['bwpDownloadUrl']
                 tbp = response_json['response']['output']['tbpDownloadUrl']
                 aeti = response_json['response']['output']['wtrDownloadUrl']
-                self.dlg.downloadLabel.setText ('OK detected')
+                self.dlg.downloadLabel.setText ('Url in memory')
                 break
+                
         print('Link to download GBWP',gbwp)
         print('Link to download TBP',tbp)
         print('Link to download AETI',aeti)
+        url= aeti
+        file_name = url.rsplit('/', 1)[1]
+        url_dir = os.path.join(self.cwd, "layers", file_name)
+        wget.download(url, url_dir)
+        while True:
+            QApplication.processEvents()
+            if os.path.isfile(file_name):
+                self.dlg.downloadLabel.setText ('File in memory')
+        self.dlg.downloadButton.setEnabled(True)
+        
     
     def load(self):
         layer_dir = os.path.join(self.cwd, "layers", "L2_GBWP_1501-1518.tif")
@@ -304,6 +380,9 @@ class WAPlugin:
         if self.first_start == True:
             self.first_start = False
             self.dlg = WAPluginDialog()
+
+            self.dlg.downloadButton.setEnabled(False)
+
             self.dlg.connectButton.clicked.connect(self.clickOK)
             self.dlg.downloadButton.clicked.connect(self.test)
             self.dlg.loadButton.clicked.connect(self.load)
