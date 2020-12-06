@@ -180,18 +180,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="location">
-           <item>
-            <property name="text">
-             <string>Africa</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Middle East</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="location"/>
          </item>
         </layout>
        </item>
