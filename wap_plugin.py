@@ -25,6 +25,9 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QDate, QT
 from qgis.PyQt.QtGui import QIcon 
 from qgis.PyQt.QtWidgets import QAction, QApplication
 
+from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
+from qgis.core import QgsRasterLayer
+
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
@@ -402,6 +405,38 @@ class WAPlugin:
         rlayer = self.iface.addRasterLayer(layer_dir, "layer name you like")
         if not rlayer:
             print("Layer failed to load!")
+        
+    def calculateIndex(self):
+        print('Calculating . . . ')
+        lyr_TBP_dir = os.path.join(self.layer_folder_dir, "indic", "L3_BKA_TBP_18s1.tif")
+        lyr_TBP = QgsRasterLayer(lyr_TBP_dir)
+        lyr_AETI_dir = os.path.join(self.layer_folder_dir, "indic", "L3_BKA_AETI_1806M.tif")
+        lyr_AETI = QgsRasterLayer(lyr_AETI_dir)
+
+        output_dir = os.path.join(self.layer_folder_dir, "indic", "output_indicator.tif")
+
+        entries = []
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@1'
+        ras.raster = lyr_TBP
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@2'
+        ras.raster = lyr_AETI
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1 * 10 * 6)', output_dir, 'GTiff',\
+                lyr_TBP.extent(), lyr_TBP.width(), lyr_TBP.height(), entries)
+        print(calc.processCalculation())
+        print('Finish . . . ')
+        self.iface.addRasterLayer(lyr_TBP_dir, "TBP Raster")
+        self.iface.addRasterLayer(lyr_AETI_dir, "AETI Raster")
+        self.iface.addRasterLayer(output_dir, "Output indicator")
+
 
     def run(self):
         """Run method that performs all the real work"""
@@ -421,6 +456,7 @@ class WAPlugin:
             self.dlg.location.currentIndexChanged.connect(self.locationChanged)
             self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
+            self.dlg.calculateButton.clicked.connect(self.calculateIndex)
 
             # Set initial locations as 200m
             self.dlg.location.addItems(self.locListContinental) 
