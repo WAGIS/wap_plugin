@@ -1,4 +1,6 @@
-# WAP Pluginn: WaPOR Hackathon Team 17 ![]![](./img/WaPlugin_Logo.png)
+# WAP Pluginn: WaPOR Hackathon Team 17
+
+<img src="https://github.com/fhfonsecaa/wap_plugin/blob/master/img/WaPlugin_Logo.png" width="180" height="180">
 
 ## Requirements for contributors
 * QGIS 3.10
@@ -18,3 +20,11 @@
 
 1. Open OSGeo4W Shell
 2. Run python -m pip install [Package Name]
+
+## User Interface design
+
+### Interface for downloading Rasters 
+<img src="https://github.com/fhfonsecaa/wap_plugin/blob/master/img/waporCatalog.JPG" width="400" height="400">
+
+### Interface for calculating Indicators
+<img src="https://github.com/fhfonsecaa/wap_plugin/blob/master/img/indicator.JPG" width="400" height="400">
