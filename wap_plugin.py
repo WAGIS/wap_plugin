@@ -353,7 +353,7 @@ class WAPlugin:
         
     def load(self):
         layer_dir = os.path.join(self.cwd, "layers", "L2_GBWP_1501-1518.tif")
-        rlayer = self.iface.addRasterLayer(layer_dir, "layer name you like")
+        rlayer = self.iface.addRasterLayer(layer_dir, "L2_GBWP_1501-1518.tif")
         if not rlayer:
             print("Layer failed to load!")
 
