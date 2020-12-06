@@ -468,6 +468,11 @@
       </attribute>
      </widget>
     </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="location"/>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QProgressBar" name="progressBar">

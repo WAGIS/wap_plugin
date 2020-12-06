@@ -83,6 +83,24 @@ class WAPlugin:
         self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
         self.endSeasonVar = "2015-18"  # "YYYY-DK" (Dekad)
 
+        # Cocations
+        self.locListContinental = ["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Canary Islands"
+            ,"Cape Verde","Central African Republic","Ceuta","Chad","Comoros","Côte d'Ivoire"
+            ,"Democratic Republic of the Congo","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia"
+            ,"Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya"
+            ,"Madagascar","Madeira","Malawi","Mali","Mauritania","Mauritius","Mayotte","Melilla"
+            ,"Morocco"  ,"Mozambique","Namibia","Niger","Nigeria"  ,"Republic of the Congo"
+            ,"Réunion","Rwanda","Saint Helena","São Tomé and Príncipe","Senegal","Seychelles"
+            ,"Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia"
+            ,"Uganda","Western Sahara","Zambia","Zimbabwe" ]
+
+        self.locListNational = ["Benin","Burundi","Egypt","Ghana","Iraq","Jordan","Kenya","Lebanon","Mali","Morocco"
+            ,"Mozambique","Niger","Palestine","Rwanda","South Sudan","Sudan","Syrian Arab Republic"
+            ,"Tunisia","Uganda","Yemen"]
+
+        self.locListSubNational = ["Awash, Ethiopia", "Bekaa, Lebanon", "Busia, Kenya", "Gezira, Sudan", "Koga, Ethiopia",
+                "Lamego, Mozambique", "Office du Niger, Mali", "Zankalon, Egypt"] 
+
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -230,19 +248,20 @@ class WAPlugin:
 
         if i is 0:
             print("Selected 200 Meters")
-            locList = ["Africa", "Middle East"]
             self.resolutionVar = "200m"
+            self.dlg.location.addItems(self.locListContinental) 
+
         elif i is 1:
             print("Selected 100 Meters")
             self.resolutionVar = "100m"
-            locList = ["Africa", "Middle East"]
+            self.dlg.location.addItems(self.locListNational) 
+
         elif i is 2:
             print("Selected 30 Meters")
             self.resolutionVar = "30m"
-            locList = ["Awash, Ethiopia", "Bekaa, Lebanon", "Busia, Kenya", "Gezira, Sudan", "Koga, Ethiopia",
-                        "Lamego, Mozambique", "Office du Niger, Mali", "Zankalon, Egypt"] 
+            self.dlg.location.addItems(self.locListSubNational) 
+
         # adding list of items to combo box 
-        self.dlg.location.addItems(locList) 
 
     def locationChanged(self, i):
         pass
@@ -402,6 +421,9 @@ class WAPlugin:
             self.dlg.location.currentIndexChanged.connect(self.locationChanged)
             self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
+
+            # Set initial locations as 200m
+            self.dlg.location.addItems(self.locListContinental) 
 
         # show the dialog
         self.dlg.show()
