@@ -233,6 +233,8 @@ class WAPlugin:
             self.AccessToken=resp_json['response']['accessToken']
             print('SUCCESS: Access granted')
             print('Access expires in 3600s')
+            self.dlg.progressBar.setValue(20)
+            self.dlg.progressLabel.setText ('Conncecter to WaPOR database')
             self.dlg.downloadButton.setEnabled(True)
 
         else:
@@ -389,6 +391,8 @@ class WAPlugin:
         print('Link to download GBWP',gbwp)
         print('Link to download TBP',tbp)
         print('Link to download AETI',aeti)
+        self.dlg.progressBar.setValue(50)
+        self.dlg.progressLabel.setText ('Received links to download Rasters')
         url= aeti
         file_name = url.rsplit('/', 1)[1]
         file_dir = os.path.join(self.cwd, "layers", file_name)
@@ -399,6 +403,8 @@ class WAPlugin:
                 self.dlg.downloadLabel.setText ('File in memory')
                 self.dlg.downloadButton.setEnabled(True)
                 break
+        self.dlg.progressBar.setValue(100)
+        self.dlg.progressLabel.setText ('Downloaded Rasters')
         
     def load(self):
         layer_dir = os.path.join(self.cwd, "layers", "L2_GBWP_1501-1518.tif")
