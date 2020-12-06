@@ -1,4 +1,6 @@
-# WAP Pluginn: WaPOR Hackathon Team 17 ![]![](./img/WaPlugin_Logo.png)
+# WAP Pluginn: WaPOR Hackathon Team 17
+
+![](./img/WaPlugin_Logo.png =180x)
 
 ## Requirements for contributors
 * QGIS 3.10
@@ -18,3 +20,9 @@
 
 1. Open OSGeo4W Shell
 2. Run python -m pip install [Package Name]
+
+## User Interface design
+
+![WaPOR catalog](./img/waporCatalog.JPG )
+
+![Indicators](./img/indicator.JPG )
