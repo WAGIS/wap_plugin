@@ -226,15 +226,26 @@ class WAPlugin:
             self.waterProductivityVar = "NBWP"
 
     def resolutionListChange(self, i):
+        self.dlg.location.clear() 
+
         if i is 0:
-            print("Selected 30 Meters")
-            self.resolutionVar = "30m"
+            print("Selected 200 Meters")
+            locList = ["Africa", "Middle East"]
+            self.resolutionVar = "200m"
         elif i is 1:
             print("Selected 100 Meters")
             self.resolutionVar = "100m"
+            locList = ["Africa", "Middle East"]
         elif i is 2:
-            print("Selected 200 Meters")
-            self.resolutionVar = "200m"
+            print("Selected 30 Meters")
+            self.resolutionVar = "30m"
+            locList = ["Awash, Ethiopia", "Bekaa, Lebanon", "Busia, Kenya", "Gezira, Sudan", "Koga, Ethiopia",
+                        "Lamego, Mozambique", "Office du Niger, Mali", "Zankalon, Egypt"] 
+        # adding list of items to combo box 
+        self.dlg.location.addItems(locList) 
+
+    def locationChanged(self, i):
+        pass
 
     def onStartDateChanged(self, qDate):
         # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
@@ -388,6 +399,7 @@ class WAPlugin:
             self.dlg.loadButton.clicked.connect(self.load)
             self.dlg.waterProductivity.currentIndexChanged.connect(self.waterProductivityChange)
             self.dlg.resolutionList.currentIndexChanged.connect(self.resolutionListChange)
+            self.dlg.location.currentIndexChanged.connect(self.locationChanged)
             self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
 
