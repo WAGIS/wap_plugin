@@ -234,7 +234,7 @@ class WAPlugin:
             print('SUCCESS: Access granted')
             print('Access expires in 3600s')
             self.dlg.progressBar.setValue(20)
-            self.dlg.progressLabel.setText ('Conncecter to WaPOR database')
+            self.dlg.progressLabel.setText ('Conncected to WaPOR database')
             self.dlg.downloadButton.setEnabled(True)
 
         else:
@@ -377,6 +377,7 @@ class WAPlugin:
         print('Waiting WaPOR')
         self.dlg.downloadButton.setEnabled(False)
         self.dlg.downloadLabel.setText ('Waiting WaPOR')
+        self.dlg.progressLabel.setText ('Getting links to download Rasters ...')
         while True:
             QApplication.processEvents()
             response = requests.get(job_url)
@@ -397,6 +398,7 @@ class WAPlugin:
         file_name = url.rsplit('/', 1)[1]
         file_dir = os.path.join(self.cwd, "layers", file_name)
         wget.download(url, file_dir)
+        self.dlg.progressLabel.setText ('Downloading Rasters ...')
         while True:
             QApplication.processEvents()
             if os.path.isfile(file_dir):
