@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
+    <width>557</width>
     <height>571</height>
    </rect>
   </property>
@@ -27,7 +27,7 @@
    </property>
    <widget class="QWidget" name="downloadTab">
     <attribute name="title">
-     <string>WaPOR Dataset</string>
+     <string>WaPOR Catalog</string>
     </attribute>
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
@@ -80,7 +80,7 @@
        <string>Show Canvas</string>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -95,7 +95,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Water Productivity:</string>
+            <string>WaPOR Dataset:</string>
            </property>
           </widget>
          </item>
@@ -103,12 +103,37 @@
           <widget class="QComboBox" name="waterProductivity">
            <item>
             <property name="text">
-             <string>GBWP</string>
+             <string>Gross Biomass Water Productivity</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>NBWP</string>
+             <string>Net Biomass Water Productivity</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Actual EvapoTranspiration and Interception</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Transpiration</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Evaporation</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Interception</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Net Primary Production</string>
             </property>
            </item>
           </widget>
@@ -128,17 +153,17 @@
           <widget class="QComboBox" name="resolutionList">
            <item>
             <property name="text">
-             <string>200 Meters</string>
+             <string>Continental (250 m)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>100 Meters</string>
+             <string>National (100 m)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>30 Meters</string>
+             <string>Sub-National (30 m)</string>
             </property>
            </item>
           </widget>
@@ -175,7 +200,7 @@
          <item>
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Start Session:</string>
+            <string>Start date:</string>
            </property>
           </widget>
          </item>
@@ -199,7 +224,7 @@
             <enum>QDateTimeEdit::YearSection</enum>
            </property>
            <property name="displayFormat">
-            <string>yyyy-dd</string>
+            <string>yyyy-mm-dd</string>
            </property>
            <property name="calendarPopup">
             <bool>false</bool>
@@ -219,7 +244,7 @@
          <item>
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>&quot;YYYY-DK&quot; (Dekad)</string>
+            <string>&quot;YYYY-MM-DD&quot;</string>
            </property>
           </widget>
          </item>
@@ -230,14 +255,14 @@
          <item>
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>End Session</string>
+            <string>End date:</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QDateEdit" name="endDate">
            <property name="displayFormat">
-            <string>yyyy-dd</string>
+            <string>yyyy-mm-dd</string>
            </property>
            <property name="calendarPopup">
             <bool>false</bool>
@@ -254,7 +279,7 @@
          <item>
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>&quot;YYYY-DK&quot; (Dekad)</string>
+            <string>&quot;YYYY-MM-DD&quot;</string>
            </property>
           </widget>
          </item>
@@ -300,7 +325,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="indicTab">
     <attribute name="title">
      <string>Indicators Calculator</string>
     </attribute>
@@ -317,7 +342,7 @@
       <string>Apply</string>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -337,7 +362,32 @@
           <widget class="QComboBox" name="rastor1_2">
            <item>
             <property name="text">
-             <string>Overall Consumption Ratio</string>
+             <string>Overall Consumtion Ratio</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Water productivity indicator</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Overall Field application ratio</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Crop yield indicator</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Field application ratio</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Depleted fraction</string>
             </property>
            </item>
           </widget>
@@ -356,12 +406,16 @@
            <item>
             <widget class="QLabel" name="label_11">
              <property name="text">
-              <string>Raster 1</string>
+              <string>TBP Raster</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="rastor1"/>
+            <widget class="QComboBox" name="raster1">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -370,12 +424,12 @@
            <item>
             <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>Raster 2</string>
+              <string>AETI Raster</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="rastor2"/>
+            <widget class="QComboBox" name="raster2"/>
            </item>
           </layout>
          </item>
@@ -391,17 +445,10 @@
          <item>
           <widget class="QRadioButton" name="radioButton_3">
            <property name="text">
-            <string>KG/mm^3</string>
+            <string>KG/mm</string>
            </property>
            <property name="checked">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_2">
-           <property name="text">
-            <string>KG/cm^3</string>
            </property>
           </widget>
          </item>
@@ -452,7 +499,7 @@
         <property name="title">
          <string>Output File Name</string>
         </property>
-        <widget class="QLineEdit" name="lineEdit">
+        <widget class="QLineEdit" name="outputIndicName">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -468,7 +515,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -494,7 +541,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>

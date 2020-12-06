@@ -299,63 +299,6 @@ class WAPlugin:
         # request_json["params"]["startSeason"] = self.startSeasonVar
         # request_json["params"]["endSeason"] = self.endSeasonVar
 
-        request_json = {
-                        "type": "CustomWaterProductivity",
-                        "params": {
-                            "waterProductivity": "GBWP", #"GBWP" or "NBWP"
-                            "resolution": "100m", #"250m" or "100m" , maybe "30m" works for some area
-                            "startSeason": "2015-01", # "YYYY-DK" (Dekad)
-                            "endSeason": "2015-18", # "YYYY-DK" (Dekad)
-                            "shape": {
-                            "type": "Polygon", #define coordinates of the area in geojson format
-                            "coordinates": [
-                                [
-                                [
-                                    37.20642480347329,
-                                    9.879461495912246
-                                ],
-                                [
-                                    36.49808605470977,
-                                    7.56804031573655
-                                ],
-                                [
-                                    37.84020157868276,
-                                    5.219338148783827
-                                ],
-                                [
-                                    40.0770607853044,
-                                    5.293900122337882
-                                ],
-                                [
-                                    41.97839111093279,
-                                    7.232511434743303
-                                ],
-                                [
-                                    41.68014321671657,
-                                    8.313660051277097
-                                ],
-                                [
-                                    39.89065585141926,
-                                    7.605321302513577
-                                ],
-                                [
-                                    38.5858213142233,
-                                    7.344354395074386
-                                ],
-                                [
-                                    38.51125934066925,
-                                    8.649188932270341
-                                ],
-                                [
-                                    37.20642480347329,
-                                    9.879461495912246
-                                ]
-                                ]
-                            ]
-                            }
-                        }
-                        }
-
         request_headers = {
                     'Authorization': "Bearer " + self.AccessToken}
 
@@ -413,7 +356,24 @@ class WAPlugin:
         rlayer = self.iface.addRasterLayer(layer_dir, "layer name you like")
         if not rlayer:
             print("Layer failed to load!")
-        
+
+    def refreshRasters(self):
+        indic_dir = os.path.join(self.layer_folder_dir, "indic")
+        self.raster1 = []
+        self.raster1_dir = []
+        for _, _, files in os.walk(indic_dir):
+            for name in files:
+                self.raster1_dir.append(os.path.join(indic_dir, name))
+            self.raster1 = list(files)
+        self.raster2 = self.raster1
+        self.raster2_dir = self.raster1_dir
+
+        self.dlg.raster1.clear()
+        self.dlg.raster2.clear()
+
+        self.dlg.raster1.addItems(self.raster1)
+        self.dlg.raster2.addItems(self.raster2)
+
     def calculateIndex(self):
         print('Calculating . . . ')
         lyr_TBP_dir = os.path.join(self.layer_folder_dir, "indic", "L3_BKA_TBP_18s1.tif")
@@ -421,7 +381,7 @@ class WAPlugin:
         lyr_AETI_dir = os.path.join(self.layer_folder_dir, "indic", "L3_BKA_AETI_1806M.tif")
         lyr_AETI = QgsRasterLayer(lyr_AETI_dir)
 
-        output_dir = os.path.join(self.layer_folder_dir, "indic", "output_indicator.tif")
+        output_dir = os.path.join(self.layer_folder_dir, "indic", self.dlg.outputIndicName.text()+".tif")
 
         entries = []
 
@@ -440,10 +400,9 @@ class WAPlugin:
         calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1 * 10 * 6)', output_dir, 'GTiff',\
                 lyr_TBP.extent(), lyr_TBP.width(), lyr_TBP.height(), entries)
         print(calc.processCalculation())
-        print('Finish . . . ')
         self.iface.addRasterLayer(lyr_TBP_dir, "TBP Raster")
         self.iface.addRasterLayer(lyr_AETI_dir, "AETI Raster")
-        self.iface.addRasterLayer(output_dir, "Output indicator")
+        self.iface.addRasterLayer(output_dir, self.dlg.outputIndicName.text()+".tif")
 
 
     def run(self):
@@ -465,9 +424,11 @@ class WAPlugin:
             self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
             self.dlg.calculateButton.clicked.connect(self.calculateIndex)
+            self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
 
             # Set initial locations as 200m
             self.dlg.location.addItems(self.locListContinental) 
+            self.refreshRasters()
 
         # show the dialog
         self.dlg.show()
