@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>639</width>
-    <height>486</height>
+    <width>527</width>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>621</width>
-     <height>431</height>
+     <height>441</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -32,28 +32,15 @@
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
-       <x>70</x>
-       <y>40</y>
+       <x>20</x>
+       <y>100</y>
        <width>441</width>
        <height>281</height>
       </rect>
      </property>
      <property name="title">
-      <string>GroupBox</string>
+      <string>Parameters </string>
      </property>
-     <widget class="QPushButton" name="loadButton">
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>240</y>
-        <width>93</width>
-        <height>28</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Load</string>
-      </property>
-     </widget>
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
@@ -80,421 +67,415 @@
        </item>
       </layout>
      </widget>
-     <widget class="QLabel" name="connectLabel">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
+     <widget class="QPushButton" name="loadButton">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>30</y>
-        <width>151</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Waiting for connection . . . </string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>150</y>
-        <width>381</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Start Session:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDateEdit" name="startDate">
-         <property name="maximumDate">
-          <date>
-           <year>2030</year>
-           <month>12</month>
-           <day>31</day>
-          </date>
-         </property>
-         <property name="minimumDate">
-          <date>
-           <year>2000</year>
-           <month>9</month>
-           <day>14</day>
-          </date>
-         </property>
-         <property name="currentSection">
-          <enum>QDateTimeEdit::YearSection</enum>
-         </property>
-         <property name="displayFormat">
-          <string>yyyy-dd</string>
-         </property>
-         <property name="calendarPopup">
-          <bool>false</bool>
-         </property>
-         <property name="currentSectionIndex">
-          <number>0</number>
-         </property>
-         <property name="date">
-          <date>
-           <year>2015</year>
-           <month>1</month>
-           <day>1</day>
-          </date>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>&quot;YYYY-DK&quot; (Dekad)</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>251</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Water Productivity:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="waterProductivity">
-         <item>
-          <property name="text">
-           <string>GBWP</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>NBWP</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QPushButton" name="connectButton">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>70</y>
-        <width>93</width>
+        <x>290</x>
+        <y>240</y>
+        <width>101</width>
         <height>28</height>
        </rect>
       </property>
       <property name="text">
-       <string>Connect</string>
+       <string>Show Canvas</string>
       </property>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>190</y>
+        <y>30</y>
         <width>381</width>
-        <height>31</height>
+        <height>191</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>End Session</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Water Productivity:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="waterProductivity">
+           <item>
+            <property name="text">
+             <string>GBWP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>NBWP</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QDateEdit" name="endDate">
-         <property name="displayFormat">
-          <string>yyyy-dd</string>
-         </property>
-         <property name="calendarPopup">
-          <bool>false</bool>
-         </property>
-         <property name="date">
-          <date>
-           <year>2015</year>
-           <month>1</month>
-           <day>18</day>
-          </date>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Resolution:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="resolutionList">
+           <item>
+            <property name="text">
+             <string>200 Meters</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>100 Meters</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>30 Meters</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>&quot;YYYY-DK&quot; (Dekad)</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Location:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="location">
+           <item>
+            <property name="text">
+             <string>Africa</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Middle East</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Start Session:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateEdit" name="startDate">
+           <property name="maximumDate">
+            <date>
+             <year>2030</year>
+             <month>12</month>
+             <day>31</day>
+            </date>
+           </property>
+           <property name="minimumDate">
+            <date>
+             <year>2000</year>
+             <month>9</month>
+             <day>14</day>
+            </date>
+           </property>
+           <property name="currentSection">
+            <enum>QDateTimeEdit::YearSection</enum>
+           </property>
+           <property name="displayFormat">
+            <string>yyyy-dd</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>false</bool>
+           </property>
+           <property name="currentSectionIndex">
+            <number>0</number>
+           </property>
+           <property name="date">
+            <date>
+             <year>2015</year>
+             <month>1</month>
+             <day>1</day>
+            </date>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>&quot;YYYY-DK&quot; (Dekad)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>End Session</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateEdit" name="endDate">
+           <property name="displayFormat">
+            <string>yyyy-dd</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>false</bool>
+           </property>
+           <property name="date">
+            <date>
+             <year>2015</year>
+             <month>1</month>
+             <day>18</day>
+            </date>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>&quot;YYYY-DK&quot; (Dekad)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>251</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Resolution:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="resolutionList">
-         <item>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>441</width>
+       <height>77</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Resulting units</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_14">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <widget class="QPushButton" name="connectButton">
           <property name="text">
-           <string>200 Meters</string>
+           <string>Connect</string>
           </property>
-         </item>
-         <item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="connectLabel">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="text">
-           <string>100 Meters</string>
+           <string>Waiting for connection . . . </string>
           </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>30 Meters</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="layoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>110</y>
-        <width>251</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <item>
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Location:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="location">
-         <item>
-          <property name="text">
-           <string>Africa</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Middle East</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
      <string>Indicators Calculator</string>
     </attribute>
-    <widget class="QTabWidget" name="tabWidget_2">
+    <widget class="QPushButton" name="calculateButton">
      <property name="geometry">
       <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>621</width>
-       <height>411</height>
+       <x>20</x>
+       <y>370</y>
+       <width>93</width>
+       <height>28</height>
       </rect>
      </property>
-     <property name="tabPosition">
-      <enum>QTabWidget::North</enum>
+     <property name="text">
+      <string>Calculate</string>
      </property>
-     <property name="currentIndex">
-      <number>0</number>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>11</y>
+       <width>431</width>
+       <height>351</height>
+      </rect>
      </property>
-     <widget class="QWidget" name="tab_3">
-      <attribute name="title">
-       <string>Natalia Indicator</string>
-      </attribute>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="geometry">
-        <rect>
-         <x>390</x>
-         <y>10</y>
-         <width>121</width>
-         <height>121</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Resulting units</string>
-       </property>
-       <widget class="QRadioButton" name="radioButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>95</width>
-          <height>20</height>
-         </rect>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="title">
+         <string>Indicator</string>
         </property>
-        <property name="text">
-         <string>RadioButton</string>
-        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QComboBox" name="rastor1_2">
+           <item>
+            <property name="text">
+             <string>Overall Consumption Ratio</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </widget>
-       <widget class="QRadioButton" name="radioButton_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>95</width>
-          <height>20</height>
-         </rect>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>WAPOR Data</string>
         </property>
-        <property name="text">
-         <string>RadioButton</string>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Rastor 1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="rastor1"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_10">
+           <item>
+            <widget class="QLabel" name="label_12">
+             <property name="text">
+              <string>Rastor 2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="rastor2"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
-       <widget class="QRadioButton" name="radioButton_3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>90</y>
-          <width>95</width>
-          <height>20</height>
-         </rect>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Resulting units</string>
         </property>
-        <property name="text">
-         <string>RadioButton</string>
-        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QRadioButton" name="radioButton_3">
+           <property name="text">
+            <string>KG/mm^3</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_2">
+           <property name="text">
+            <string>KG/cm^3</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton">
+           <property name="text">
+            <string>KG/m^3</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
-      </widget>
-      <widget class="QWidget" name="horizontalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>281</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <widget class="QRadioButton" name="radioButton_4">
-          <property name="text">
-           <string>RadioButton</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_5">
-          <property name="text">
-           <string>From work space</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QPushButton" name="calculateButton">
-       <property name="geometry">
-        <rect>
-         <x>420</x>
-         <y>310</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Calculate</string>
-       </property>
-      </widget>
-      <widget class="QWidget" name="verticalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>320</x>
-         <y>190</y>
-         <width>271</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>Raster 1</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_10">
-          <property name="text">
-           <string>Raster 2</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="tab_4">
-      <attribute name="title">
-       <string>In progress . . .</string>
-      </attribute>
-     </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="title">
+         <string>Output File Type</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QRadioButton" name="radioButton_4">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Add Map to Canva</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_6">
+           <property name="text">
+            <string>Download Report</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>
-  <widget class="QProgressBar" name="progressBar">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>450</y>
-     <width>231</width>
-     <height>23</height>
+     <y>470</y>
+     <width>431</width>
+     <height>26</height>
     </rect>
    </property>
-   <property name="value">
-    <number>24</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_8">
-   <property name="geometry">
-    <rect>
-     <x>260</x>
-     <y>450</y>
-     <width>271</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Waiting for WaPOR Connection</string>
-   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_12">
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>24</number>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>Waiting for WaPOR Connection</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
