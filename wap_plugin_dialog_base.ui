@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="downloadTab">
     <attribute name="title">
@@ -468,11 +468,6 @@
       </attribute>
      </widget>
     </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="location"/>
-     </item>
-    </layout>
    </widget>
   </widget>
   <widget class="QProgressBar" name="progressBar">
