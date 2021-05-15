@@ -1,4 +1,10 @@
 import time
+import requests
+import os
+
+# self.api_manag = WaporAPIManager()
+# self.canv_manag = CanvasManager()
+# self.file_manag = FileManager()
 
 class WaporAPIManager:
     def __init__(self, plugin_cwd, APIToken='1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'):
@@ -7,6 +13,7 @@ class WaporAPIManager:
         self.connected =  False
         self.sign_in_url = r'https://io.apps.fao.org/gismgr/api/v1/iam/sign-in/'
         self.query_url = r'https://io.apps.fao.org/gismgr/api/v1/query/'
+
     def connectWapor(self):
         request_headers = {'X-GISMGR-API-KEY': self.APIToken}
 
@@ -46,29 +53,28 @@ class WaporAPIManager:
     def query(self):
         pass
 
-
-
 class FileManager:
-    def __init__(self, ):
+    def __init__(self, plugin_dir):
+        self.plugin_dir = plugin_dir
+
+    def check_path(self, path):
+        return os.path.exists(path)
+
+    def create_path(self, path):
+        path = os.path.join(self.plugin_dir,path)
+        if not self.check_path(path):
+            os.mkdir(path)
+
+    def readLayer():
         pass
-
-    def checkWS():
-        pass
-
-    def createWS():
-        pass
-
-    def 
-
-
 
 class CanvasManager:
     def __init__(self, ):
-
-
-class WindowManager:
-    def __init__(self, ):
-
-class IndicatorCalculator:
-    def __init__(self, ):
         pass
+
+    def disp_rast(self, raster):
+        pass
+    
+    def rm_rast(self, raster):
+        pass
+
