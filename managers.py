@@ -7,8 +7,7 @@ import os
 # self.file_manag = FileManager()
 
 class WaporAPIManager:
-    def __init__(self, plugin_cwd, APIToken='1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'):
-        self.plugin_cwd = plugin_cwd
+    def __init__(self, APIToken='1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'):
         self.APIToken = APIToken
         self.connected =  False
         self.sign_in_url = r'https://io.apps.fao.org/gismgr/api/v1/iam/sign-in/'

@@ -34,6 +34,8 @@ from .resources import *
 from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
+from .managers import WaporAPIManager
+
 # from PyQt5.QtGui import *
 import requests
 import json
@@ -51,6 +53,8 @@ class WAPlugin:
             application at run time.
         :type iface: QgsInterface
         """
+        self.api_manag = WaporAPIManager()
+        
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
@@ -86,7 +90,7 @@ class WAPlugin:
         self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
         self.endSeasonVar = "2015-18"  # "YYYY-DK" (Dekad)
 
-        # Cocations
+        # Locations
         self.locListContinental = ["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Canary Islands"
             ,"Cape Verde","Central African Republic","Ceuta","Chad","Comoros","Côte d'Ivoire"
             ,"Democratic Republic of the Congo","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia"
@@ -217,28 +221,13 @@ class WAPlugin:
             self.iface.removeToolBarIcon(action)
 
     def wapor_connect(self):
-        APIToken='1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'
-
-        request_url='https://io.apps.fao.org/gismgr/api/v1/iam/sign-in/'
-        request_headers = {'X-GISMGR-API-KEY': APIToken}
-
-        resp = requests.post(
-                        request_url,
-                        headers=request_headers)
-
-        print('Trying to access WaPOR Database . . .')
-
-        resp_json = resp.json()
-        if resp_json['message']=='OK':
-            self.AccessToken=resp_json['response']['accessToken']
-            print('SUCCESS: Access granted')
-            print('Access expires in 3600s')
+        connected = self.api_manag.connectWapor()    
+        if connected:
             self.dlg.progressBar.setValue(20)
             self.dlg.progressLabel.setText ('Conncected to WaPOR database')
             self.dlg.downloadButton.setEnabled(True)
-
         else:
-            print('Fail to get accessToken')
+            self.dlg.progressLabel.setText ('Fail to coonect to Wapor Database . . .')
 
     def waterProductivityChange(self, i):
         if i is 0:
