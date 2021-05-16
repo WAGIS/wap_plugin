@@ -32,7 +32,7 @@ class WaporAPIManager:
             return True
 
         else:
-            print('Fail to coonect to Wapor Database . . .')
+            print('Fail to connect to Wapor Database . . .')
             return False
 
     def isConnected(self):
@@ -57,19 +57,38 @@ class FileManager:
         self.plugin_dir = plugin_dir
 
     def check_path(self, path):
-        return os.path.exists(path)
+        dir = os.path.join(self.plugin_dir,path)
+        return os.path.exists(dir)
 
     def create_path(self, path):
-        path = os.path.join(self.plugin_dir,path)
-        if not self.check_path(path):
-            os.mkdir(path)
+        dir = os.path.join(self.plugin_dir,path)
+        if not os.path.exists(dir):
+            os.mkdir(dir)
+        else:
+            print('The path [{}] is already in the workspace'.format(path))
 
-    def readLayer():
+    def list_rasters(self, rasters_path):
+        layer_dir =  os.path.join(self.plugin_dir,rasters_path)
+        tif_files_dir = []
+        tif_names = []
+        if os.path.exists(layer_dir):
+            for dirpath, _, fnames in os.walk(layer_dir):
+                for f in fnames:
+                    if f.endswith(".tif"):
+                        tif_names.append(f)
+                        tif_files_dir.append(os.path.join(dirpath, f))
+            
+            print('Found {} layers in the workspace [{}]'.format(len(tif_names),rasters_path))
+        else:
+            self.create_path(rasters_path)
+        return tif_files_dir, tif_names
+
+    def read_layer():
         pass
 
 class CanvasManager:
-    def __init__(self, ):
-        pass
+    def __init__(self, interface):
+        self.iface = interface
 
     def disp_rast(self, raster):
         pass

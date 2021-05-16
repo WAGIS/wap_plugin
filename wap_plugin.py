@@ -34,7 +34,7 @@ from .resources import *
 from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
-from .managers import WaporAPIManager
+from .managers import WaporAPIManager, FileManager, CanvasManager
 
 # from PyQt5.QtGui import *
 import requests
@@ -53,7 +53,8 @@ class WAPlugin:
             application at run time.
         :type iface: QgsInterface
         """
-        self.api_manag = WaporAPIManager()
+        
+
         
         # Save reference to the QGIS interface
         self.iface = iface
@@ -107,6 +108,16 @@ class WAPlugin:
 
         self.locListSubNational = ["Awash, Ethiopia", "Bekaa, Lebanon", "Busia, Kenya", "Gezira, Sudan", "Koga, Ethiopia",
                 "Lamego, Mozambique", "Office du Niger, Mali", "Zankalon, Egypt"] 
+
+        # MODIFICATIONS AFTER OOP
+
+        self.api_manag = WaporAPIManager()
+        self.file_manag = FileManager(self.plugin_dir)
+        self.canv_manag = CanvasManager(self.iface)
+        
+        self.rasters_path = "layers"
+
+
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -227,7 +238,7 @@ class WAPlugin:
             self.dlg.progressLabel.setText ('Conncected to WaPOR database')
             self.dlg.downloadButton.setEnabled(True)
         else:
-            self.dlg.progressLabel.setText ('Fail to coonect to Wapor Database . . .')
+            self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
 
     def waterProductivityChange(self, i):
         if i is 0:
@@ -239,7 +250,6 @@ class WAPlugin:
 
     def resolutionListChange(self, i):
         self.dlg.location.clear() 
-
         if i is 0:
             print("Selected 200 Meters")
             self.resolutionVar = "200m"
@@ -340,7 +350,12 @@ class WAPlugin:
         self.dlg.progressBar.setValue(100)
         self.dlg.progressLabel.setText ('Downloaded Rasters')
         
+    def list_rasters(self):
+        tif_files_dir, tif_names = self.file_manag.list_rasters(self.rasters_path)
+        print(tif_names)
+
     def load(self):
+        self.list_rasters()
         layer_dir = os.path.join(self.cwd, "layers", "L2_GBWP_1501-1518.tif")
         rlayer = self.iface.addRasterLayer(layer_dir, "L2_GBWP_1501-1518.tif")
         if not rlayer:
