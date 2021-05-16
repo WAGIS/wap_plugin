@@ -94,7 +94,10 @@ class CanvasManager:
 
     def add_rast(self, raster_name):
         raster_dir = os.path.join(self.rasters_dir,raster_name)
-        return bool(self.iface.addRasterLayer(raster_dir,raster_name))
+        if not self.iface.addRasterLayer(raster_dir,raster_name):
+            print("Layer failed to load raster [{}]".format(raster_name))
+            return False
+        return True
     
     def rm_rast(self, raster):
         pass

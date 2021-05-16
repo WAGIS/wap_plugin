@@ -35,6 +35,7 @@ from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
 from .managers import WaporAPIManager, FileManager, CanvasManager
+from .indicators import IndicatorCalculator
 
 # from PyQt5.QtGui import *
 import requests
@@ -115,6 +116,8 @@ class WAPlugin:
         self.api_manag = WaporAPIManager()
         self.file_manag = FileManager(self.plugin_dir)
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
+        
+        self.indic_calc = IndicatorCalculator(self.plugin_dir, self.rasters_path)
         
 
 
@@ -356,8 +359,7 @@ class WAPlugin:
 
     def load(self):
         self.list_rasters()
-        if not self.canv_manag.add_rast("L2_GBWP_1501-1518.tif"):
-            print("Layer failed to load!")
+        self.canv_manag.add_rast("L2_GBWP_1501-1518.tif")
 
     def refreshRasters(self):
         indic_dir = os.path.join(self.layer_folder_dir, "indic")
@@ -378,33 +380,16 @@ class WAPlugin:
 
     def calculateIndex(self):
         print('Calculating . . . ')
-        lyr_TBP_dir = os.path.join(self.layer_folder_dir, "indic", "L3_BKA_TBP_18s1.tif")
-        lyr_TBP = QgsRasterLayer(lyr_TBP_dir)
-        lyr_AETI_dir = os.path.join(self.layer_folder_dir, "indic", "L3_BKA_AETI_1806M.tif")
-        lyr_AETI = QgsRasterLayer(lyr_AETI_dir)
 
-        output_dir = os.path.join(self.layer_folder_dir, "indic", self.dlg.outputIndicName.text()+".tif")
+        tbp_name = "L3_BKA_TBP_18s1.tif"
+        aeti_name = "L3_BKA_AETI_1806M.tif"
+        output_name = self.dlg.outputIndicName.text()+".tif"
 
-        entries = []
+        self.indic_calc.test_calc(tbp_name,aeti_name,output_name)
 
-        ras = QgsRasterCalculatorEntry()
-        ras.ref = 'ras@1'
-        ras.raster = lyr_TBP
-        ras.bandNumber = 1
-        entries.append(ras)
-
-        ras = QgsRasterCalculatorEntry()
-        ras.ref = 'ras@2'
-        ras.raster = lyr_AETI
-        ras.bandNumber = 1
-        entries.append(ras)
-
-        calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1 * 10 * 6)', output_dir, 'GTiff',\
-                lyr_TBP.extent(), lyr_TBP.width(), lyr_TBP.height(), entries)
-        print(calc.processCalculation())
-        self.iface.addRasterLayer(lyr_TBP_dir, "TBP Raster")
-        self.iface.addRasterLayer(lyr_AETI_dir, "AETI Raster")
-        self.iface.addRasterLayer(output_dir, self.dlg.outputIndicName.text()+".tif")
+        self.canv_manag.add_rast(tbp_name)
+        self.canv_manag.add_rast(aeti_name)
+        self.canv_manag.add_rast(output_name)
 
 
     def run(self):
