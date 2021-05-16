@@ -68,11 +68,11 @@ class FileManager:
             print('The path [{}] is already in the workspace'.format(path))
 
     def list_rasters(self, rasters_path):
-        layer_dir =  os.path.join(self.plugin_dir,rasters_path)
+        rasters_dir = os.path.join(self.plugin_dir,rasters_path)
         tif_files_dir = []
         tif_names = []
-        if os.path.exists(layer_dir):
-            for dirpath, _, fnames in os.walk(layer_dir):
+        if os.path.exists(rasters_dir):
+            for dirpath, _, fnames in os.walk(rasters_dir):
                 for f in fnames:
                     if f.endswith(".tif"):
                         tif_names.append(f)
@@ -87,11 +87,14 @@ class FileManager:
         pass
 
 class CanvasManager:
-    def __init__(self, interface):
+    def __init__(self, interface, plugin_dir, rasters_path):
         self.iface = interface
+        self.plugin_dir = plugin_dir
+        self.rasters_dir = os.path.join(self.plugin_dir,rasters_path)
 
-    def disp_rast(self, raster):
-        pass
+    def add_rast(self, raster_name):
+        raster_dir = os.path.join(self.rasters_dir,raster_name)
+        return bool(self.iface.addRasterLayer(raster_dir,raster_name))
     
     def rm_rast(self, raster):
         pass

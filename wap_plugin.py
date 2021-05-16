@@ -110,12 +110,12 @@ class WAPlugin:
                 "Lamego, Mozambique", "Office du Niger, Mali", "Zankalon, Egypt"] 
 
         # MODIFICATIONS AFTER OOP
+        self.rasters_path = "layers"
 
         self.api_manag = WaporAPIManager()
         self.file_manag = FileManager(self.plugin_dir)
-        self.canv_manag = CanvasManager(self.iface)
+        self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
-        self.rasters_path = "layers"
 
 
 
@@ -356,9 +356,7 @@ class WAPlugin:
 
     def load(self):
         self.list_rasters()
-        layer_dir = os.path.join(self.cwd, "layers", "L2_GBWP_1501-1518.tif")
-        rlayer = self.iface.addRasterLayer(layer_dir, "L2_GBWP_1501-1518.tif")
-        if not rlayer:
+        if not self.canv_manag.add_rast("L2_GBWP_1501-1518.tif"):
             print("Layer failed to load!")
 
     def refreshRasters(self):
