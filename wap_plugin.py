@@ -247,8 +247,8 @@ class WAPlugin:
     def workspaceChange(self):
         self.dlg.progressLabel.setText ('Loading available cubes . . .')
         QApplication.processEvents()
-        workspace = self.dlg.workspaceComboBox.currentText()
-        self.cubes = self.api_manag.pull_cubes(workspace)
+        self.workspace = self.dlg.workspaceComboBox.currentText()
+        self.cubes = self.api_manag.pull_cubes(self.workspace)
 
         self.dlg.cubeComboBox.clear()
         self.dlg.cubeComboBox.addItems(self.cubes.keys())
@@ -259,10 +259,9 @@ class WAPlugin:
         try:
             self.dlg.progressLabel.setText ('Loading available dimensions and measures . . .')
             QApplication.processEvents()
-            workspace = self.dlg.workspaceComboBox.currentText()
-            cube = self.cubes[self.dlg.cubeComboBox.currentText()]
-            self.dimensions = self.api_manag.pull_cube_dims(workspace,cube)
-            self.measures = self.api_manag.pull_cube_meas(workspace,cube)
+            self.cube = self.cubes[self.dlg.cubeComboBox.currentText()]
+            self.dimensions = self.api_manag.pull_cube_dims(self.workspace,self.cube)
+            self.measures = self.api_manag.pull_cube_meas(self.workspace,self.cube)
 
             self.dlg.measureComboBox.clear()
             self.dlg.measureComboBox.addItems(self.measures.keys())
@@ -272,21 +271,47 @@ class WAPlugin:
         except (KeyError) as exception:
             pass
 
+    def measureChange(self):
+        try:
+            self.measure = self.measures[self.dlg.measureComboBox.currentText()]
+        except (KeyError) as exception:
+            pass
+
+    def memberChange(self):
+        try:
+            self.member = self.members[self.dlg.memberComboBox.currentText()]
+        except (KeyError) as exception:
+            pass
+
+
     def dimensionChange(self):
         try:
             self.dlg.progressLabel.setText ('Loading available members . . .')
             QApplication.processEvents()
-            workspace = self.dlg.workspaceComboBox.currentText()
-            cube = self.cubes[self.dlg.cubeComboBox.currentText()]
-            dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
-            self.members = self.api_manag.pull_cube_dim_membs(workspace,cube,dimension)
+            self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
+            self.members = self.api_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
 
-            self.dlg.dimensionMemberComboBox.clear()
-            self.dlg.dimensionMemberComboBox.addItems(self.members.keys())
+            self.dlg.memberComboBox.clear()
+            self.dlg.memberComboBox.addItems(self.members.keys())
             self.dlg.progressLabel.setText ('Members available ready!')
         except (KeyError) as exception:
                     pass
-                
+    
+    def downloadCropedRaster(self):
+        params = dict()
+        # params['outputFileName'] = "test.tif"
+        params['cube_code'] = self.cube
+        params['cube_workspaceCode'] = self.workspace
+        params['measures'] = [self.measure]
+        params['dimensions'] = [{
+                                    "code": self.dimension,
+                                    "values": [
+                                        self.member
+                                    ]
+                                }]
+        print(params)
+
+
     def locationChanged(self, i):
         pass
 
@@ -301,8 +326,8 @@ class WAPlugin:
         print("Set End Date: ", self.endSeasonVar)
 
     def clickOK(self):
-        self.dlg.connectLabel.setText ('OK detected')
-        self.wapor_connect()
+        # self.wapor_connect()
+        self.downloadCropedRaster()
 
     def test(self):
         # print("Inside Test function")
@@ -426,6 +451,8 @@ class WAPlugin:
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
+            self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
+            self.dlg.measureComboBox.currentIndexChanged.connect(self.measureChange)
             # self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             # self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
 

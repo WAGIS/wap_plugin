@@ -156,7 +156,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="dimensionMemberComboBox"/>
+          <widget class="QComboBox" name="memberComboBox"/>
          </item>
         </layout>
        </item>
