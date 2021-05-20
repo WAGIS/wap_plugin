@@ -60,9 +60,11 @@ class WaporAPIManager:
             listing = dict()
             for elem in resp['response']:
                 listing[elem['caption']] = elem['code']
-            return sorted(listing)
+            return listing
         except (requests.ConnectionError, requests.Timeout) as exception:
             return None
+        except (KeyError) as exception:
+            return {'---':None}
 
     def query_info(self, url):
         try:
