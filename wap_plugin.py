@@ -118,6 +118,7 @@ class WAPlugin:
         self.indic_calc = IndicatorCalculator(self.plugin_dir, self.rasters_path)
 
 
+
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -241,62 +242,51 @@ class WAPlugin:
     def listWorkspaces(self):
         self.dlg.workspaceComboBox.clear()
         workspaces = self.api_manag.pull_workspaces()
-        self.dlg.workspaceComboBox.addItems(workspaces)
+        self.dlg.workspaceComboBox.addItems(workspaces.values())
 
     def workspaceChange(self):
+        self.dlg.progressLabel.setText ('Loading available cubes . . .')
+        QApplication.processEvents()
         workspace = self.dlg.workspaceComboBox.currentText()
-        cubes = self.api_manag.pull_cubes(workspace)
+        self.cubes = self.api_manag.pull_cubes(workspace)
 
         self.dlg.cubeComboBox.clear()
-        self.dlg.cubeComboBox.addItems(cubes)
+        self.dlg.cubeComboBox.addItems(self.cubes.keys())
+        self.dlg.progressLabel.setText ('Cubes available ready!')
+
 
     def cubeChange(self):
-        workspace = self.dlg.workspaceComboBox.currentText()
-        cube = self.dlg.cubeComboBox.currentText()
-        dimensions = self.api_manag.pull_cube_dims(workspace,cube)
-        measures = self.api_manag.pull_cube_meas(workspace,cube)
+        try:
+            self.dlg.progressLabel.setText ('Loading available dimensions and measures . . .')
+            QApplication.processEvents()
+            workspace = self.dlg.workspaceComboBox.currentText()
+            cube = self.cubes[self.dlg.cubeComboBox.currentText()]
+            self.dimensions = self.api_manag.pull_cube_dims(workspace,cube)
+            self.measures = self.api_manag.pull_cube_meas(workspace,cube)
 
-        self.dlg.measureComboBox.clear()
-        self.dlg.measureComboBox.addItems(measures)
-        self.dlg.dimensionComboBox.clear()
-        self.dlg.dimensionComboBox.addItems(dimensions)
+            self.dlg.measureComboBox.clear()
+            self.dlg.measureComboBox.addItems(self.measures.keys())
+            self.dlg.dimensionComboBox.clear()
+            self.dlg.dimensionComboBox.addItems(self.dimensions.keys())
+            self.dlg.progressLabel.setText ('Dimensions and measures available ready!')
+        except (KeyError) as exception:
+            pass
 
     def dimensionChange(self):
-        workspace = self.dlg.workspaceComboBox.currentText()
-        cube = self.dlg.cubeComboBox.currentText()
-        dimension = self.dlg.dimensionComboBox.currentText()
-        members = self.api_manag.pull_cube_dim_membs(workspace,cube,dimension)
+        try:
+            self.dlg.progressLabel.setText ('Loading available members . . .')
+            QApplication.processEvents()
+            workspace = self.dlg.workspaceComboBox.currentText()
+            cube = self.cubes[self.dlg.cubeComboBox.currentText()]
+            dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
+            self.members = self.api_manag.pull_cube_dim_membs(workspace,cube,dimension)
 
-        self.dlg.dimensionMemberComboBox.clear()
-        self.dlg.dimensionMemberComboBox.addItems(members)
-
-    def waterProductivityChange(self, i):
-        if i is 0:
-            print("Selected GBWP")
-            self.waterProductivityVar = "GBWP"
-        elif i is 1:
-            print("Selected NBWP")
-            self.waterProductivityVar = "NBWP"
-
-    def resolutionListChange(self, i):
-        self.dlg.location.clear() 
-        if i is 0:
-            print("Selected 200 Meters")
-            self.resolutionVar = "200m"
-            self.dlg.location.addItems(self.locListContinental) 
-
-        elif i is 1:
-            print("Selected 100 Meters")
-            self.resolutionVar = "100m"
-            self.dlg.location.addItems(self.locListNational) 
-
-        elif i is 2:
-            print("Selected 30 Meters")
-            self.resolutionVar = "30m"
-            self.dlg.location.addItems(self.locListSubNational) 
-
-        # adding list of items to combo box 
-
+            self.dlg.dimensionMemberComboBox.clear()
+            self.dlg.dimensionMemberComboBox.addItems(self.members.keys())
+            self.dlg.progressLabel.setText ('Members available ready!')
+        except (KeyError) as exception:
+                    pass
+                
     def locationChanged(self, i):
         pass
 
@@ -433,9 +423,9 @@ class WAPlugin:
             self.dlg.downloadButton.clicked.connect(self.test)
             self.dlg.loadButton.clicked.connect(self.load)
 
-            # self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
-            # self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
-            # self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
+            self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
+            self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
+            self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             # self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             # self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
 

@@ -93,184 +93,70 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="workspaceLabel">
            <property name="text">
-            <string>WaPOR Dataset:</string>
+            <string>Workspace:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="waterProductivity">
-           <item>
-            <property name="text">
-             <string>Gross Biomass Water Productivity</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Net Biomass Water Productivity</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Actual EvapoTranspiration and Interception</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Transpiration</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Evaporation</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Interception</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Net Primary Production</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="workspaceComboBox"/>
          </item>
         </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="cubeLabel">
            <property name="text">
-            <string>Resolution:</string>
+            <string>Cube:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="resolutionList">
-           <item>
-            <property name="text">
-             <string>Continental (250 m)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>National (100 m)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Sub-National (30 m)</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="cubeComboBox"/>
          </item>
         </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="measureLabel">
            <property name="text">
-            <string>Location:</string>
+            <string>Measure:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="location"/>
+          <widget class="QComboBox" name="measureComboBox"/>
          </item>
         </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="dimensionLabel">
            <property name="text">
-            <string>Start date:</string>
+            <string>Dimension type:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QDateEdit" name="startDate">
-           <property name="maximumDate">
-            <date>
-             <year>2030</year>
-             <month>12</month>
-             <day>31</day>
-            </date>
-           </property>
-           <property name="minimumDate">
-            <date>
-             <year>2000</year>
-             <month>9</month>
-             <day>14</day>
-            </date>
-           </property>
-           <property name="currentSection">
-            <enum>QDateTimeEdit::YearSection</enum>
-           </property>
-           <property name="displayFormat">
-            <string>yyyy-mm-dd</string>
-           </property>
-           <property name="calendarPopup">
-            <bool>false</bool>
-           </property>
-           <property name="currentSectionIndex">
-            <number>0</number>
-           </property>
-           <property name="date">
-            <date>
-             <year>2015</year>
-             <month>1</month>
-             <day>1</day>
-            </date>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>&quot;YYYY-MM-DD&quot;</string>
-           </property>
-          </widget>
+          <widget class="QComboBox" name="dimensionComboBox"/>
          </item>
         </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="dimensionMemberLabel">
            <property name="text">
-            <string>End date:</string>
+            <string>Dimension:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QDateEdit" name="endDate">
-           <property name="displayFormat">
-            <string>yyyy-mm-dd</string>
-           </property>
-           <property name="calendarPopup">
-            <bool>false</bool>
-           </property>
-           <property name="date">
-            <date>
-             <year>2015</year>
-             <month>1</month>
-             <day>18</day>
-            </date>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>&quot;YYYY-MM-DD&quot;</string>
-           </property>
-          </widget>
+          <widget class="QComboBox" name="dimensionMemberComboBox"/>
          </item>
         </layout>
        </item>
