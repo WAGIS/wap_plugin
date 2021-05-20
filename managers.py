@@ -12,6 +12,10 @@ class WaporAPIManager:
         self.connected =  False
         self.sign_in_url = r'https://io.apps.fao.org/gismgr/api/v1/iam/sign-in/'
         self.query_url = r'https://io.apps.fao.org/gismgr/api/v1/query/'
+        self.catalog_url = r'https://io.apps.fao.org/gismgr/api/v1/catalog/'
+
+        self.payload = {'overview':False,'paged':False}
+        self.time_out = 5
 
     def connectWapor(self):
         request_headers = {'X-GISMGR-API-KEY': self.APIToken}
@@ -48,9 +52,105 @@ class WaporAPIManager:
 
     def login(self):
         pass
+    
+    def query_listing(self, url):
+        try:
+            resp = requests.get(url,self.payload,timeout=self.time_out).json()
 
-    def query(self):
-        pass
+            listing = dict()
+            for elem in resp['response']:
+                listing[elem['caption']] = elem['code']
+            return sorted(listing)
+        except (requests.ConnectionError, requests.Timeout) as exception:
+            return None
+
+    def query_info(self, url):
+        try:
+            resp = requests.get(url,timeout=self.time_out).json()
+            return resp['response']
+        except (requests.ConnectionError, requests.Timeout) as exception:
+            return None
+
+    def pull_workspaces(self):
+        workspaces_url = self.catalog_url+'workspaces'
+        workspaces_dict = self.query_listing(workspaces_url)
+        if workspaces_dict is None:
+            raise Exception("Query [pull_workspaces] error, no internet conection or timeout")
+        else:
+            return workspaces_dict
+        
+    def get_info_workspace(self, workspace):
+        workspace_url = self.catalog_url+'workspaces/{}'.format(workspace)
+        workspace_resp = self.query_info(workspace_url)
+        if workspace_resp is None:
+            raise Exception("Query [info_workspaces] error, no internet conection or timeout")
+        else:
+            return workspace_resp['caption'], workspace_resp['description']
+
+    def pull_cubes(self, workspace):
+        cubes_url = self.catalog_url+'workspaces/{}/cubes'.format(workspace)
+        cubes_dict = self.query_listing(cubes_url)
+        if cubes_dict is None:
+            raise Exception("Query [pull_cubes] error, no internet conection or timeout")
+        else:
+            return cubes_dict
+    
+    def get_info_cube(self, workspace, cube):
+        cube_url = self.catalog_url+'workspaces/{}/cubes/{}'.format(workspace,cube)
+        cube_resp = self.query_info(cube_url)
+        if cube_resp is None:
+            raise Exception("Query [info_cube] error, no internet conection or timeout")
+        else:
+            return cube_resp['caption'], cube_resp['description']
+
+    def pull_cube_dims(self, workspace, cube):
+        cube_dims_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions'.format(workspace,cube)
+        cube_dims_dict = self.query_listing(cube_dims_url)
+        if cube_dims_dict is None:
+            raise Exception("Query [pull_cube_dims] error, no internet conection or timeout")
+        else:
+            return cube_dims_dict
+
+    def get_info_cube_dim(self, workspace, cube, dimension):
+        cube_dim_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}'.format(workspace,cube,dimension)
+        cube_dim_resp = self.query_info(cube_dim_url)
+        if cube_dim_resp is None:
+            raise Exception("Query [info_cube_dim] error, no internet conection or timeout")
+        else:
+            return cube_dim_resp['caption'], cube_dim_resp['description']
+
+    def pull_cube_dim_membs(self, workspace, cube, dimension):
+        cube_dim_membs_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}/members'.format(workspace,cube,dimension)
+        cube_dim_membs_dict = self.query_listing(cube_dim_membs_url)
+        if cube_dim_membs_dict is None:
+            raise Exception("Query [pull_cube_dim_membs] error, no internet conection or timeout")
+        else:
+            return cube_dim_membs_dict
+
+    def get_info_cube_dim_memb(self, workspace, cube, dimension, member):
+        cube_dim_memb_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}/members/{}'.format(workspace,cube,dimension,member)
+        cube_dim_memb_resp = self.query_info(cube_dim_memb_url)
+        if cube_dim_memb_resp is None:
+            raise Exception("Query [info_cube_dim_memb] error, no internet conection or timeout")
+        else:
+            return cube_dim_memb_resp['caption'], cube_dim_memb_resp['description']
+
+    def pull_cube_meas(self, workspace, cube):
+        cube_meas_url = self.catalog_url+'workspaces/{}/cubes/{}/measures'.format(workspace,cube)
+        cube_meas_dict = self.query_listing(cube_meas_url)
+        if cube_meas_dict is None:
+            raise Exception("Query [pull_cube_meas] error, no internet conection or timeout")
+        else:
+            return cube_meas_dict
+
+    def get_info_cube_mea(self, workspace, cube, measure):
+        cube_meas_url = self.catalog_url+'workspaces/{}/cubes/{}/measures/{}'.format(workspace,cube,measure)
+        cube_meas_resp = self.query_info(cube_meas_url)
+        if cube_meas_resp is None:
+            raise Exception("Query [info_cube_meas] error, no internet conection or timeout")
+        else:
+            return cube_meas_resp['caption'], cube_meas_resp['description']
+
 
 class FileManager:
     def __init__(self, plugin_dir):

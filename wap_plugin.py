@@ -55,8 +55,6 @@ class WAPlugin:
         :type iface: QgsInterface
         """
         
-
-        
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
@@ -101,7 +99,7 @@ class WAPlugin:
             ,"Morocco"  ,"Mozambique","Namibia","Niger","Nigeria"  ,"Republic of the Congo"
             ,"Réunion","Rwanda","Saint Helena","São Tomé and Príncipe","Senegal","Seychelles"
             ,"Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia"
-            ,"Uganda","Western Sahara","Zambia","Zimbabwe" ]
+            ,"Uganda","Western Sahara","Zambia","Zimbabwe"]
 
         self.locListNational = ["Benin","Burundi","Egypt","Ghana","Iraq","Jordan","Kenya","Lebanon","Mali","Morocco"
             ,"Mozambique","Niger","Palestine","Rwanda","South Sudan","Sudan","Syrian Arab Republic"
@@ -118,8 +116,6 @@ class WAPlugin:
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
         self.indic_calc = IndicatorCalculator(self.plugin_dir, self.rasters_path)
-        
-
 
 
     # noinspection PyMethodMayBeStatic
@@ -136,7 +132,6 @@ class WAPlugin:
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('WAPlugin', message)
-
 
     def add_action(
         self,
@@ -242,6 +237,38 @@ class WAPlugin:
             self.dlg.downloadButton.setEnabled(True)
         else:
             self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
+
+    def listWorkspaces(self):
+        self.dlg.workspaceComboBox.clear()
+        workspaces = self.api_manag.pull_workspaces()
+        self.dlg.workspaceComboBox.addItems(workspaces)
+
+    def workspaceChange(self):
+        workspace = self.dlg.workspaceComboBox.currentText()
+        cubes = self.api_manag.pull_cubes(workspace)
+
+        self.dlg.cubeComboBox.clear()
+        self.dlg.cubeComboBox.addItems(cubes)
+
+    def cubeChange(self):
+        workspace = self.dlg.workspaceComboBox.currentText()
+        cube = self.dlg.cubeComboBox.currentText()
+        dimensions = self.api_manag.pull_cube_dims(workspace,cube)
+        measures = self.api_manag.pull_cube_meas(workspace,cube)
+
+        self.dlg.measureComboBox.clear()
+        self.dlg.measureComboBox.addItems(measures)
+        self.dlg.dimensionComboBox.clear()
+        self.dlg.dimensionComboBox.addItems(dimensions)
+
+    def dimensionChange(self):
+        workspace = self.dlg.workspaceComboBox.currentText()
+        cube = self.dlg.cubeComboBox.currentText()
+        dimension = self.dlg.dimensionComboBox.currentText()
+        members = self.api_manag.pull_cube_dim_membs(workspace,cube,dimension)
+
+        self.dlg.dimensionMemberComboBox.clear()
+        self.dlg.dimensionMemberComboBox.addItems(members)
 
     def waterProductivityChange(self, i):
         if i is 0:
@@ -353,12 +380,12 @@ class WAPlugin:
         self.dlg.progressBar.setValue(100)
         self.dlg.progressLabel.setText ('Downloaded Rasters')
         
-    def list_rasters(self):
-        tif_files_dir, tif_names = self.file_manag.list_rasters(self.rasters_path)
+    def listRasters(self):
+        tif_files_dir, tif_names = self.file_manag.listRasters(self.rasters_path)
         print(tif_names)
 
     def load(self):
-        self.list_rasters()
+        self.listRasters()
         self.canv_manag.add_rast("L2_GBWP_1501-1518.tif")
 
     def refreshRasters(self):
@@ -405,17 +432,17 @@ class WAPlugin:
             self.dlg.connectButton.clicked.connect(self.clickOK)
             self.dlg.downloadButton.clicked.connect(self.test)
             self.dlg.loadButton.clicked.connect(self.load)
-            self.dlg.waterProductivity.currentIndexChanged.connect(self.waterProductivityChange)
-            self.dlg.resolutionList.currentIndexChanged.connect(self.resolutionListChange)
-            self.dlg.location.currentIndexChanged.connect(self.locationChanged)
-            self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
-            self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
-            self.dlg.calculateButton.clicked.connect(self.calculateIndex)
-            self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
 
-            # Set initial locations as 200m
-            self.dlg.location.addItems(self.locListContinental) 
-            self.refreshRasters()
+            # self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
+            # self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
+            # self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
+            # self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
+            # self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
+
+            self.dlg.calculateButton.clicked.connect(self.calculateIndex)
+            # self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
+
+            self.listWorkspaces()
 
         # show the dialog
         self.dlg.show()
