@@ -112,7 +112,7 @@ class WAPlugin:
         self.rasters_path = "layers"
 
         self.api_manag = WaporAPIManager()
-        self.file_manag = FileManager(self.plugin_dir)
+        self.file_manag = FileManager(self.plugin_dir, self.rasters_path)
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
         self.indic_calc = IndicatorCalculator(self.plugin_dir, self.rasters_path)
@@ -244,6 +244,11 @@ class WAPlugin:
         workspaces = self.api_manag.pull_workspaces()
         self.dlg.workspaceComboBox.addItems(workspaces.values())
 
+    def listRasterMemory(self):
+        self.dlg.rasterMemoryComboBox.clear()
+        self.tif_files = self.file_manag.list_rasters(self.rasters_path)
+        self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
+
     def workspaceChange(self):
         self.dlg.progressLabel.setText ('Loading available cubes . . .')
         QApplication.processEvents()
@@ -253,7 +258,6 @@ class WAPlugin:
         self.dlg.cubeComboBox.clear()
         self.dlg.cubeComboBox.addItems(self.cubes.keys())
         self.dlg.progressLabel.setText ('Cubes available ready!')
-
 
     def cubeChange(self):
         try:
@@ -283,7 +287,6 @@ class WAPlugin:
         except (KeyError) as exception:
             pass
 
-
     def dimensionChange(self):
         try:
             self.dlg.progressLabel.setText ('Loading available members . . .')
@@ -299,7 +302,7 @@ class WAPlugin:
     
     def downloadCropedRaster(self):
         params = dict()
-        # params['outputFileName'] = "test.tif"
+        params['outputFileName'] = self.dlg.outputRasterName.text()+".tif"
         params['cube_code'] = self.cube
         params['cube_workspaceCode'] = self.workspace
         params['measures'] = [self.measure]
@@ -309,11 +312,10 @@ class WAPlugin:
                                         self.member
                                     ]
                                 }]
-        print(params)
-
-
-    def locationChanged(self, i):
-        pass
+        rast_url = self.api_manag.query_crop_raster(params)
+        print(rast_url)
+        self.file_manag.download_raster(rast_url)
+        self.listRasterMemory()
 
     def onStartDateChanged(self, qDate):
         # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
@@ -325,83 +327,9 @@ class WAPlugin:
         self.endSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
         print("Set End Date: ", self.endSeasonVar)
 
-    def clickOK(self):
-        # self.wapor_connect()
-        self.downloadCropedRaster()
-
-    def test(self):
-        # print("Inside Test function")
-        path = os.path.join(self.cwd, "json", "test.json") 
-        testJsonFile = open(path,) 
-        request_json = json.load(testJsonFile) 
-
-        url=r'https://io.apps.fao.org/gismgr/api/v1/query/'
-
-        # Update json with current settings
-        # request_json["params"]["waterProductivity"] = self.waterProductivityVar
-        # request_json["params"]["resolution"] = self.resolutionVar
-        # request_json["params"]["startSeason"] = self.startSeasonVar
-        # request_json["params"]["endSeason"] = self.endSeasonVar
-
-        request_headers = {
-                    'Authorization': "Bearer " + self.AccessToken}
-
-        response = requests.post(
-                        url,
-                        json=request_json,
-                        headers=request_headers)
-        response_json=response.json()
-        print(response_json)
-
-        if response_json['message']=='OK':
-            job_url = response_json['response']['links'][0]['href']
-        else:
-            print('Fail to get job url')
-            response = requests.get(
-                                job_url)
-            response.json()
-
-        print('Waiting WaPOR')
-        self.dlg.downloadButton.setEnabled(False)
-        self.dlg.downloadLabel.setText ('Waiting WaPOR')
-        self.dlg.progressLabel.setText ('Getting links to download Rasters ...')
-        while True:
-            QApplication.processEvents()
-            response = requests.get(job_url)
-            response_json=response.json()
-            if response_json['response']['status']=='COMPLETED':
-                gbwp = response_json['response']['output']['bwpDownloadUrl']
-                tbp = response_json['response']['output']['tbpDownloadUrl']
-                aeti = response_json['response']['output']['wtrDownloadUrl']
-                self.dlg.downloadLabel.setText ('Url in memory')
-                break
-                
-        print('Link to download GBWP',gbwp)
-        print('Link to download TBP',tbp)
-        print('Link to download AETI',aeti)
-        self.dlg.progressBar.setValue(50)
-        self.dlg.progressLabel.setText ('Received links to download Rasters')
-        url= aeti
-        file_name = url.rsplit('/', 1)[1]
-        file_dir = os.path.join(self.cwd, "layers", file_name)
-        wget.download(url, file_dir)
-        self.dlg.progressLabel.setText ('Downloading Rasters ...')
-        while True:
-            QApplication.processEvents()
-            if os.path.isfile(file_dir):
-                self.dlg.downloadLabel.setText ('File in memory')
-                self.dlg.downloadButton.setEnabled(True)
-                break
-        self.dlg.progressBar.setValue(100)
-        self.dlg.progressLabel.setText ('Downloaded Rasters')
-        
-    def listRasters(self):
-        tif_files_dir, tif_names = self.file_manag.listRasters(self.rasters_path)
-        print(tif_names)
-
-    def load(self):
-        self.listRasters()
-        self.canv_manag.add_rast("L2_GBWP_1501-1518.tif")
+    def loadRaster(self):
+        raster_name = self.dlg.rasterMemoryComboBox.currentText()
+        self.canv_manag.add_rast(raster_name)
 
     def refreshRasters(self):
         indic_dir = os.path.join(self.layer_folder_dir, "indic")
@@ -444,9 +372,9 @@ class WAPlugin:
 
             self.dlg.downloadButton.setEnabled(False)
 
-            self.dlg.connectButton.clicked.connect(self.clickOK)
-            self.dlg.downloadButton.clicked.connect(self.test)
-            self.dlg.loadButton.clicked.connect(self.load)
+            self.dlg.connectButton.clicked.connect(self.wapor_connect)
+            self.dlg.downloadButton.clicked.connect(self.downloadCropedRaster)
+            self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
@@ -460,6 +388,7 @@ class WAPlugin:
             # self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
 
             self.listWorkspaces()
+            self.listRasterMemory()
 
         # show the dialog
         self.dlg.show()

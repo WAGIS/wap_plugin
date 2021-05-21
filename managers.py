@@ -1,10 +1,11 @@
 import time
 import requests
 import os
+import wget
 
-# self.api_manag = WaporAPIManager()
-# self.canv_manag = CanvasManager()
-# self.file_manag = FileManager()
+from .api_queries import crop_raster_query
+
+from qgis.PyQt.QtWidgets import QApplication
 
 class WaporAPIManager:
     def __init__(self, APIToken='1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'):
@@ -33,18 +34,19 @@ class WaporAPIManager:
             print('Access expires in 3600s')
 
             self.lastConnection_time = time.time()
-            return True
+            self.connected = True
 
         else:
             print('Fail to connect to Wapor Database . . .')
-            return False
+            self.connected = False
+
+        return self.connected
 
     def isConnected(self):
         if not self.connected:
             return False
         elif time.time() - self.lastConnection_time > 3600:
             self.connected = False
-
         return self.connected
 
     def disconnectWapor(self):
@@ -52,6 +54,38 @@ class WaporAPIManager:
 
     def login(self):
         pass
+
+    def query_crop_raster(self,params):
+        if not self.isConnected():
+            raise Exception("Query [crop_raster] error, no Wapor conection")
+        else:
+            request_json = crop_raster_query.copy()
+            request_json['params']['properties']['outputFileName'] = params['outputFileName']
+            request_json['params']['cube']['code'] = params['cube_code']
+            request_json['params']['cube']['workspaceCode'] = params['cube_workspaceCode']
+            request_json['params']['dimensions'] = params['dimensions']
+            request_json['params']['measures'] = params['measures']
+
+            request_headers = {'Authorization': "Bearer " + self.AccessToken}
+
+            resp_json = requests.post(  self.query_url,
+                                        json=request_json,
+                                        headers=request_headers).json()
+
+            if resp_json['message']=='OK':
+                job_url = resp_json['response']['links'][0]['href']
+
+                while True:
+                    QApplication.processEvents()
+                    response = requests.get(job_url)
+                    resp_json=response.json()
+                    print(resp_json['response']['status'])
+                    if resp_json['response']['status']=='COMPLETED':
+                        rast_url = resp_json['response']['output']['downloadUrl']
+                        return rast_url
+            else:
+                #  TODO raise something
+                print('Fail to get job url')
     
     def query_listing(self, url):
         try:
@@ -155,8 +189,9 @@ class WaporAPIManager:
 
 
 class FileManager:
-    def __init__(self, plugin_dir):
+    def __init__(self, plugin_dir, rasters_path):
         self.plugin_dir = plugin_dir
+        self.rasters_dir = os.path.join(self.plugin_dir,rasters_path)
 
     def check_path(self, path):
         dir = os.path.join(self.plugin_dir,path)
@@ -171,22 +206,26 @@ class FileManager:
 
     def list_rasters(self, rasters_path):
         rasters_dir = os.path.join(self.plugin_dir,rasters_path)
-        tif_files_dir = []
-        tif_names = []
+        tif_files_dict = dict()
         if os.path.exists(rasters_dir):
             for dirpath, _, fnames in os.walk(rasters_dir):
-                for f in fnames:
-                    if f.endswith(".tif"):
-                        tif_names.append(f)
-                        tif_files_dir.append(os.path.join(dirpath, f))
-            
-            print('Found {} layers in the workspace [{}]'.format(len(tif_names),rasters_path))
+                for file in fnames:
+                    if file.endswith(".tif"):
+                        tif_files_dict[file] = os.path.join(dirpath, file)
+            print('Found {} layers in the workspace [{}]'.format(len(tif_files_dict),rasters_path))
         else:
             self.create_path(rasters_path)
-        return tif_files_dir, tif_names
+        return tif_files_dict
 
-    def read_layer():
-        pass
+    def download_raster(self, rast_url):
+        file_name = rast_url.rsplit('/', 1)[1]
+        file_dir = os.path.join(self.rasters_dir, file_name)
+        wget.download(rast_url, file_dir)
+        while True:
+            QApplication.processEvents()
+            if os.path.isfile(file_dir):
+                print('File in workspace')
+                break
 
 class CanvasManager:
     def __init__(self, interface, plugin_dir, rasters_path):
