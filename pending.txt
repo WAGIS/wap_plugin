@@ -1,0 +1,6 @@
+- handle raise of no internet connection, no wapor connection
+- handle filter of country or season or stage
+- handle listing of several dimensions
+- define the donwload function, and UI elements to show raster
+- handle coordinates for crop_raster_query
+- 

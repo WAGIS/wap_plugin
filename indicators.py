@@ -30,6 +30,11 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1 * 10 * 6)', output_dir, 'GTiff',\
-                ras_tbp.extent(), ras_tbp.width(), ras_tbp.height(), entries)
+        calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1 * 10 * 6)',
+                                    output_dir,
+                                    'GTiff',
+                                    ras_tbp.extent(),
+                                    ras_tbp.width(),
+                                    ras_tbp.height(),
+                                    entries)
         print(calc.processCalculation())

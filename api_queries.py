@@ -10,7 +10,7 @@ Polygon=[
           [xmin,ymin]
         ]
 
-crop_raster_query={
+crop_raster_query = {
                     "type": "CropRaster",
                     "params": {
                         "properties": {
