@@ -313,8 +313,9 @@ class WAPlugin:
                                     ]
                                 }]
         rast_url = self.api_manag.query_crop_raster(params)
-        print(rast_url)
+
         self.file_manag.download_raster(rast_url)
+        
         self.listRasterMemory()
 
     def onStartDateChanged(self, qDate):
