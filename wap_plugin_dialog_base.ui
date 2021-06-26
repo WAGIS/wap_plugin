@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="downloadTab">
     <attribute name="title">
@@ -316,14 +316,14 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
-            <widget class="QLabel" name="label_11">
+            <widget class="QLabel" name="tbp_raster">
              <property name="text">
               <string>TBP Raster</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="raster1">
+            <widget class="QComboBox" name="TbpRasterComboBox">
              <property name="enabled">
               <bool>true</bool>
              </property>
@@ -334,14 +334,14 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_10">
            <item>
-            <widget class="QLabel" name="label_12">
+            <widget class="QLabel" name="aeti_raster">
              <property name="text">
               <string>AETI Raster</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="raster2"/>
+            <widget class="QComboBox" name="AetiRasterComboBox"/>
            </item>
           </layout>
          </item>

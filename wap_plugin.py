@@ -245,9 +245,15 @@ class WAPlugin:
         self.dlg.workspaceComboBox.addItems(workspaces.values())
 
     def listRasterMemory(self):
-        self.dlg.rasterMemoryComboBox.clear()
         self.tif_files = self.file_manag.list_rasters(self.rasters_path)
+        self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
+
+        self.dlg.TbpRasterComboBox.clear()
+        self.dlg.TbpRasterComboBox.addItems(self.tif_files.keys())
+
+        self.dlg.AetiRasterComboBox.clear()
+        self.dlg.AetiRasterComboBox.addItems(self.tif_files.keys())
 
     def workspaceChange(self):
         self.dlg.progressLabel.setText ('Loading available cubes . . .')
@@ -352,8 +358,8 @@ class WAPlugin:
     def calculateIndex(self):
         print('Calculating . . . ')
 
-        tbp_name = "L3_BKA_TBP_18s1.tif"
-        aeti_name = "L3_BKA_AETI_1806M.tif"
+        tbp_name = self.dlg.TbpRasterComboBox.currentText()
+        aeti_name = self.dlg.AetiRasterComboBox.currentText()
         output_name = self.dlg.outputIndicName.text()+".tif"
 
         self.indic_calc.test_calc(tbp_name,aeti_name,output_name)
