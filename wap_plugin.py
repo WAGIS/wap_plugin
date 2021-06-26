@@ -265,6 +265,10 @@ class WAPlugin:
         self.dlg.cubeComboBox.addItems(self.cubes.keys())
         self.dlg.progressLabel.setText ('Cubes available ready!')
 
+    def indicatorChange(self):
+        self.indicator = self.dlg.indicatorListComboBox.currentText()
+        self.indicator_index = self.dlg.indicatorListComboBox.currentIndex()
+
     def cubeChange(self):
         try:
             self.dlg.progressLabel.setText ('Loading available dimensions and measures . . .')
@@ -358,6 +362,21 @@ class WAPlugin:
     def calculateIndex(self):
         print('Calculating . . . ')
 
+        if self.indicator_index is 0:
+            setFunction = self.indic_calc.overall_consumption_ratio()
+        elif self.indicator_index is 1:
+            setFunction = self.indic_calc.water_productivity()
+        elif self.indicator_index is 2:
+            setFunction = self.indic_calc.overall_field_app_ratio()
+        elif self.indicator_index is 3:
+            setFunction = self.indic_calc.crop_yield()
+        elif self.indicator_index is 4:
+            setFunction = self.indic_calc.field_app_ratio()
+        elif self.indicator_index is 5:
+            setFunction = self.indic_calc.depleted_fraction()
+        else:
+            raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
+
         tbp_name = self.dlg.TbpRasterComboBox.currentText()
         aeti_name = self.dlg.AetiRasterComboBox.currentText()
         output_name = self.dlg.outputIndicName.text()+".tif"
@@ -392,7 +411,9 @@ class WAPlugin:
             # self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
             # self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
 
+            self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.calculateButton.clicked.connect(self.calculateIndex)
+            self.indicatorChange()
             # self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
 
             self.listWorkspaces()
