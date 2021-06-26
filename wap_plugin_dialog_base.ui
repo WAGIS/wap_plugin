@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>557</width>
-    <height>571</height>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,11 +19,11 @@
      <x>10</x>
      <y>10</y>
      <width>531</width>
-     <height>511</height>
+     <height>521</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="downloadTab">
     <attribute name="title">
@@ -210,30 +210,43 @@
       </rect>
      </property>
      <property name="title">
-      <string>GroupBox</string>
+      <string>Available Rasters</string>
      </property>
-     <widget class="QPushButton" name="loadRasterButton">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>30</y>
-        <width>101</width>
-        <height>28</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Load in canvas</string>
-      </property>
-     </widget>
      <widget class="QComboBox" name="rasterMemoryComboBox">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>30</y>
-        <width>291</width>
-        <height>22</height>
+        <width>251</width>
+        <height>20</height>
        </rect>
       </property>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>30</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_15">
+       <item>
+        <widget class="QPushButton" name="loadRasterButton">
+         <property name="text">
+          <string>Load in canvas</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="RasterRefreshButton">
+         <property name="text">
+          <string>Refresh List</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </widget>
@@ -431,7 +444,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>530</y>
+     <y>540</y>
      <width>431</width>
      <height>26</height>
     </rect>

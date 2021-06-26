@@ -382,6 +382,7 @@ class WAPlugin:
             self.dlg.connectButton.clicked.connect(self.wapor_connect)
             self.dlg.downloadButton.clicked.connect(self.downloadCropedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
+            self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
