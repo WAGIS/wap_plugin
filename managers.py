@@ -83,6 +83,14 @@ class WaporAPIManager:
                     if resp_json['response']['status']=='COMPLETED':
                         rast_url = resp_json['response']['output']['downloadUrl']
                         return rast_url
+                    elif resp_json['response']['status']=='COMPLETED WITH ERRORS':
+                        print(resp_json['response']['log'][-3:-1])
+                        return None
+                    elif resp_json['response']['status'] == 'WAITING' or resp_json['response']['status'] == 'RUNNING':
+                        pass
+                    else:
+                        raise Exception("Query [crop_raster] error status not handled")
+
             else:
                 #  TODO raise something
                 print('Fail to get job url')
