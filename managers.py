@@ -8,7 +8,8 @@ from .api_queries import crop_raster_query
 from qgis.PyQt.QtWidgets import QApplication
 
 class WaporAPIManager:
-    def __init__(self, APIToken='1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'):
+    def __init__(self, APIToken=None):
+
         self.APIToken = APIToken
         self.connected =  False
         self.sign_in_url = r'https://io.apps.fao.org/gismgr/api/v1/iam/sign-in/'
@@ -18,7 +19,35 @@ class WaporAPIManager:
         self.payload = {'overview':False,'paged':False}
         self.time_out = 5
 
+    def signin(self, APIToken):
+        request_headers = {'X-GISMGR-API-KEY': APIToken}
+
+        resp = requests.post(
+                        self.sign_in_url,
+                        headers=request_headers)
+
+        print('Connecting to WaPOR Database . . .')
+
+        resp_json = resp.json()
+        if resp_json['message']=='OK':
+            self.AccessToken=resp_json['response']['accessToken']
+            print('SUCCESS: Access granted')
+            print('Access expires in 3600s')
+
+            self.lastConnection_time = time.time()
+            self.connected = True
+            self.APIToken = APIToken
+        else:
+            print('Fail to connect to Wapor Database . . .')
+            self.connected = False
+
+        return self.connected
+
     def connectWapor(self):
+        if self.APIToken == None:
+            self.APIToken = '1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'
+            raise Exception("WARNING: API Token not provided, using developers Token, please Sign In . . .")
+            
         request_headers = {'X-GISMGR-API-KEY': self.APIToken}
 
         resp = requests.post(
@@ -235,6 +264,21 @@ class FileManager:
                 print('File in workspace')
                 break
 
+    def save_token(self, APIToken):
+        tokendir = os.path.join(self.plugin_dir,'apitoken.token')
+        with open(tokendir, 'w') as tokenFile:
+            tokenFile.write(APIToken)
+
+    def load_token(self):
+        tokendir = os.path.join(self.plugin_dir,'apitoken.token')
+        if os.path.isfile(tokendir):
+            with open(tokendir, 'r') as tokenFile:
+                APIToken = tokenFile.read()
+                print(APIToken)
+                return APIToken
+        else:
+            return None
+
 class CanvasManager:
     def __init__(self, interface, plugin_dir, rasters_path):
         self.iface = interface
@@ -249,5 +293,5 @@ class CanvasManager:
         return True
     
     def rm_rast(self, raster):
-        pass
+        raise NotImplementedError("Canvar Manager, Remove raster not implemented.")
 

@@ -230,14 +230,45 @@ class WAPlugin:
                 action)
             self.iface.removeToolBarIcon(action)
 
-    def wapor_connect(self):
-        connected = self.api_manag.connectWapor()    
+    def signin(self):
+        self.dlg.signinStateLabel.setText('Signing into your WaPOR profile . . .')
+        connected = self.api_manag.signin(self.dlg.apiTokenTextBox.text())
+
         if connected:
-            self.dlg.progressBar.setValue(20)
-            self.dlg.progressLabel.setText ('Conncected to WaPOR database')
-            self.dlg.downloadButton.setEnabled(True)
+            self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
+            self.dlg.saveTokenButton.setEnabled(True)
         else:
-            self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
+            self.dlg.signinStateLabel.setText('Access denied, please check the API Token provided or the internet connection . . .')
+
+    def saveToken(self):
+        self.file_manag.save_token(self.dlg.apiTokenTextBox.text())
+        self.dlg.signinStateLabel.setText('Token file saved in memory . . .')
+
+    def loadToken(self):
+        APIToken = self.file_manag.load_token()
+
+        if APIToken is not None:
+            self.dlg.signinStateLabel.setText('Loading Token from memory and signing into your WaPOR profile . . .')
+            connected = self.api_manag.signin(APIToken)
+
+            if connected:
+                self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
+            else:
+                self.dlg.signinStateLabel.setText('Access denied, please check the API Token file or the internet connection . . .')
+        else:
+            self.dlg.signinStateLabel.setText('No token file found in memory . . .')
+
+    def wapor_connect(self):
+        try:
+            connected = self.api_manag.connectWapor()    
+            if connected:
+                self.dlg.progressBar.setValue(20)
+                self.dlg.progressLabel.setText ('Conncected to WaPOR database')
+                self.dlg.downloadButton.setEnabled(True)
+            else:
+                self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
+        except (Exception) as exception:
+            print(exception)
 
     def listWorkspaces(self):
         self.dlg.workspaceComboBox.clear()
@@ -299,7 +330,7 @@ class WAPlugin:
 
     def dimensionChange(self):
         try:
-            self.dlg.progressLabel.setText ('Loading available members . . .')
+            self.dlg.progressLabel.setText('Loading available members . . .')
             QApplication.processEvents()
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
             self.members = self.api_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
@@ -397,8 +428,13 @@ class WAPlugin:
             self.dlg = WAPluginDialog()
 
             self.dlg.downloadButton.setEnabled(False)
-
+            
+            self.dlg.saveTokenButton.setEnabled(False)
+            self.dlg.saveTokenButton.clicked.connect(self.saveToken)
+            self.dlg.signinButton.clicked.connect(self.signin)
+            self.dlg.loadTokenButton.clicked.connect(self.loadToken)
             self.dlg.connectButton.clicked.connect(self.wapor_connect)
+
             self.dlg.downloadButton.clicked.connect(self.downloadCropedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)

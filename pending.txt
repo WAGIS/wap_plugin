@@ -4,3 +4,5 @@
 - define the donwload function, and UI elements to show raster
 - handle coordinates for crop_raster_query
 - Check COMPLETED WITH ERRROS handling and break loop
+- Encrypt the token (?)
+- Clean the connect and signin functions
