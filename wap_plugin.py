@@ -261,16 +261,13 @@ class WAPlugin:
             self.dlg.signinStateLabel.setText('No token file found in memory . . .')
 
     def wapor_connect(self):
-        try:
-            connected = self.api_manag.connectWapor()    
-            if connected:
-                self.dlg.progressBar.setValue(20)
-                self.dlg.progressLabel.setText ('Conncected to WaPOR database')
-                self.dlg.downloadButton.setEnabled(True)
-            else:
-                self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
-        except (Exception) as exception:
-            print(exception)
+        connected = self.api_manag.connectWapor()    
+        if connected:
+            self.dlg.progressBar.setValue(20)
+            self.dlg.progressLabel.setText ('Connected to WaPOR database')
+            self.dlg.downloadButton.setEnabled(True)
+        else:
+            self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
 
     def listWorkspaces(self):
         self.dlg.workspaceComboBox.clear()

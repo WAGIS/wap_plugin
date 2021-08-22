@@ -46,7 +46,7 @@ class WaporAPIManager:
     def connectWapor(self):
         if self.APIToken == None:
             self.APIToken = '1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'
-            raise Exception("WARNING: API Token not provided, using developers Token, please Sign In . . .")
+            print("WARNING: API Token not provided, using developers Token, please Sign In . . .")
             
         request_headers = {'X-GISMGR-API-KEY': self.APIToken}
 
