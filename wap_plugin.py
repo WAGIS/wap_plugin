@@ -89,6 +89,8 @@ class WAPlugin:
         self.resolutionVar = "100m"  #"250m" or "100m" , maybe "30m" works for some area
         self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
         self.endSeasonVar = "2015-18"  # "YYYY-DK" (Dekad)
+        self.indicator_index = 0
+        self.indicator = "Overall Consumption Ration"
 
         # Locations
         self.locListContinental = ["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Canary Islands"
@@ -394,17 +396,17 @@ class WAPlugin:
         print('Calculating . . . ')
 
         if self.indicator_index is 0:
-            setFunction = self.indic_calc.overall_consumption_ratio()
+            self.indic_calc.overall_consumption_ratio()
         elif self.indicator_index is 1:
-            setFunction = self.indic_calc.water_productivity()
+            self.indic_calc.water_productivity()
         elif self.indicator_index is 2:
-            setFunction = self.indic_calc.overall_field_app_ratio()
+            self.indic_calc.overall_field_app_ratio()
         elif self.indicator_index is 3:
-            setFunction = self.indic_calc.crop_yield()
+            self.indic_calc.crop_yield()
         elif self.indicator_index is 4:
-            setFunction = self.indic_calc.field_app_ratio()
+            self.indic_calc.field_app_ratio()
         elif self.indicator_index is 5:
-            setFunction = self.indic_calc.depleted_fraction()
+            self.indic_calc.depleted_fraction()
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
 
@@ -449,7 +451,6 @@ class WAPlugin:
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.calculateButton.clicked.connect(self.calculateIndex)
-            self.indicatorChange()
             # self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
 
             self.listWorkspaces()
