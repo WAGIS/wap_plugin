@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="downloadTab">
     <attribute name="title">
@@ -437,6 +437,45 @@
        </widget>
       </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="TestCanvasButton">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>440</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Test Canvas</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="TestCanvasLabel">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>450</y>
+       <width>171</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Waiting . . .</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="resetToolButton">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>440</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reset Tool</string>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="signinTab">

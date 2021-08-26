@@ -36,6 +36,7 @@ import os.path
 
 from .managers import WaporAPIManager, FileManager, CanvasManager
 from .indicators import IndicatorCalculator
+from .tools import CoordinatesSelectorTool
 
 # from PyQt5.QtGui import *
 import requests
@@ -389,6 +390,16 @@ class WAPlugin:
         self.dlg.raster1.addItems(self.raster1)
         self.dlg.raster2.addItems(self.raster2)
 
+    def selectCoordinatesTool(self):
+        self.dlg.TestCanvasButton.setEnabled(False)
+        self.prev_tool = self.iface.mapCanvas().mapTool()
+        self.iface.mapCanvas().setMapTool(self.coord_selc_tool)
+
+    def resetTool(self):
+        self.iface.mapCanvas().setMapTool(self.prev_tool)
+        self.dlg.TestCanvasLabel.setText ('Tool restored . . .')
+        self.dlg.TestCanvasButton.setEnabled(True)
+        
     def calculateIndex(self):
         print('Calculating . . . ')
 
@@ -425,6 +436,10 @@ class WAPlugin:
         if self.first_start == True:
             self.first_start = False
             self.dlg = WAPluginDialog()
+            
+            self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
+
+            self.coord_selc_tool = CoordinatesSelectorTool(self.iface.mapCanvas(), self.dlg.TestCanvasLabel)
 
             self.dlg.downloadButton.setEnabled(False)
             
@@ -449,6 +464,9 @@ class WAPlugin:
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.calculateButton.clicked.connect(self.calculateIndex)
             # self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
+
+            self.dlg.TestCanvasButton.clicked.connect(self.selectCoordinatesTool)
+            self.dlg.resetToolButton.clicked.connect(self.resetTool)
 
             self.listWorkspaces()
             self.listRasterMemory()
