@@ -404,31 +404,25 @@ class WAPlugin:
         print('Calculating . . . ')
         
         tbp_name = self.dlg.TbpRasterComboBox.currentText()
+        ta_dir = self.dlg.TbpRasterComboBox.currentText()
+        aeti_dir = self.dlg.AetiRasterComboBox.currentText()
+
+        output_name = self.dlg.outputIndicName.text()+".tif"
 
         if self.indicator_index is 0:
             self.indic_calc.equity(raster=tbp_name)
         elif self.indicator_index is 1:
-            self.indic_calc.water_productivity()
+            self.indic_calc.beneficial_fraction(aeti_dir, ta_dir, output_name)
         elif self.indicator_index is 2:
-            self.indic_calc.overall_field_app_ratio()
+            self.indic_calc.adequacy(aeti_dir, ta_dir, output_name)
         elif self.indicator_index is 3:
-            self.indic_calc.crop_yield()
-        elif self.indicator_index is 4:
-            self.indic_calc.field_app_ratio()
-        elif self.indicator_index is 5:
-            self.indic_calc.depleted_fraction()
+            self.indic_calc.relative_water_deficit(aeti_dir, ta_dir, output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
-
-        # tbp_name = self.dlg.TbpRasterComboBox.currentText()
-        # aeti_name = self.dlg.AetiRasterComboBox.currentText()
-        # output_name = self.dlg.outputIndicName.text()+".tif"
-
-        # # self.indic_calc.test_calc(tbp_name,aeti_name,output_name)
-
+        
         # self.canv_manag.add_rast(tbp_name)
         # self.canv_manag.add_rast(aeti_name)
-        # self.canv_manag.add_rast(output_name)
+        self.canv_manag.add_rast(output_name)
 
 
     def run(self):

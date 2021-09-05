@@ -292,32 +292,17 @@
            </item>
            <item>
             <property name="text">
-             <string>Overall Consumtion Ratio</string>
+             <string>Beneficial Fraction</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Water productivity indicator</string>
+             <string>Adequacy</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Overall Field application ratio</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Crop yield indicator</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Field application ratio</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Depleted fraction</string>
+             <string>Relative Water Deficit</string>
             </property>
            </item>
           </widget>

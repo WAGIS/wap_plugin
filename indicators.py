@@ -25,25 +25,23 @@ class IndicatorCalculator:
 
     def equity(self, raster):
         """
-        Equity is computed from the formula,
-            equity = 0.1 * (AETIsd / AETImean) * 100
-                where,
-                    AETIsd - (real number) - Standard deviation obtained from a Raster
-                        Formula: AETIsd = Standard deviation of a Raster 
-                        Raster Types: AETI, PE, ACB
-                        Conversion Factor:
-                            AETI - 0.1
-                            PE - 0.01
-                            ACB - 50
-                    AETImean - (real number) - Mean obtained from a Raster
-                            Formula: AETIsd = Mean of a Raster
-                            Raster Types: AETI, PE
-                            Conversion Factor:
-                                AETI - 0.1
-                                PE - 0.01
-                    0.1 - (reak number) - Unit conversion factor because the rasters are in different unit from Wapor
-            Output:
-                equity - real number
+        [FORMULA PASSED THE TEST WITH TRUE VALUES]
+        Equity is computed from the formula:
+            --- equity = 0.1 * (AETIsd / AETImean) * 100
+            --- Resolution: Continental, National, Sub-national 
+            where:
+                -- AETIsd - (real number) - Standard deviation obtained from a Raster:
+                --- Formula: AETIsd = Standard deviation of a Raster 
+                --- Raster Types: AETI, PE, ACB
+                --- Conversion Factor: AETI - 0.1, PE - 0.01, ACB - 50
+                -- AETImean - (real number) - Mean obtained from a Raster
+                    --- Formula: AETIsd = Mean of a Raster
+                        --- Raster Types: AETI, PE
+                        --- Conversion Factor: AETI - 0.1, PE - 0.01
+                --- 0.1 - (real number) - Unit conversion factor because the rasters are in different unit from Wapor
+
+        Output:
+        --- equity - real number
         """
         ras_atei_dir = os.path.join(self.rasters_dir, raster)
         ds = gdal.Open(ras_atei_dir)
@@ -57,14 +55,145 @@ class IndicatorCalculator:
         
         print("Equity for the given Raster is: ", equity)
 
-    def overall_consumption_ratio(self):
-        raise NotImplementedError("Indicator: 'Overall Consumption Ratio' not implemented.")
+    def beneficial_fraction(self, aeti_dir, ta_dir, output_name):
+        """
+        [FORMULA PASSED THE TEST WITH TRUE VALUES]
+        Beneficial fraction is computed from the formula:
+        --- BF = (AETI / TA)
+        --- Resolution: Continental, National, Sub-national 
+        where:
+            -- AETI - (raster) - Actual Evapotranspiration and Interception 
+            --- Raster Types: AETI (annual, dekadal)
+            --- Conversion Factor: 0.1
+            -- TA - (raster) - Mean obtained from a Raster
+                --- Raster Types: TA (annual, dekadal)
+                --- Conversion Factor: 0.1
+        --- Units: decimal or percentage(*100)
 
-    def water_productivity(self):
-        raise NotImplementedError("Indicator: 'Water Productivity' not implemented yet.")
+        Output:
+        --- BF - Raster
+        """
+        ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
+        ras_ta_dir = os.path.join(self.rasters_dir, ta_dir)
+        output_dir = os.path.join(self.rasters_dir, output_name)
 
-    def overall_field_app_ratio(self):
-        raise NotImplementedError("Indicator: 'Overall Field Application Ratio' not implemented yet.")
+        ras_atei = QgsRasterLayer(ras_atei_dir)
+        ras_ta = QgsRasterLayer(ras_ta_dir)
+
+        entries = []
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@1'
+        ras.raster = ras_atei
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@2'
+        ras.raster = ras_ta
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        calc = QgsRasterCalculator('ras@1 / ras@2',
+                                    output_dir,
+                                    'GTiff',
+                                    ras_atei.extent(),
+                                    ras_atei.width(),
+                                    ras_atei.height(),
+                                    entries)
+        print(calc.processCalculation())
+
+    def adequacy(self, aeti_dir, ret_dir, output_name, Kc=0.1):
+        """
+        [FORMULA NOT TESTED]
+        Adequacy is computed from the formula:
+        --- AD = (AETI / PET)
+        --- Resolution: Continental
+        where:
+            -- AETI - (raster) - Actual Evapotranspiration and Interception 
+            --- Raster Types: AETI (annual, monthly, dekadal)
+            --- Conversion Factor: 0.1
+            -- PET - (raster) - Potential Evapotranspiration 
+            --- Formula: PET = Kc * RET
+            --- Kc (real number) - provided by the user     TODO: To be obtained by the user
+        --- RET (raster) Reference Evapotranspiration
+                --- Raster Types: RET (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+        --- Units: decimal or percentage(*100)
+
+        Output:
+        --- AD - Raster
+        """
+        ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
+        ras_ret_dir = os.path.join(self.rasters_dir, ret_dir)
+        output_dir = os.path.join(self.rasters_dir, output_name)
+
+        ras_atei = QgsRasterLayer(ras_atei_dir)
+        ras_ret = QgsRasterLayer(ras_ret_dir)
+
+
+        entries = []
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@1'
+        ras.raster = ras_atei
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@2'
+        ras.raster = ras_ret
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1)',     # TODO: Check how to send variables
+                                    output_dir,
+                                    'GTiff',
+                                    ras_atei.extent(),
+                                    ras_atei.width(),
+                                    ras_atei.height(),
+                                    entries)
+        print(calc.processCalculation())
+
+
+    def relative_water_deficit(self, aeti_dir, output_name, ETx=0.1):
+        """
+        [FORMULA NOT TESTED]
+        Relative water deficit is computed from the formula:
+        --- RWD = 1 - (AETI / ETx)
+        --- Resolution: Continental, National, Sub-national 
+        where:
+            -- AETI - (raster) - Actual Evapotranspiration and Interception 
+            --- Raster Types: AETI (annual, monthly, dekadal)
+            --- Conversion Factor: 0.1
+            -- ETx - (real number) - 99 percentile of the actual evapotranspiration  TODO: To be obtained by the user 
+        --- Formula: ETx = 99 percentile of a Raster (AETI)
+                --- Raster Types: AETI (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+        --- Units: decimal or percentage(*100)
+
+        Output:
+        --- RWD - Raster
+        """
+        ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
+        output_dir = os.path.join(self.rasters_dir, output_name)
+        ras_atei = QgsRasterLayer(ras_atei_dir)
+
+        entries = []
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@1'
+        ras.raster = ras_atei
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        calc = QgsRasterCalculator('1 - (ras@1 / 0.1)',     # TODO: Check how to send variables
+                                    output_dir,
+                                    'GTiff',
+                                    ras_atei.extent(),
+                                    ras_atei.width(),
+                                    ras_atei.height(),
+                                    entries)
+        print(calc.processCalculation())
 
     def crop_yield(self):
         raise NotImplementedError("Indicator: 'Crop Yield' not implemented yet.")
@@ -74,34 +203,3 @@ class IndicatorCalculator:
 
     def depleted_fraction(self):
         raise NotImplementedError("Indicator: 'Depletion Fraction' not implemented yet.")
-
-    def test_calc(self, tbp_name, aeti_name, output_name):
-        ras_tbp_dir = os.path.join(self.rasters_dir, tbp_name)
-        ras_tbp = QgsRasterLayer(ras_tbp_dir)
-        ras_aeti_dir = os.path.join(self.rasters_dir, aeti_name)
-        ras_aeti = QgsRasterLayer(ras_aeti_dir)
-
-        output_dir = os.path.join(self.rasters_dir, output_name)
-
-        entries = []
-
-        ras = QgsRasterCalculatorEntry()
-        ras.ref = 'ras@1'
-        ras.raster = ras_tbp
-        ras.bandNumber = 1
-        entries.append(ras)
-
-        ras = QgsRasterCalculatorEntry()
-        ras.ref = 'ras@2'
-        ras.raster = ras_aeti
-        ras.bandNumber = 1
-        entries.append(ras)
-
-        calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1 * 10 * 6)',
-                                    output_dir,
-                                    'GTiff',
-                                    ras_tbp.extent(),
-                                    ras_tbp.width(),
-                                    ras_tbp.height(),
-                                    entries)
-        print(calc.processCalculation())
