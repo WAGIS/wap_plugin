@@ -1,12 +1,60 @@
+"""
+    Indicator computation and additional resources and respective links for computation
+
+    - Some common operation with QGIS
+        https://docs.qgis.org/3.10/en/docs/pyqgis_developer_cookbook/raster.html
+    - A python library to convert raster to numpy array
+        https://geoscripting-wur.github.io/PythonRaster/
+    - Using python library gdal
+        https://www.youtube.com/watch?v=Rv8v9HPVq9M
+    - Using Notbook for computations after converting to python array
+        https://github.com/wateraccounting/WAPORWP/blob/master/Notebooks/Module_3_CalculatePerformanceIndicators.ipynb
+
+"""
+import numpy as np
+import gdal
+import os
+
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer
-
-import os
 
 class IndicatorCalculator:
     def __init__(self, plugin_dir, rasters_path):
         self.plugin_dir = plugin_dir
         self.rasters_dir = os.path.join(self.plugin_dir,rasters_path)
+
+    def equity(self, raster):
+        """
+        Equity is computed from the formula,
+            equity = 0.1 * (AETIsd / AETImean) * 100
+                where,
+                    AETIsd - (real number) - Standard deviation obtained from a Raster
+                        Formula: AETIsd = Standard deviation of a Raster 
+                        Raster Types: AETI, PE, ACB
+                        Conversion Factor:
+                            AETI - 0.1
+                            PE - 0.01
+                            ACB - 50
+                    AETImean - (real number) - Mean obtained from a Raster
+                            Formula: AETIsd = Mean of a Raster
+                            Raster Types: AETI, PE
+                            Conversion Factor:
+                                AETI - 0.1
+                                PE - 0.01
+                    0.1 - (reak number) - Unit conversion factor because the rasters are in different unit from Wapor
+            Output:
+                equity - real number
+        """
+        ras_atei_dir = os.path.join(self.rasters_dir, raster)
+        ds = gdal.Open(ras_atei_dir)
+        atei_band1 = ds.GetRasterBand(1).ReadAsArray()
+        
+        AETIm   = np.nanmean(atei_band1 * 0.1)
+        AETIsd  = np.nanstd(atei_band1 * 0.1)
+
+        equity = (AETIsd / AETIm) * 100
+        
+        print("Equity for the given Raster is: ", equity)
 
     def overall_consumption_ratio(self):
         raise NotImplementedError("Indicator: 'Overall Consumption Ratio' not implemented.")

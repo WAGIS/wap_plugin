@@ -91,7 +91,7 @@ class WAPlugin:
         self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
         self.endSeasonVar = "2015-18"  # "YYYY-DK" (Dekad)
         self.indicator_index = 0
-        self.indicator = "Overall Consumption Ration"
+        self.indicator = "Equity"
 
         # Locations
         self.locListContinental = ["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Canary Islands"
@@ -402,9 +402,11 @@ class WAPlugin:
         
     def calculateIndex(self):
         print('Calculating . . . ')
+        
+        tbp_name = self.dlg.TbpRasterComboBox.currentText()
 
         if self.indicator_index is 0:
-            self.indic_calc.overall_consumption_ratio()
+            self.indic_calc.equity(raster=tbp_name)
         elif self.indicator_index is 1:
             self.indic_calc.water_productivity()
         elif self.indicator_index is 2:
@@ -418,15 +420,15 @@ class WAPlugin:
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
 
-        tbp_name = self.dlg.TbpRasterComboBox.currentText()
-        aeti_name = self.dlg.AetiRasterComboBox.currentText()
-        output_name = self.dlg.outputIndicName.text()+".tif"
+        # tbp_name = self.dlg.TbpRasterComboBox.currentText()
+        # aeti_name = self.dlg.AetiRasterComboBox.currentText()
+        # output_name = self.dlg.outputIndicName.text()+".tif"
 
-        self.indic_calc.test_calc(tbp_name,aeti_name,output_name)
+        # # self.indic_calc.test_calc(tbp_name,aeti_name,output_name)
 
-        self.canv_manag.add_rast(tbp_name)
-        self.canv_manag.add_rast(aeti_name)
-        self.canv_manag.add_rast(output_name)
+        # self.canv_manag.add_rast(tbp_name)
+        # self.canv_manag.add_rast(aeti_name)
+        # self.canv_manag.add_rast(output_name)
 
 
     def run(self):
