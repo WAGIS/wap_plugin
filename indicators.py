@@ -105,7 +105,7 @@ class IndicatorCalculator:
 
     def adequacy(self, aeti_dir, ret_dir, output_name, Kc=1.25):
         """
-        [FORMULA NOT TESTED]
+        [FORMULA PASSED THE TEST WITH TRUE VALUES]
         Adequacy is computed from the formula:
         --- AD = (AETI / PET)
         --- Resolution: Continental
@@ -131,7 +131,6 @@ class IndicatorCalculator:
         ras_atei = QgsRasterLayer(ras_atei_dir)
         ras_ret = QgsRasterLayer(ras_ret_dir)
 
-
         entries = []
 
         ras = QgsRasterCalculatorEntry()
@@ -146,7 +145,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('{} / ({} * {})'.format('ras@1', 'ras@2', str(Kc)),
+        calc = QgsRasterCalculator('(ras@1 * 0.1) / ({} * {})'.format('ras@2 * 0.1', str(Kc)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -158,7 +157,7 @@ class IndicatorCalculator:
 
     def relative_water_deficit(self, aeti_dir, output_name):
         """
-        [FORMULA NOT TESTED]
+        [FORMULA PASSED THE TEST WITH TRUE VALUES]
         Relative water deficit is computed from the formula:
         --- RWD = 1 - (AETI / ETx)
         --- Resolution: Continental, National, Sub-national 
@@ -176,6 +175,7 @@ class IndicatorCalculator:
         --- RWD - Raster
         """
         ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
+        print(ras_atei_dir)
         output_dir = os.path.join(self.rasters_dir, output_name)
         ras_atei = QgsRasterLayer(ras_atei_dir)
 
@@ -183,7 +183,9 @@ class IndicatorCalculator:
         atei_band1 = ds.GetRasterBand(1).ReadAsArray()
         atei_band1 = atei_band1.astype(np.float)
         atei_band1[atei_band1 == -9999] = float('nan')
-        ETx = np.nanpercentile(atei_band1, 99)
+        AETI1_1D  = np.reshape(atei_band1,  atei_band1.shape[0] * atei_band1.shape[1])
+
+        ETx = np.nanpercentile(AETI1_1D * 0.1, 99)
         print(ETx)
 
         entries = []
@@ -193,7 +195,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1 - (ras@1 / {})'.format(str(ETx)),
+        calc = QgsRasterCalculator('1 - (ras@1 * 0.1 / {})'.format(str(ETx)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),

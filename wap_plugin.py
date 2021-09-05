@@ -416,7 +416,7 @@ class WAPlugin:
         elif self.indicator_index is 2:
             self.indic_calc.adequacy(aeti_dir, ta_dir, output_name)
         elif self.indicator_index is 3:
-            self.indic_calc.relative_water_deficit(aeti_dir, ta_dir, output_name)
+            self.indic_calc.relative_water_deficit(aeti_dir, output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
         
