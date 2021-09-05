@@ -287,6 +287,11 @@
           <widget class="QComboBox" name="indicatorListComboBox">
            <item>
             <property name="text">
+             <string>Equity</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>Overall Consumtion Ratio</string>
             </property>
            </item>
