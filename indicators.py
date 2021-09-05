@@ -103,7 +103,7 @@ class IndicatorCalculator:
                                     entries)
         print(calc.processCalculation())
 
-    def adequacy(self, aeti_dir, ret_dir, output_name, Kc=0.1):
+    def adequacy(self, aeti_dir, ret_dir, output_name, Kc=1.25):
         """
         [FORMULA NOT TESTED]
         Adequacy is computed from the formula:
@@ -115,7 +115,7 @@ class IndicatorCalculator:
             --- Conversion Factor: 0.1
             -- PET - (raster) - Potential Evapotranspiration 
             --- Formula: PET = Kc * RET
-            --- Kc (real number) - provided by the user     TODO: To be obtained by the user
+            --- Kc (real number) - provided by the user
         --- RET (raster) Reference Evapotranspiration
                 --- Raster Types: RET (annual, monthly, dekadal)
                 --- Conversion Factor: 0.1
@@ -146,7 +146,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('ras@1 / (ras@2 * 0.1)',     # TODO: Check how to send variables
+        calc = QgsRasterCalculator('{} / ({} * {})'.format('ras@1', 'ras@2', str(Kc)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -156,7 +156,7 @@ class IndicatorCalculator:
         print(calc.processCalculation())
 
 
-    def relative_water_deficit(self, aeti_dir, output_name, ETx=0.1):
+    def relative_water_deficit(self, aeti_dir, output_name):
         """
         [FORMULA NOT TESTED]
         Relative water deficit is computed from the formula:
@@ -166,7 +166,7 @@ class IndicatorCalculator:
             -- AETI - (raster) - Actual Evapotranspiration and Interception 
             --- Raster Types: AETI (annual, monthly, dekadal)
             --- Conversion Factor: 0.1
-            -- ETx - (real number) - 99 percentile of the actual evapotranspiration  TODO: To be obtained by the user 
+            -- ETx - (real number) - 99 percentile of the actual evapotranspiration
         --- Formula: ETx = 99 percentile of a Raster (AETI)
                 --- Raster Types: AETI (annual, monthly, dekadal)
                 --- Conversion Factor: 0.1
@@ -179,6 +179,13 @@ class IndicatorCalculator:
         output_dir = os.path.join(self.rasters_dir, output_name)
         ras_atei = QgsRasterLayer(ras_atei_dir)
 
+        ds = gdal.Open(ras_atei_dir)
+        atei_band1 = ds.GetRasterBand(1).ReadAsArray()
+        atei_band1 = atei_band1.astype(np.float)
+        atei_band1[atei_band1 == -9999] = float('nan')
+        ETx = np.nanpercentile(atei_band1, 99)
+        print(ETx)
+
         entries = []
         ras = QgsRasterCalculatorEntry()
         ras.ref = 'ras@1'
@@ -186,7 +193,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1 - (ras@1 / 0.1)',     # TODO: Check how to send variables
+        calc = QgsRasterCalculator('1 - (ras@1 / {})'.format(str(ETx)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
