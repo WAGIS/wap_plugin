@@ -393,12 +393,17 @@ class WAPlugin:
     def selectCoordinatesTool(self):
         self.dlg.TestCanvasButton.setEnabled(False)
         self.prev_tool = self.iface.mapCanvas().mapTool()
+        self.coord_selc_tool.activate()
         self.iface.mapCanvas().setMapTool(self.coord_selc_tool)
 
     def resetTool(self):
+        coordinates_buffer = self.coord_selc_tool.getCoordinatesBuffer()
+        self.coord_selc_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
         self.dlg.TestCanvasLabel.setText ('Tool restored . . .')
         self.dlg.TestCanvasButton.setEnabled(True)
+
+
         
     def calculateIndex(self):
         print('Calculating . . . ')
