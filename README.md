@@ -26,3 +26,9 @@
 
 1. Open OSGeo4W Shell
 2. Run python -m pip install [Package Name]
+
+### Keeping the requirements file updated
+
+1. Open OSGeo4W Shell
+2. Run cd C:\Users\ (USER) \AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\wap_plugin
+3. Run python3 -m pip freeze > requirements.txt                                                                                   
