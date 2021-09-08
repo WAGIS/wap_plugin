@@ -3,6 +3,8 @@ from qgis.core import QgsPointXY, QgsWkbTypes
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QColor 
 
+from shapely.geometry import Polygon
+
 class CoordinatesSelectorTool(QgsMapTool):   
     def __init__(self, canvas, label):
         QgsMapTool.__init__(self, canvas)
@@ -17,15 +19,16 @@ class CoordinatesSelectorTool(QgsMapTool):
         self.reset()
 
     def reset(self):
-        self.coordinates = list()
+        self.rubberCoordinates = list()
+        self.polygonCoordinates = list()
 
         self.isEmittingPoint = False
         self.rubberBand.reset(True)
     
     def updateShape(self):
         self.rubberBand.reset(True)
-        for idx, point in enumerate(self.coordinates):
-            if idx != len(self.coordinates)-1:
+        for idx, point in enumerate(self.rubberCoordinates):
+            if idx != len(self.rubberCoordinates)-1:
                 self.rubberBand.addPoint(QgsPointXY(point.x(), point.y()), False)
             else:
                 self.rubberBand.addPoint(QgsPointXY(point.x(), point.y()), True) # true to update canvas
@@ -36,7 +39,16 @@ class CoordinatesSelectorTool(QgsMapTool):
         y = event.pos().y()
         self.label.setText('x:{} || y:{}'.format(x,y))
 
-        self.coordinates.append(self.toMapCoordinates(event.pos()))
+        self.rubberCoordinates.append(self.toMapCoordinates(event.pos()))
+        # self.polygonCoordinates.append((float(self.toMapCoordinates(event.pos()).x()),
+        #                                 float(self.toMapCoordinates(event.pos()).y())))
+
+        self.polygonCoordinates.append([float(self.toMapCoordinates(event.pos()).x()),
+                                        float(self.toMapCoordinates(event.pos()).y())])
+
+        print(self.rubberCoordinates)
+        print(self.polygonCoordinates)
+
         self.isEmittingPoint = True
         self.updateShape()
 
@@ -64,8 +76,14 @@ class CoordinatesSelectorTool(QgsMapTool):
 
     def getCoordinatesBuffer(self):
         self.rubberBand.closePoints(True)
-        self.coordinates.append(self.coordinates[0])
-        return self.coordinates
+        polygon = Polygon(self.polygonCoordinates)
+        if polygon.is_valid:
+            self.label.setText('{} vertex sel.'.format(len(self.polygonCoordinates)))
+            self.polygonCoordinates.append(self.polygonCoordinates[0])
+            return self.polygonCoordinates
+        else:
+            self.label.setText('Shape not valid')
+            return None
 
     def isZoomTool(self):
         return False
