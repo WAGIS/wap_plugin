@@ -160,12 +160,15 @@ class WaporAPIManager:
         else:
             return workspace_resp['caption'], workspace_resp['description']
 
-    def pull_cubes(self, workspace):
+    def pull_cubes(self, workspace, filter = False):
         cubes_url = self.catalog_url+'workspaces/{}/cubes'.format(workspace)
         cubes_dict = self.query_listing(cubes_url)
         if cubes_dict is None:
             raise Exception("Query [pull_cubes] error, no internet conection or timeout")
         else:
+            # TODO Filter clipped elements
+            if filter:
+                pass    
             return cubes_dict
     
     def get_info_cube(self, workspace, cube):

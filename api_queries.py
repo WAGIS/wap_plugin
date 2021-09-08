@@ -2,7 +2,7 @@ bbox = [37.95883206252312, 7.89534, 43.32093, 12.3873979377346] #latlon
 
 xmin, ymin, xmax, ymax = bbox[0], bbox[1], bbox[2], bbox[3]
 
-Polygon=[
+Polygon = [
           [xmin,ymin],
           [xmin,ymax],
           [xmax,ymax],

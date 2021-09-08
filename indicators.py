@@ -175,7 +175,6 @@ class IndicatorCalculator:
         --- RWD - Raster
         """
         ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
-        print(ras_atei_dir)
         output_dir = os.path.join(self.rasters_dir, output_name)
         ras_atei = QgsRasterLayer(ras_atei_dir)
 
