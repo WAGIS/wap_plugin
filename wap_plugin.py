@@ -292,8 +292,10 @@ class WAPlugin:
         self.workspace = self.dlg.workspaceComboBox.currentText()
         self.cubes = self.api_manag.pull_cubes(self.workspace)
 
+        listCubes = [cube for cube in self.cubes.keys() if 'clipped' not in cube]
+
         self.dlg.cubeComboBox.clear()
-        self.dlg.cubeComboBox.addItems(self.cubes.keys())
+        self.dlg.cubeComboBox.addItems(listCubes)
         self.dlg.progressLabel.setText ('Cubes available ready!')
 
     def indicatorChange(self):
@@ -349,10 +351,10 @@ class WAPlugin:
         params['measures'] = [self.measure]
         params['dimensions'] = [{
                                     "code": self.dimension,
-                                    "values": [
-                                        self.member
-                                    ]
+                                    "values": [self.member]
                                 }]
+        params['coordinates'] = [self.queryCoordinates]
+
         rast_url = self.api_manag.query_crop_raster(params)
 
         self.file_manag.download_raster(rast_url)
@@ -397,14 +399,13 @@ class WAPlugin:
         self.iface.mapCanvas().setMapTool(self.coord_selc_tool)
 
     def resetTool(self):
-        coordinates_buffer = self.coord_selc_tool.getCoordinatesBuffer()
+        self.queryCoordinates = self.coord_selc_tool.getCoordinatesBuffer()
+        print(self.queryCoordinates)
         self.coord_selc_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
         self.dlg.TestCanvasLabel.setText ('Tool restored . . .')
         self.dlg.TestCanvasButton.setEnabled(True)
 
-
-        
     def calculateIndex(self):
         print('Calculating . . . ')
         
@@ -471,6 +472,8 @@ class WAPlugin:
 
             self.listWorkspaces()
             self.listRasterMemory()
+
+            self.queryCoordinates = None
 
         # show the dialog
         self.dlg.show()

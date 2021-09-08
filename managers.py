@@ -84,7 +84,7 @@ class WaporAPIManager:
     def login(self):
         pass
 
-    def query_crop_raster(self,params):
+    def query_crop_raster(self, params):
         if not self.isConnected():
             raise Exception("Query [crop_raster] error, no Wapor conection")
         else:
@@ -94,6 +94,12 @@ class WaporAPIManager:
             request_json['params']['cube']['workspaceCode'] = params['cube_workspaceCode']
             request_json['params']['dimensions'] = params['dimensions']
             request_json['params']['measures'] = params['measures']
+
+            print(params['coordinates'][0])
+            if params['coordinates'][0] is not None:
+                request_json['params']['shape']['coordinates'] = params['coordinates']
+            else:
+                print('WARNING: Valid coordiantes not provided, using default ones . . . ')
 
             request_headers = {'Authorization': "Bearer " + self.AccessToken}
 
@@ -160,15 +166,12 @@ class WaporAPIManager:
         else:
             return workspace_resp['caption'], workspace_resp['description']
 
-    def pull_cubes(self, workspace, filter = False):
+    def pull_cubes(self, workspace):
         cubes_url = self.catalog_url+'workspaces/{}/cubes'.format(workspace)
         cubes_dict = self.query_listing(cubes_url)
         if cubes_dict is None:
             raise Exception("Query [pull_cubes] error, no internet conection or timeout")
         else:
-            # TODO Filter clipped elements
-            if filter:
-                pass    
             return cubes_dict
     
     def get_info_cube(self, workspace, cube):
