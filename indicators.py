@@ -12,7 +12,8 @@
 
 """
 import numpy as np
-import gdal
+# import gdal
+from osgeo import gdal
 import os
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
@@ -193,7 +194,7 @@ class IndicatorCalculator:
         ras.raster = ras_atei
         ras.bandNumber = 1
         entries.append(ras)
-
+        
         calc = QgsRasterCalculator('1 - (ras@1 * 0.1 / {})'.format(str(ETx)),
                                     output_dir,
                                     'GTiff',
