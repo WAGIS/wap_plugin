@@ -1,5 +1,6 @@
-bbox = [37.95883206252312, 7.89534, 43.32093, 12.3873979377346] #latlon
-
+bbox = [-130, -90, 220, 90] #latlon Full Raster
+# bbox = [35.636, 10.1654, 39.6362093, 14.165] #latlon
+# bbox = [37.95883206252312, 7.89534, 43.32093, 12.3873979377346] #latlon
 xmin, ymin, xmax, ymax = bbox[0], bbox[1], bbox[2], bbox[3]
 
 Polygon = [

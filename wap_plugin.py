@@ -275,6 +275,10 @@ class WAPlugin:
         workspaces = self.api_manag.pull_workspaces()
         self.dlg.workspaceComboBox.addItems(workspaces.values())
 
+        index = self.dlg.workspaceComboBox.findText('WAPOR_2', QtCore.Qt.MatchFixedString)
+        if index >= 0:
+            self.dlg.workspaceComboBox.setCurrentIndex(index)
+
     def listRasterMemory(self):
         self.tif_files = self.file_manag.list_rasters(self.rasters_path)
         self.dlg.rasterMemoryComboBox.clear()
