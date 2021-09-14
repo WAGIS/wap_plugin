@@ -35,7 +35,7 @@ from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
 from .managers import WaporAPIManager, FileManager, CanvasManager
-from .indicators import IndicatorCalculator
+from .indicators import IndicatorCalculator, INDICATORS_LIST, INDICATORS_INFO
 from .tools import CoordinatesSelectorTool
 
 # from PyQt5.QtGui import *
@@ -303,8 +303,8 @@ class WAPlugin:
         self.dlg.progressLabel.setText ('Cubes available ready!')
 
     def indicatorChange(self):
-        self.indicator = self.dlg.indicatorListComboBox.currentText()
-        self.indicator_index = self.dlg.indicatorListComboBox.currentIndex()
+        self.indicator_key = self.dlg.indicatorListComboBox.currentText()
+        self.dlg.indicInfoLabel.setText(INDICATORS_INFO[self.indicator_key]['info'])
 
     def cubeChange(self):
         try:
@@ -319,6 +319,8 @@ class WAPlugin:
             self.dlg.dimensionComboBox.clear()
             self.dlg.dimensionComboBox.addItems(self.dimensions.keys())
             self.dlg.progressLabel.setText ('Dimensions and measures available ready!')
+
+            self.dlg.outputRasterCubeID.setText('_'+self.cube+'.tif')
         except (KeyError) as exception:
             pass
 
@@ -349,7 +351,7 @@ class WAPlugin:
     
     def downloadCropedRaster(self):
         params = dict()
-        params['outputFileName'] = self.dlg.outputRasterName.text()+".tif"
+        params['outputFileName'] = self.dlg.outputRasterName.text()+'_'+self.cube+'.tif'
         params['cube_code'] = self.cube
         params['cube_workspaceCode'] = self.workspace
         params['measures'] = [self.measure]
@@ -419,13 +421,13 @@ class WAPlugin:
 
         output_name = self.dlg.outputIndicName.text()+".tif"
 
-        if self.indicator_index is 0:
+        if self.indicator_key is 'Equity':
             self.indic_calc.equity(raster=tbp_name)
-        elif self.indicator_index is 1:
+        elif self.indicator_key is 'Beneficial Fraction':
             self.indic_calc.beneficial_fraction(aeti_dir, ta_dir, output_name)
-        elif self.indicator_index is 2:
+        elif self.indicator_key is 'Adequacy':
             self.indic_calc.adequacy(aeti_dir, ta_dir, output_name)
-        elif self.indicator_index is 3:
+        elif self.indicator_key is 'Relative Water Deficit':
             self.indic_calc.relative_water_deficit(aeti_dir, output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
@@ -444,6 +446,7 @@ class WAPlugin:
             self.dlg = WAPluginDialog()
             
             self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
+            self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
 
             self.coord_selc_tool = CoordinatesSelectorTool(self.iface.mapCanvas(), self.dlg.TestCanvasLabel)
 
@@ -476,6 +479,7 @@ class WAPlugin:
 
             self.listWorkspaces()
             self.listRasterMemory()
+            self.indicatorChange()
 
             self.queryCoordinates = None
 

@@ -19,6 +19,50 @@ import os
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer
 
+INDICATORS_LIST = ['Adequacy',
+                   'Beneficial Fraction',
+                   'Equity',
+                   'Relative Water Deficit']
+
+INDICATORS_INFO = {
+                    'Adequacy' : {
+                        'info' : 'Adequacy information pending',
+                        'rasters' : {
+                            '' : ''
+                        },
+                        'factors' : {
+                            '' : ''
+                        }
+                    },
+                    'Beneficial Fraction' : {
+                        'info' : 'Beneficial Fraction information pending',
+                        'rasters' : {
+                            '' : ''
+                        },
+                        'factors' : {
+                            '' : ''
+                        }
+                    },
+                    'Equity' : {
+                        'info' : 'Equity information pending',
+                        'rasters' : {
+                            '' : ''
+                        },
+                        'factors' : {
+                            '' : ''
+                        }
+                    },
+                    'Relative Water Deficit' : {
+                        'info' : 'Relative Water Deficit information pending',
+                        'rasters' : {
+                            '' : ''
+                        },
+                        'factors' : {
+                            '' : ''
+                        }
+                    }   
+                  }
+
 class IndicatorCalculator:
     def __init__(self, plugin_dir, rasters_path):
         self.plugin_dir = plugin_dir
