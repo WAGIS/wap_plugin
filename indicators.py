@@ -28,11 +28,16 @@ INDICATORS_INFO = {
                     'Equity' : {
                         'info' : 'equity = 0.1 * (RASTERsd / RASTERmean) * 100',
                         'rasters' : {
-                            'Types' : 'AETI, PE, ACB'
+                            'RASTER Types' : 'AETI, PE, ACB'
                         },
                         'factors' : {
                             'RASTERsd' : 'Standard deviation obtained from the Raster',
                             'RASTERmean' : 'Mean obtained from the Raster'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI or PE or ACB Raster',
+                            'PARAM_2' : '',
+                            'PARAM_3' : ''
                         }
                     },
                     'Beneficial Fraction' : {
@@ -43,24 +48,40 @@ INDICATORS_INFO = {
                         },
                         'factors' : {
                             'Conversion Factor' : '0.1'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI Raster',
+                            'PARAM_2' : 'TA Raster',
+                            'PARAM_3' : ''
                         }
                     },
                     'Adequacy' : {
-                        'info' : 'AD = (AETI / Kc * RET)',
+                        'info' : 'AD = (RASTER_1 / (Kc * RASTER_2))',
                         'rasters' : {
-                            '' : ''
+                            'RASTER_1 Type' : 'AETI',
+                            'RASTER_2 Type' : 'RET'
                         },
                         'factors' : {
-                            '' : ''
+                            'Kc' : 'A constant to compute Potential Evapotranspiration'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI Raster',
+                            'PARAM_2' : 'RET Raster',
+                            'PARAM_3' : 'Kc'
                         }
                     },
                     'Relative Water Deficit' : {
-                        'info' : 'Relative Water Deficit information pending',
+                        'info' : 'RWD = 1 - (RASTER / ETx)',
                         'rasters' : {
-                            '' : ''
+                            'RASTER Type' : 'AETI'
                         },
                         'factors' : {
-                            '' : ''
+                            'ETx' : '99 percentile of the Raster'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI Raster',
+                            'PARAM_2' : '',
+                            'PARAM_3' : ''
                         }
                     }
                   }
