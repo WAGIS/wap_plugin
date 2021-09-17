@@ -287,11 +287,11 @@ class WAPlugin:
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
 
-        self.dlg.TbpRasterComboBox.clear()
-        self.dlg.TbpRasterComboBox.addItems(self.tif_files.keys())
+        self.dlg.Raster1ComboBox.clear()
+        self.dlg.Raster1ComboBox.addItems(self.tif_files.keys())
 
-        self.dlg.AetiRasterComboBox.clear()
-        self.dlg.AetiRasterComboBox.addItems(self.tif_files.keys())
+        self.dlg.Raster2ComboBox.clear()
+        self.dlg.Raster2ComboBox.addItems(self.tif_files.keys())
 
     def workspaceChange(self):
         self.dlg.progressLabel.setText ('Loading available cubes . . .')
@@ -309,6 +309,7 @@ class WAPlugin:
         self.indicator_key = self.dlg.indicatorListComboBox.currentText()
         self.dlg.indicInfoLabel.setWordWrap(True)
         
+        """ Update Indicator Info """
         raster_info = [INDICATORS_INFO[self.indicator_key]['info'] + '\n']
         raster_info.extend(['==' * 20 + '\n'])
         raster_info.extend([raster + ': ' + INDICATORS_INFO[self.indicator_key]['rasters'][raster] + '\n'
@@ -316,6 +317,8 @@ class WAPlugin:
         raster_info.extend(['--' * 20 + '\n'])
         raster_info.extend([factor + ': ' + INDICATORS_INFO[self.indicator_key]['factors'][factor] + '\n'
                             for factor in INDICATORS_INFO[self.indicator_key]['factors']])
+
+        """ Update Indicator parameters """
 
         self.dlg.indicInfoLabel.setText(''.join(raster_info))
 
@@ -455,9 +458,9 @@ class WAPlugin:
     def calculateIndex(self):
         print('Calculating . . . ')
         
-        tbp_name = self.dlg.TbpRasterComboBox.currentText()
-        ta_dir = self.dlg.TbpRasterComboBox.currentText()
-        aeti_dir = self.dlg.AetiRasterComboBox.currentText()
+        tbp_name = self.dlg.Raster1ComboBox.currentText()
+        ta_dir = self.dlg.Raster1ComboBox.currentText()
+        aeti_dir = self.dlg.Raster2ComboBox.currentText()
 
         output_name = self.dlg.outputIndicName.text()+".tif"
 

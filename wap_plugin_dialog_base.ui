@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabMaganer">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -450,7 +450,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="TbpRasterComboBox">
+               <widget class="QComboBox" name="Raster1ComboBox">
                 <property name="enabled">
                  <bool>true</bool>
                 </property>
@@ -468,7 +468,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="AetiRasterComboBox"/>
+               <widget class="QComboBox" name="Raster2ComboBox"/>
               </item>
              </layout>
             </item>
