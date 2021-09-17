@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>WAPlugin</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -90,7 +90,7 @@
              <item>
               <widget class="QLabel" name="signinStateLabel">
                <property name="text">
-                <string>Please sing in to access WaPOR data . . .</string>
+                <string>Please sign in to access WaPOR data . . .</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -499,7 +499,7 @@
              <string>Calculate Indicator</string>
             </property>
            </widget>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>10</x>
