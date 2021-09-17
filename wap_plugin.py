@@ -240,8 +240,14 @@ class WAPlugin:
         if connected:
             self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
             self.dlg.saveTokenButton.setEnabled(True)
+            self.dlg.signinButton.setEnabled(False)
+
+            self.dlg.progressBar.setValue(20)
+            self.dlg.downloadButton.setEnabled(True)
+            self.dlg.progressLabel.setText ('Connected to WaPOR database')
         else:
             self.dlg.signinStateLabel.setText('Access denied, please check the API Token provided or the internet connection . . .')
+            self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
 
     def saveToken(self):
         self.file_manag.save_token(self.dlg.apiTokenTextBox.text())
@@ -256,6 +262,8 @@ class WAPlugin:
 
             if connected:
                 self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
+                self.dlg.signinButton.setEnabled(False)
+
                 self.dlg.progressBar.setValue(20)
                 self.dlg.downloadButton.setEnabled(True)
                 self.dlg.progressLabel.setText ('Connected to WaPOR database')
