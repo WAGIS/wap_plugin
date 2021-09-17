@@ -33,6 +33,11 @@ INDICATORS_INFO = {
                         'factors' : {
                             'RASTERsd' : 'Standard deviation obtained from the Raster',
                             'RASTERmean' : 'Mean obtained from the Raster'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI or PE or ACB Raster',
+                            'PARAM_2' : '',
+                            'PARAM_3' : ''
                         }
                     },
                     'Beneficial Fraction' : {
@@ -43,6 +48,11 @@ INDICATORS_INFO = {
                         },
                         'factors' : {
                             'Conversion Factor' : '0.1'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI Raster',
+                            'PARAM_2' : 'TA Raster',
+                            'PARAM_3' : ''
                         }
                     },
                     'Adequacy' : {
@@ -53,6 +63,11 @@ INDICATORS_INFO = {
                         },
                         'factors' : {
                             'Kc' : 'A constant to compute Potential Evapotranspiration'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI Raster',
+                            'PARAM_2' : 'RET Raster',
+                            'PARAM_3' : 'Kc'
                         }
                     },
                     'Relative Water Deficit' : {
@@ -62,6 +77,11 @@ INDICATORS_INFO = {
                         },
                         'factors' : {
                             'ETx' : '99 percentile of the Raster'
+                        },
+                        'params' : {
+                            'PARAM_1' : 'AETI Raster',
+                            'PARAM_2' : '',
+                            'PARAM_3' : ''
                         }
                     }
                   }

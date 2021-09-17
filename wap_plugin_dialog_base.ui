@@ -443,14 +443,14 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>
-               <widget class="QLabel" name="tbp_raster">
+               <widget class="QLabel" name="Param1Label">
                 <property name="text">
                  <string>TBP Raster</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="Raster1ComboBox">
+               <widget class="QComboBox" name="Param1ComboBox">
                 <property name="enabled">
                  <bool>true</bool>
                 </property>
@@ -461,14 +461,28 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_10">
               <item>
-               <widget class="QLabel" name="aeti_raster">
+               <widget class="QLabel" name="Param2Label">
                 <property name="text">
                  <string>AETI Raster</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="Raster2ComboBox"/>
+               <widget class="QComboBox" name="Param2ComboBox"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="8,8">
+              <item>
+               <widget class="QLabel" name="Param3Label">
+                <property name="text">
+                 <string>Other Constant</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="Param3TextBox"/>
               </item>
              </layout>
             </item>

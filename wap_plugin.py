@@ -287,11 +287,11 @@ class WAPlugin:
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
 
-        self.dlg.Raster1ComboBox.clear()
-        self.dlg.Raster1ComboBox.addItems(self.tif_files.keys())
+        self.dlg.Param1ComboBox.clear()
+        self.dlg.Param1ComboBox.addItems(self.tif_files.keys())
 
-        self.dlg.Raster2ComboBox.clear()
-        self.dlg.Raster2ComboBox.addItems(self.tif_files.keys())
+        self.dlg.Param2ComboBox.clear()
+        self.dlg.Param2ComboBox.addItems(self.tif_files.keys())
 
     def workspaceChange(self):
         self.dlg.progressLabel.setText ('Loading available cubes . . .')
@@ -318,7 +318,27 @@ class WAPlugin:
         raster_info.extend([factor + ': ' + INDICATORS_INFO[self.indicator_key]['factors'][factor] + '\n'
                             for factor in INDICATORS_INFO[self.indicator_key]['factors']])
 
-        """ Update Indicator parameters """
+        """ Parameters Update """
+        if INDICATORS_INFO[self.indicator_key]['params']['PARAM_1'] == '':
+            self.dlg.Param1Label.setText('Not Required')
+            self.dlg.Param1ComboBox.setEnabled(False)
+        else:
+            self.dlg.Param1Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_1'])
+            self.dlg.Param1ComboBox.setEnabled(True)
+
+        if INDICATORS_INFO[self.indicator_key]['params']['PARAM_2'] == '':
+            self.dlg.Param2Label.setText('Not Required')
+            self.dlg.Param2ComboBox.setEnabled(False)
+        else:
+            self.dlg.Param2Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_2'])
+            self.dlg.Param2ComboBox.setEnabled(True)
+
+        if INDICATORS_INFO[self.indicator_key]['params']['PARAM_3'] == '':
+            self.dlg.Param3Label.setText('Not Required')
+            self.dlg.Param3TextBox.setEnabled(False)
+        else:
+            self.dlg.Param3Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_3'])
+            self.dlg.Param3TextBox.setEnabled(True)
 
         self.dlg.indicInfoLabel.setText(''.join(raster_info))
 
@@ -458,20 +478,27 @@ class WAPlugin:
     def calculateIndex(self):
         print('Calculating . . . ')
         
-        tbp_name = self.dlg.Raster1ComboBox.currentText()
-        ta_dir = self.dlg.Raster1ComboBox.currentText()
-        aeti_dir = self.dlg.Raster2ComboBox.currentText()
-
+        param1_name = self.dlg.Param1ComboBox.currentText()
+        param2_name = self.dlg.Param2ComboBox.currentText()
+        try:
+            param3_name = float(self.dlg.Param3TextBox.text())
+        except ValueError:
+            print("Param 3 Input is not a float. Using Default value 1.25 instead")
+            self.dlg.Param3TextBox.setText('1.25')
+            param3_name = 1.25
+            
         output_name = self.dlg.outputIndicName.text()+".tif"
-
-        if self.indicator_key is 'Equity':
-            self.indic_calc.equity(raster=tbp_name)
-        elif self.indicator_key is 'Beneficial Fraction':
-            self.indic_calc.beneficial_fraction(aeti_dir, ta_dir, output_name)
-        elif self.indicator_key is 'Adequacy':
-            self.indic_calc.adequacy(aeti_dir, ta_dir, output_name)
-        elif self.indicator_key is 'Relative Water Deficit':
-            self.indic_calc.relative_water_deficit(aeti_dir, output_name)
+        
+        print(self.indicator_key)
+        if self.indicator_key == 'Equity':
+            self.indic_calc.equity(raster=param1_name)
+        elif self.indicator_key == 'Beneficial Fraction':
+            self.indic_calc.beneficial_fraction(param1_name, param2_name, output_name)
+        elif self.indicator_key == 'Adequacy':
+            print("Reached Here")
+            self.indic_calc.adequacy(param1_name, param2_name, output_name, Kc=param3_name)
+        elif self.indicator_key == 'Relative Water Deficit':
+            self.indic_calc.relative_water_deficit(param1_name, output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
         
