@@ -408,11 +408,28 @@ class WAPlugin:
         self.iface.mapCanvas().setMapTool(self.coord_selc_tool)
 
     def resetTool(self):
+        """ 
+        1. Get Edges
+        2. Save Polygon
+        3. Reset
+
+        Initially:
+            2 and 3 are disabled
+        When 1 is clicked,
+        Once 1 is clicked, its disabled too. And 3 is enabled.
+        2 will be enabled only after getting three points. 
+
+        When 2 is clicked, 1 and 2 are disabled and 3 is enabled. 
+
+        When 3 is clicked, remove polygon and clear edges and 1 is enabled
+
+        Show Number of Edges selected. Info """
         self.queryCoordinates = self.coord_selc_tool.getCoordinatesBuffer()
         print(self.queryCoordinates)
         self.coord_selc_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
-        self.dlg.TestCanvasLabel.setText ('Tool restored . . .')
+        self.dlg.TestCanvasLabel.setText ('''
+                                        ''')
         self.dlg.TestCanvasButton.setEnabled(True)
 
     def calculateIndex(self):
