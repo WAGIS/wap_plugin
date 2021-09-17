@@ -28,7 +28,7 @@ INDICATORS_INFO = {
                     'Equity' : {
                         'info' : 'equity = 0.1 * (RASTERsd / RASTERmean) * 100',
                         'rasters' : {
-                            'Types' : 'AETI, PE, ACB'
+                            'RASTER Types' : 'AETI, PE, ACB'
                         },
                         'factors' : {
                             'RASTERsd' : 'Standard deviation obtained from the Raster',
@@ -46,21 +46,22 @@ INDICATORS_INFO = {
                         }
                     },
                     'Adequacy' : {
-                        'info' : 'AD = (AETI / Kc * RET)',
+                        'info' : 'AD = (RASTER_1 / (Kc * RASTER_2))',
                         'rasters' : {
-                            '' : ''
+                            'RASTER_1 Type' : 'AETI',
+                            'RASTER_2 Type' : 'RET'
                         },
                         'factors' : {
-                            '' : ''
+                            'Kc' : 'A constant to compute Potential Evapotranspiration'
                         }
                     },
                     'Relative Water Deficit' : {
-                        'info' : 'Relative Water Deficit information pending',
+                        'info' : 'RWD = 1 - (RASTER / ETx)',
                         'rasters' : {
-                            '' : ''
+                            'RASTER Type' : 'AETI'
                         },
                         'factors' : {
-                            '' : ''
+                            'ETx' : '99 percentile of the Raster'
                         }
                     }
                   }

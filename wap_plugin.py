@@ -309,7 +309,11 @@ class WAPlugin:
         self.indicator_key = self.dlg.indicatorListComboBox.currentText()
         self.dlg.indicInfoLabel.setWordWrap(True)
         
-        raster_info = [INDICATORS_INFO[self.indicator_key]['info'] + '\n' + '--' * 20 + '\n']
+        raster_info = [INDICATORS_INFO[self.indicator_key]['info'] + '\n']
+        raster_info.extend(['==' * 20 + '\n'])
+        raster_info.extend([raster + ': ' + INDICATORS_INFO[self.indicator_key]['rasters'][raster] + '\n'
+                    for raster in INDICATORS_INFO[self.indicator_key]['rasters']])
+        raster_info.extend(['--' * 20 + '\n'])
         raster_info.extend([factor + ': ' + INDICATORS_INFO[self.indicator_key]['factors'][factor] + '\n'
                             for factor in INDICATORS_INFO[self.indicator_key]['factors']])
 
