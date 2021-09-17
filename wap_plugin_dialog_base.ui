@@ -355,7 +355,7 @@
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <item>
-                <widget class="QPushButton" name="TestCanvasButton">
+                <widget class="QPushButton" name="getEdgesButton">
                  <property name="text">
                   <string>Get Edges</string>
                  </property>
@@ -378,7 +378,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="resetToolButton_2">
+              <widget class="QPushButton" name="resetToolButton">
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
@@ -398,37 +398,24 @@
        <attribute name="title">
         <string>Indicators Calculator</string>
        </attribute>
-       <widget class="QPushButton" name="calculateButton">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>480</y>
-          <width>93</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Apply</string>
-        </property>
-       </widget>
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>11</y>
+          <x>10</x>
+          <y>10</y>
           <width>491</width>
-          <height>421</height>
+          <height>511</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QGroupBox" name="groupBox_4">
+          <widget class="QGroupBox" name="indicatorBox">
            <property name="title">
             <string>Indicator</string>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
+             <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0,0">
               <item>
                <widget class="QComboBox" name="indicatorListComboBox"/>
               </item>
@@ -446,6 +433,9 @@
          </item>
          <item>
           <widget class="QGroupBox" name="groupBox_3">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="title">
             <string>WaPOR Data</string>
            </property>
@@ -486,77 +476,61 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="title">
-            <string>Resulting units</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QRadioButton" name="radioButton_3">
-              <property name="text">
-               <string>KG/mm</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton">
-              <property name="text">
-               <string>KG/m^3</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_13">
-           <property name="title">
-            <string>Output File Type</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_28">
-            <item>
-             <widget class="QRadioButton" name="radioButton_11">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Add Map to Canvas</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_12">
-              <property name="text">
-               <string>Download Report</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
           <widget class="QGroupBox" name="groupBox_5">
            <property name="title">
-            <string>Output File Name</string>
+            <string>Compute Indicator</string>
            </property>
-           <widget class="QLineEdit" name="outputIndicName">
+           <widget class="QPushButton" name="calculateButton">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>30</y>
-              <width>321</width>
-              <height>22</height>
+              <y>90</y>
+              <width>121</width>
+              <height>28</height>
              </rect>
             </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>13</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Calculate Indicator</string>
+            </property>
+           </widget>
+           <widget class="QWidget" name="">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>31</y>
+              <width>471</width>
+              <height>59</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="8,10,0">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Output File Name:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="outputIndicName"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>.tif</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </widget>
           </widget>
          </item>
