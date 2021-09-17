@@ -307,7 +307,13 @@ class WAPlugin:
 
     def indicatorChange(self):
         self.indicator_key = self.dlg.indicatorListComboBox.currentText()
-        self.dlg.indicInfoLabel.setText(INDICATORS_INFO[self.indicator_key]['info'])
+        self.dlg.indicInfoLabel.setWordWrap(True)
+        
+        raster_info = [INDICATORS_INFO[self.indicator_key]['info'] + '\n' + '--' * 20 + '\n']
+        raster_info.extend([factor + ': ' + INDICATORS_INFO[self.indicator_key]['factors'][factor] + '\n'
+                            for factor in INDICATORS_INFO[self.indicator_key]['factors']])
+
+        self.dlg.indicInfoLabel.setText(''.join(raster_info))
 
     def cubeChange(self):
         try:
@@ -415,7 +421,7 @@ class WAPlugin:
         self.coord_selc_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
         if self.queryCoordinates:
-            self.dlg.TestCanvasLabel.setText ('The polygon selected has {} edges'.format(len(self.queryCoordinates)))
+            self.dlg.TestCanvasLabel.setText ('The polygon selected has {} edges'.format(len(self.queryCoordinates)-1))
         else:
             self.dlg.TestCanvasLabel.setText ('Polygon not valid.')
 
@@ -436,6 +442,7 @@ class WAPlugin:
         When 3 is clicked, remove polygon and clear edges and 1 is enabled
 
         Show Number of Edges selected. Info """
+        self.coord_selc_tool.reset()
         self.queryCoordinates = None
         self.dlg.TestCanvasLabel.setText ('Coordinates cleared, using default ones . . .')
         self.dlg.getEdgesButton.setEnabled(True)

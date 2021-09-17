@@ -19,32 +19,34 @@ import os
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer
 
-INDICATORS_LIST = ['Adequacy',
+INDICATORS_LIST = ['Equity',
                    'Beneficial Fraction',
-                   'Equity',
+                   'Adequacy',
                    'Relative Water Deficit']
 
 INDICATORS_INFO = {
-                    'Adequacy' : {
-                        'info' : 'Adequacy information pending',
+                    'Equity' : {
+                        'info' : 'equity = 0.1 * (RASTERsd / RASTERmean) * 100',
                         'rasters' : {
-                            '' : ''
+                            'Types' : 'AETI, PE, ACB'
                         },
                         'factors' : {
-                            '' : ''
+                            'RASTERsd' : 'Standard deviation obtained from the Raster',
+                            'RASTERmean' : 'Mean obtained from the Raster'
                         }
                     },
                     'Beneficial Fraction' : {
-                        'info' : 'Beneficial Fraction information pending',
+                        'info' : 'BF = (RASTER_1 / RASTER_2)',
                         'rasters' : {
-                            '' : ''
+                            'RASTER_1 Type' : 'AETI',
+                            'RASTER_2 Type' : 'TA'
                         },
                         'factors' : {
-                            '' : ''
+                            'Conversion Factor' : '0.1'
                         }
                     },
-                    'Equity' : {
-                        'info' : 'Equity information pending',
+                    'Adequacy' : {
+                        'info' : 'AD = (AETI / Kc * RET)',
                         'rasters' : {
                             '' : ''
                         },
@@ -60,7 +62,7 @@ INDICATORS_INFO = {
                         'factors' : {
                             '' : ''
                         }
-                    }   
+                    }
                   }
 
 class IndicatorCalculator:
