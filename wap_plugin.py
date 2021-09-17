@@ -437,8 +437,8 @@ class WAPlugin:
 
         Show Number of Edges selected. Info """
         self.queryCoordinates = None
-        self.dlg.TestCanvasLabel.setText ('Coordinates cleared . . .')
-        self.dlg.TestCanvasButton.setEnabled(True)
+        self.dlg.TestCanvasLabel.setText ('Coordinates cleared, using default ones . . .')
+        self.dlg.getEdgesButton.setEnabled(True)
         self.dlg.resetToolButton.setEnabled(False)
 
     def calculateIndex(self):

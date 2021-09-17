@@ -83,8 +83,6 @@ class CoordinatesSelectorTool(QgsMapTool):
             self.label.setText('Shape not valid')
             return None
         
-
-
     def isZoomTool(self):
         return False
 
