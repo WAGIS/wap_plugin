@@ -256,19 +256,14 @@ class WAPlugin:
 
             if connected:
                 self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
+                self.dlg.progressBar.setValue(20)
+                self.dlg.downloadButton.setEnabled(True)
+                self.dlg.progressLabel.setText ('Connected to WaPOR database')
             else:
                 self.dlg.signinStateLabel.setText('Access denied, please check the API Token file or the internet connection . . .')
+                self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
         else:
             self.dlg.signinStateLabel.setText('No token file found in memory . . .')
-
-    def wapor_connect(self):
-        connected = self.api_manag.connectWapor()    
-        if connected:
-            self.dlg.progressBar.setValue(20)
-            self.dlg.progressLabel.setText ('Connected to WaPOR database')
-            self.dlg.downloadButton.setEnabled(True)
-        else:
-            self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
 
     def listWorkspaces(self):
         self.dlg.workspaceComboBox.clear()
@@ -456,7 +451,6 @@ class WAPlugin:
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
             self.dlg.signinButton.clicked.connect(self.signin)
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
-            self.dlg.connectButton.clicked.connect(self.wapor_connect)
 
             self.dlg.downloadButton.clicked.connect(self.downloadCropedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
