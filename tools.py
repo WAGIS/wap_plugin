@@ -36,8 +36,10 @@ class CoordinatesSelectorTool(QgsMapTool):
         self.rubberBand.show()
 
     def canvasPressEvent(self, event):
-        x = float(self.toMapCoordinates(event.pos()).x())
-        y = float(self.toMapCoordinates(event.pos()).y())
+        # x = float(self.toMapCoordinates(event.pos()).x())
+        # y = float(self.toMapCoordinates(event.pos()).y())
+        x = event.pos().x()
+        y = event.pos().y()
         self.label.setText('x:{} || y:{}'.format(x,y))
 
         self.rubberCoordinates.append(self.toMapCoordinates(event.pos()))
@@ -45,6 +47,9 @@ class CoordinatesSelectorTool(QgsMapTool):
 
         if not self.savePolygonButton.isEnabled() and len(self.rubberCoordinates) > 2:
             self.savePolygonButton.setEnabled(True)
+
+        print(self.rubberCoordinates)
+        print(self.polygonCoordinates)
 
         self.isEmittingPoint = True
         self.updateShape()
