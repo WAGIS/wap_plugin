@@ -402,10 +402,22 @@ class WAPlugin:
         self.dlg.raster2.addItems(self.raster2)
 
     def selectCoordinatesTool(self):
-        self.dlg.TestCanvasButton.setEnabled(False)
+        self.dlg.getEdgesButton.setEnabled(False)
+        self.dlg.resetToolButton.setEnabled(True)
         self.prev_tool = self.iface.mapCanvas().mapTool()
         self.coord_selc_tool.activate()
         self.iface.mapCanvas().setMapTool(self.coord_selc_tool)
+    
+    def savePolygon(self):
+        self.dlg.savePolygonButton.setEnabled(False)
+        self.queryCoordinates = self.coord_selc_tool.getCoordinatesBuffer()
+        print(self.queryCoordinates)
+        self.coord_selc_tool.deactivate()
+        self.iface.mapCanvas().setMapTool(self.prev_tool)
+        if self.queryCoordinates:
+            self.dlg.TestCanvasLabel.setText ('The polygon selected has {} edges'.format(len(self.queryCoordinates)))
+        else:
+            self.dlg.TestCanvasLabel.setText ('Polygon not valid.')
 
     def resetTool(self):
         """ 
@@ -424,13 +436,10 @@ class WAPlugin:
         When 3 is clicked, remove polygon and clear edges and 1 is enabled
 
         Show Number of Edges selected. Info """
-        self.queryCoordinates = self.coord_selc_tool.getCoordinatesBuffer()
-        print(self.queryCoordinates)
-        self.coord_selc_tool.deactivate()
-        self.iface.mapCanvas().setMapTool(self.prev_tool)
-        self.dlg.TestCanvasLabel.setText ('''
-                                        ''')
+        self.queryCoordinates = None
+        self.dlg.TestCanvasLabel.setText ('Coordinates cleared . . .')
         self.dlg.TestCanvasButton.setEnabled(True)
+        self.dlg.resetToolButton.setEnabled(False)
 
     def calculateIndex(self):
         print('Calculating . . . ')
@@ -468,13 +477,19 @@ class WAPlugin:
             self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
 
-            self.coord_selc_tool = CoordinatesSelectorTool(self.iface.mapCanvas(), self.dlg.TestCanvasLabel)
+            self.coord_selc_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
+                                                           self.dlg.TestCanvasLabel,
+                                                           self.dlg.savePolygonButton)
 
             self.dlg.downloadButton.setEnabled(False)
-            
+
             self.dlg.saveTokenButton.setEnabled(False)
-            self.dlg.saveTokenButton.clicked.connect(self.saveToken)
+            
+            self.dlg.savePolygonButton.setEnabled(False)
+            self.dlg.resetToolButton.setEnabled(False)
+
             self.dlg.signinButton.clicked.connect(self.signin)
+            self.dlg.saveTokenButton.clicked.connect(self.saveToken)
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
 
             self.dlg.downloadButton.clicked.connect(self.downloadCropedRaster)
@@ -493,7 +508,8 @@ class WAPlugin:
             self.dlg.calculateButton.clicked.connect(self.calculateIndex)
             # self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
 
-            self.dlg.TestCanvasButton.clicked.connect(self.selectCoordinatesTool)
+            self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)
+            self.dlg.savePolygonButton.clicked.connect(self.savePolygon)
             self.dlg.resetToolButton.clicked.connect(self.resetTool)
 
             self.listWorkspaces()

@@ -6,11 +6,12 @@ from qgis.PyQt.QtGui import QColor
 from shapely.geometry import Polygon
 
 class CoordinatesSelectorTool(QgsMapTool):   
-    def __init__(self, canvas, label):
+    def __init__(self, canvas, label, savePolygonButton):
         QgsMapTool.__init__(self, canvas)
         
         self.canvas = canvas    
         self.label = label    
+        self.savePolygonButton = savePolygonButton
 
         self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry )
         self.rubberBand.setColor(Qt.red)
@@ -40,14 +41,11 @@ class CoordinatesSelectorTool(QgsMapTool):
         self.label.setText('x:{} || y:{}'.format(x,y))
 
         self.rubberCoordinates.append(self.toMapCoordinates(event.pos()))
-        # self.polygonCoordinates.append((float(self.toMapCoordinates(event.pos()).x()),
-        #                                 float(self.toMapCoordinates(event.pos()).y())))
-
         self.polygonCoordinates.append([float(self.toMapCoordinates(event.pos()).x()),
                                         float(self.toMapCoordinates(event.pos()).y())])
 
-        print(self.rubberCoordinates)
-        print(self.polygonCoordinates)
+        if not self.savePolygonButton.isEnabled() and len(self.rubberCoordinates) > 2:
+            self.savePolygonButton.setEnabled(True)
 
         self.isEmittingPoint = True
         self.updateShape()
@@ -58,7 +56,7 @@ class CoordinatesSelectorTool(QgsMapTool):
         y = event.pos().y()
         point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
 
-        print('The cordinates are: ', point)
+        # print('The cordinates are: ', point)
 
     def canvasReleaseEvent(self, event):
         #Get the click
@@ -84,6 +82,8 @@ class CoordinatesSelectorTool(QgsMapTool):
         else:
             self.label.setText('Shape not valid')
             return None
+        
+
 
     def isZoomTool(self):
         return False
