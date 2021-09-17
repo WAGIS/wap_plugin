@@ -50,6 +50,7 @@ crop_raster_query = {
                             "PHE"
                         ],
                         "shape": {
+                            # "crs": "EPSG:4326",
                             "type": "Polygon",
                             "coordinates": [Polygon]
                         }

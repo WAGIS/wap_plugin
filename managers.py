@@ -95,12 +95,12 @@ class WaporAPIManager:
             request_json['params']['dimensions'] = params['dimensions']
             request_json['params']['measures'] = params['measures']
 
-            print(params['coordinates'][0])
             if params['coordinates'][0] is not None:
                 request_json['params']['shape']['coordinates'] = params['coordinates']
+                request_json['params']['shape']['crs'] = params['crs']
             else:
                 print('WARNING: Valid coordiantes not provided, using default ones . . . ')
-
+            
             request_headers = {'Authorization': "Bearer " + self.AccessToken}
 
             resp_json = requests.post(  self.query_url,

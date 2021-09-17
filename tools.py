@@ -36,10 +36,8 @@ class CoordinatesSelectorTool(QgsMapTool):
         self.rubberBand.show()
 
     def canvasPressEvent(self, event):
-        # x = float(self.toMapCoordinates(event.pos()).x())
-        # y = float(self.toMapCoordinates(event.pos()).y())
-        x = event.pos().x()
-        y = event.pos().y()
+        x = float(self.toMapCoordinates(event.pos()).x())
+        y = float(self.toMapCoordinates(event.pos()).y())
         self.label.setText('x:{} || y:{}'.format(x,y))
 
         self.rubberCoordinates.append(self.toMapCoordinates(event.pos()))

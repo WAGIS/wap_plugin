@@ -263,6 +263,7 @@ class WAPlugin:
             if connected:
                 self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
                 self.dlg.signinButton.setEnabled(False)
+                self.dlg.loadTokenButton.setEnabled(False)
 
                 self.dlg.progressBar.setValue(20)
                 self.dlg.downloadButton.setEnabled(True)
@@ -396,6 +397,7 @@ class WAPlugin:
                                     "values": [self.member]
                                 }]
         params['coordinates'] = [self.queryCoordinates]
+        params['crs'] = self.queryCrs
 
         rast_url = self.api_manag.query_crop_raster(params)
 
@@ -444,7 +446,9 @@ class WAPlugin:
     def savePolygon(self):
         self.dlg.savePolygonButton.setEnabled(False)
         self.queryCoordinates = self.coord_selc_tool.getCoordinatesBuffer()
+        self.queryCrs = self.getCrs()
         print(self.queryCoordinates)
+        print(self.queryCrs)
         self.coord_selc_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
         if self.queryCoordinates:
@@ -505,7 +509,9 @@ class WAPlugin:
         # self.canv_manag.add_rast(tbp_name)
         # self.canv_manag.add_rast(aeti_name)
         self.canv_manag.add_rast(output_name)
-
+    
+    def getCrs(self):
+        return self.iface.mapCanvas().mapSettings().destinationCrs().authid()
 
     def run(self):
         """Run method that performs all the real work"""
