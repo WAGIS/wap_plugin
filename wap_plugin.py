@@ -242,7 +242,7 @@ class WAPlugin:
             self.dlg.saveTokenButton.setEnabled(True)
             self.dlg.signinButton.setEnabled(False)
 
-            self.dlg.progressBar.setValue(20)
+            self.dlg.progressBar.setValue(0)
             self.dlg.downloadButton.setEnabled(True)
             self.dlg.progressLabel.setText ('Connected to WaPOR database')
         else:
@@ -265,7 +265,7 @@ class WAPlugin:
                 self.dlg.signinButton.setEnabled(False)
                 self.dlg.loadTokenButton.setEnabled(False)
 
-                self.dlg.progressBar.setValue(20)
+                self.dlg.progressBar.setValue(0)
                 self.dlg.downloadButton.setEnabled(True)
                 self.dlg.progressLabel.setText ('Connected to WaPOR database')
             else:
@@ -297,7 +297,6 @@ class WAPlugin:
         self.dlg.Param2ComboBox.addItems(filteredRasterFiles.keys())
 
     def workspaceChange(self):
-        self.dlg.progressLabel.setText ('Loading available cubes . . .')
         QApplication.processEvents()
         self.workspace = self.dlg.workspaceComboBox.currentText()
         self.cubes = self.api_manag.pull_cubes(self.workspace)
@@ -306,7 +305,6 @@ class WAPlugin:
 
         self.dlg.cubeComboBox.clear()
         self.dlg.cubeComboBox.addItems(listCubes)
-        self.dlg.progressLabel.setText ('Cubes available ready!')
 
     def indicatorChange(self):
         self.indicator_key = self.dlg.indicatorListComboBox.currentText()
@@ -350,7 +348,6 @@ class WAPlugin:
 
     def cubeChange(self):
         try:
-            self.dlg.progressLabel.setText ('Loading available dimensions and measures . . .')
             QApplication.processEvents()
             self.cube = self.cubes[self.dlg.cubeComboBox.currentText()]
             self.dimensions = self.api_manag.pull_cube_dims(self.workspace,self.cube)
@@ -360,7 +357,6 @@ class WAPlugin:
             self.dlg.measureComboBox.addItems(self.measures.keys())
             self.dlg.dimensionComboBox.clear()
             self.dlg.dimensionComboBox.addItems(self.dimensions.keys())
-            self.dlg.progressLabel.setText ('Dimensions and measures available ready!')
 
             self.dlg.outputRasterCubeID.setText('_'+self.cube+'.tif')
         except (KeyError) as exception:
@@ -380,18 +376,19 @@ class WAPlugin:
 
     def dimensionChange(self):
         try:
-            self.dlg.progressLabel.setText('Loading available members . . .')
             QApplication.processEvents()
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
             self.members = self.api_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
 
             self.dlg.memberComboBox.clear()
             self.dlg.memberComboBox.addItems(self.members.keys())
-            self.dlg.progressLabel.setText ('Members available ready!')
         except (KeyError) as exception:
                     pass
     
     def downloadCropedRaster(self):
+        self.dlg.progressBar.setValue(20)
+        self.dlg.progressLabel.setText ('Downloading Raster')
+        
         params = dict()
         params['outputFileName'] = self.dlg.outputRasterName.text()+'_'+self.cube+'.tif'
         params['cube_code'] = self.cube
@@ -407,6 +404,9 @@ class WAPlugin:
         rast_url = self.api_manag.query_crop_raster(params)
 
         self.file_manag.download_raster(rast_url)
+        
+        self.dlg.progressBar.setValue(100)
+        self.dlg.progressLabel.setText ('Raster Download Complete')
         
         self.listRasterMemory()
 

@@ -558,7 +558,7 @@
       <item>
        <widget class="QProgressBar" name="progressBar">
         <property name="value">
-         <number>10</number>
+         <number>0</number>
         </property>
        </widget>
       </item>
