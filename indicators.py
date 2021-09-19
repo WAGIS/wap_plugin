@@ -31,7 +31,7 @@ INDICATORS_INFO = {
                             'mean_raster' : 'Mean obtained from the Raster'
                         },
                         'params' : {
-                            'PARAM_1' : 'AETI or PE or ACB Raster',
+                            'PARAM_1' : {'label':'AETI or PE or ACB Raster', 'type': ['AETI','PE','ACB']},
                             'PARAM_2' : '',
                             'PARAM_3' : ''
                         }
@@ -40,14 +40,14 @@ INDICATORS_INFO = {
                         'info' : 'BF = (Raster_1 / Raster_2)',
                         'rasters' : {
                             'AETI' : 'Name of AETI',
-                            'TA' : 'Name of TA'
+                            'T' : 'Name of T'
                         },
                         'factors' : {
                             'Conversion Factor' : '0.1'
                         },
                         'params' : {
-                            'PARAM_1' : 'AETI Raster',
-                            'PARAM_2' : 'TA Raster',
+                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                            'PARAM_2' : {'label':'T Raster', 'type': ['T']},
                             'PARAM_3' : ''
                         }
                     },
@@ -61,8 +61,8 @@ INDICATORS_INFO = {
                             'Kc' : 'A constant to compute Potential Evapotranspiration'
                         },
                         'params' : {
-                            'PARAM_1' : 'AETI Raster',
-                            'PARAM_2' : 'RET Raster',
+                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                            'PARAM_2' : {'label':'RET Raster', 'type': ['RET']},
                             'PARAM_3' : 'Kc'
                         }
                     },
@@ -75,7 +75,7 @@ INDICATORS_INFO = {
                             'ETx' : '99 percentile of the Raster'
                         },
                         'params' : {
-                            'PARAM_1' : 'AETI Raster',
+                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
                             'PARAM_2' : '',
                             'PARAM_3' : ''
                         }

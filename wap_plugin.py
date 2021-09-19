@@ -288,14 +288,6 @@ class WAPlugin:
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
 
-        """ Raster Files Filtered Update """
-        filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_files, INDICATORS_INFO[self.indicator_key]['rasters'].keys())
-        self.dlg.Param1ComboBox.clear()
-        self.dlg.Param1ComboBox.addItems(filteredRasterFiles.keys())
-
-        self.dlg.Param2ComboBox.clear()
-        self.dlg.Param2ComboBox.addItems(filteredRasterFiles.keys())
-
     def workspaceChange(self):
         QApplication.processEvents()
         self.workspace = self.dlg.workspaceComboBox.currentText()
@@ -327,14 +319,20 @@ class WAPlugin:
             self.dlg.Param1Label.setText('Not Required')
             self.dlg.Param1ComboBox.setEnabled(False)
         else:
-            self.dlg.Param1Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_1'])
+            self.dlg.Param1Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_1']['label'])
+            filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_files, INDICATORS_INFO[self.indicator_key]['params']['PARAM_1']['type'])
+            self.dlg.Param1ComboBox.clear()
+            self.dlg.Param1ComboBox.addItems(filteredRasterFiles.keys())
             self.dlg.Param1ComboBox.setEnabled(True)
 
         if INDICATORS_INFO[self.indicator_key]['params']['PARAM_2'] == '':
             self.dlg.Param2Label.setText('Not Required')
             self.dlg.Param2ComboBox.setEnabled(False)
         else:
-            self.dlg.Param2Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_2'])
+            self.dlg.Param2Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_2']['label'])
+            filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_files, INDICATORS_INFO[self.indicator_key]['params']['PARAM_2']['type'])
+            self.dlg.Param2ComboBox.clear()
+            self.dlg.Param2ComboBox.addItems(filteredRasterFiles.keys())
             self.dlg.Param2ComboBox.setEnabled(True)
 
         if INDICATORS_INFO[self.indicator_key]['params']['PARAM_3'] == '':
@@ -343,6 +341,8 @@ class WAPlugin:
         else:
             self.dlg.Param3Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_3'])
             self.dlg.Param3TextBox.setEnabled(True)
+
+        
 
         self.dlg.indicInfoLabel.setText(''.join(raster_info))
 
@@ -568,8 +568,8 @@ class WAPlugin:
             self.dlg.resetToolButton.clicked.connect(self.resetTool)
 
             self.listWorkspaces()
-            self.listRasterMemory()
             self.indicatorChange()
+            self.listRasterMemory()
 
             self.queryCoordinates = None
             self.queryCrs = None
