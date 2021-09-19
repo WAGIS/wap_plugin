@@ -20,13 +20,13 @@ from qgis.core import QgsRasterLayer
 
 INDICATORS_INFO = {
                     'Equity' : {
-                        'info' : 'equity = 0.1 * (RASTERsd / RASTERmean) * 100',
+                        'info' : 'equity = 0.1 * (sd_raster / mean_raster) * 100',
                         'rasters' : {
-                            'RASTER Types' : 'AETI, PE, ACB'
+                            'Raster Types' : 'AETI, PE, ACB'
                         },
                         'factors' : {
-                            'RASTERsd' : 'Standard deviation obtained from the Raster',
-                            'RASTERmean' : 'Mean obtained from the Raster'
+                            'sd_raster' : 'Standard deviation obtained from the Raster',
+                            'mean_raster' : 'Mean obtained from the Raster'
                         },
                         'params' : {
                             'PARAM_1' : 'AETI or PE or ACB Raster',
@@ -35,10 +35,10 @@ INDICATORS_INFO = {
                         }
                     },
                     'Beneficial Fraction' : {
-                        'info' : 'BF = (RASTER_1 / RASTER_2)',
+                        'info' : 'BF = (Raster_1 / Raster_2)',
                         'rasters' : {
-                            'RASTER_1 Type' : 'AETI',
-                            'RASTER_2 Type' : 'TA'
+                            'Raster_1 Type' : 'AETI',
+                            'Raster_2 Type' : 'TA'
                         },
                         'factors' : {
                             'Conversion Factor' : '0.1'
@@ -50,10 +50,10 @@ INDICATORS_INFO = {
                         }
                     },
                     'Adequacy' : {
-                        'info' : 'AD = (RASTER_1 / (Kc * RASTER_2))',
+                        'info' : 'AD = (Raster_1 / (Kc * Raster_2))',
                         'rasters' : {
-                            'RASTER_1 Type' : 'AETI',
-                            'RASTER_2 Type' : 'RET'
+                            'Raster_1 Type' : 'AETI',
+                            'Raster_2 Type' : 'RET'
                         },
                         'factors' : {
                             'Kc' : 'A constant to compute Potential Evapotranspiration'
@@ -65,9 +65,9 @@ INDICATORS_INFO = {
                         }
                     },
                     'Relative Water Deficit' : {
-                        'info' : 'RWD = 1 - (RASTER / ETx)',
+                        'info' : 'RWD = 1 - (Raster / ETx)',
                         'rasters' : {
-                            'RASTER Type' : 'AETI'
+                            'Raster Type' : 'AETI'
                         },
                         'factors' : {
                             'ETx' : '99 percentile of the Raster'
