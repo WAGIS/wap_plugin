@@ -35,7 +35,7 @@ from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
 from .managers import WaporAPIManager, FileManager, CanvasManager
-from .indicators import IndicatorCalculator, INDICATORS_LIST, INDICATORS_INFO
+from .indicators import IndicatorCalculator, INDICATORS_INFO
 from .tools import CoordinatesSelectorTool
 
 # from PyQt5.QtGui import *
@@ -475,6 +475,7 @@ class WAPlugin:
         Show Number of Edges selected. Info """
         self.coord_selc_tool.reset()
         self.queryCoordinates = None
+        self.queryCrs = None
         self.dlg.TestCanvasLabel.setText ('Coordinates cleared, using default ones . . .')
         self.dlg.getEdgesButton.setEnabled(True)
         self.dlg.resetToolButton.setEnabled(False)
@@ -564,6 +565,7 @@ class WAPlugin:
             self.indicatorChange()
 
             self.queryCoordinates = None
+            self.queryCrs = None
 
         # show the dialog
         self.dlg.show()

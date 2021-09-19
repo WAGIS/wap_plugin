@@ -12,17 +12,11 @@
 
 """
 import numpy as np
-# import gdal
 from osgeo import gdal
 import os
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer
-
-INDICATORS_LIST = ['Equity',
-                   'Beneficial Fraction',
-                   'Adequacy',
-                   'Relative Water Deficit']
 
 INDICATORS_INFO = {
                     'Equity' : {
