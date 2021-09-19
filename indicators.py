@@ -22,7 +22,9 @@ INDICATORS_INFO = {
                     'Equity' : {
                         'info' : 'equity = 0.1 * (sd_raster / mean_raster) * 100',
                         'rasters' : {
-                            'Raster Types' : 'AETI, PE, ACB'
+                            'AETI' : 'Name of AETI',
+                            'PE' : 'Name of PE',
+                            'ACB' : 'Name of ACB'
                         },
                         'factors' : {
                             'sd_raster' : 'Standard deviation obtained from the Raster',
@@ -37,8 +39,8 @@ INDICATORS_INFO = {
                     'Beneficial Fraction' : {
                         'info' : 'BF = (Raster_1 / Raster_2)',
                         'rasters' : {
-                            'Raster_1 Type' : 'AETI',
-                            'Raster_2 Type' : 'TA'
+                            'AETI' : 'Name of AETI',
+                            'TA' : 'Name of TA'
                         },
                         'factors' : {
                             'Conversion Factor' : '0.1'
@@ -52,8 +54,8 @@ INDICATORS_INFO = {
                     'Adequacy' : {
                         'info' : 'AD = (Raster_1 / (Kc * Raster_2))',
                         'rasters' : {
-                            'Raster_1 Type' : 'AETI',
-                            'Raster_2 Type' : 'RET'
+                            'AETI' : 'Name of AETI',
+                            'RET' : 'Name of RET'
                         },
                         'factors' : {
                             'Kc' : 'A constant to compute Potential Evapotranspiration'
@@ -67,7 +69,7 @@ INDICATORS_INFO = {
                     'Relative Water Deficit' : {
                         'info' : 'RWD = 1 - (Raster / ETx)',
                         'rasters' : {
-                            'Raster Type' : 'AETI'
+                            'AETI' : 'Name of AETI'
                         },
                         'factors' : {
                             'ETx' : '99 percentile of the Raster'

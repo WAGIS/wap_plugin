@@ -285,6 +285,17 @@ class FileManager:
         else:
             return None
 
+    def filterRasterFiles(self, files, raster_types):
+        filteredRasterFiles = dict()
+        for name, path in files.items():
+            for raster_type in raster_types:
+                header = os.path.splitext(name)[0]
+                roots = header.split('_')
+                if raster_type in roots:
+                    filteredRasterFiles[name] = path
+
+        return filteredRasterFiles
+
 class CanvasManager:
     def __init__(self, interface, plugin_dir, rasters_path):
         self.iface = interface

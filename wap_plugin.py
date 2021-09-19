@@ -288,11 +288,13 @@ class WAPlugin:
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
 
+        """ Raster Files Filtered Update """
+        filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_files, INDICATORS_INFO[self.indicator_key]['rasters'].keys())
         self.dlg.Param1ComboBox.clear()
-        self.dlg.Param1ComboBox.addItems(self.tif_files.keys())
+        self.dlg.Param1ComboBox.addItems(filteredRasterFiles.keys())
 
         self.dlg.Param2ComboBox.clear()
-        self.dlg.Param2ComboBox.addItems(self.tif_files.keys())
+        self.dlg.Param2ComboBox.addItems(filteredRasterFiles.keys())
 
     def workspaceChange(self):
         self.dlg.progressLabel.setText ('Loading available cubes . . .')
@@ -318,6 +320,9 @@ class WAPlugin:
         raster_info.extend(['--' * 20 + '\n'])
         raster_info.extend([factor + ': ' + INDICATORS_INFO[self.indicator_key]['factors'][factor] + '\n'
                             for factor in INDICATORS_INFO[self.indicator_key]['factors']])
+        
+        """ Raster Files Filtered Update """
+        self.listRasterMemory()
 
         """ Parameters Update """
         if INDICATORS_INFO[self.indicator_key]['params']['PARAM_1'] == '':
@@ -523,6 +528,8 @@ class WAPlugin:
             self.dlg = WAPluginDialog()
             
             self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
+            self.dlg.setFixedSize(self.dlg.size())
+
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
 
             self.coord_selc_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
