@@ -501,20 +501,24 @@ class WAPlugin:
         
         print(self.indicator_key)
         if self.indicator_key == 'Equity':
+            self.dlg.outputIndicName.setEnabled(False)
             self.indic_calc.equity(raster=param1_name)
         elif self.indicator_key == 'Beneficial Fraction':
             self.indic_calc.beneficial_fraction(param1_name, param2_name, output_name)
+            self.canv_manag.add_rast(output_name)
         elif self.indicator_key == 'Adequacy':
-            print("Reached Here")
+            # print("Reached Here")
             self.indic_calc.adequacy(param1_name, param2_name, output_name, Kc=param3_name)
+            self.canv_manag.add_rast(output_name)
         elif self.indicator_key == 'Relative Water Deficit':
             self.indic_calc.relative_water_deficit(param1_name, output_name)
+            self.canv_manag.add_rast(output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
         
         # self.canv_manag.add_rast(tbp_name)
         # self.canv_manag.add_rast(aeti_name)
-        self.canv_manag.add_rast(output_name)
+        # self.canv_manag.add_rast(output_name)
     
     def getCrs(self):
         return self.iface.mapCanvas().mapSettings().destinationCrs().authid()
