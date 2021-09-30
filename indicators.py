@@ -22,16 +22,16 @@ INDICATORS_INFO = {
                     'Equity' : {
                         'info' : 'equity = 0.1 * (sd_raster / mean_raster) * 100',
                         'rasters' : {
-                            'AETI' : 'Name of AETI',
-                            'PE' : 'Name of PE',
-                            'ACB' : 'Name of ACB'
+                            'AETI' : 'Actual Evapotranspiration and Interception',
+                            'PE' : 'Potential Evapotranspitarion'
+                            # 'ACB' : 'Name of ACB'
                         },
                         'factors' : {
                             'sd_raster' : 'Standard deviation obtained from the Raster',
                             'mean_raster' : 'Mean obtained from the Raster'
                         },
                         'params' : {
-                            'PARAM_1' : {'label':'AETI or PE or ACB Raster', 'type': ['AETI','PE','ACB']},
+                            'PARAM_1' : {'label':'AETI or PE', 'type': ['AETI','PE']},
                             'PARAM_2' : '',
                             'PARAM_3' : ''
                         }
@@ -39,8 +39,8 @@ INDICATORS_INFO = {
                     'Beneficial Fraction' : {
                         'info' : 'BF = (Raster_1 / Raster_2)',
                         'rasters' : {
-                            'AETI' : 'Name of AETI',
-                            'T' : 'Name of T'
+                            'AETI' : 'Actual Evapotranspiration and Interception',
+                            'T' : 'Transpiration'
                         },
                         'factors' : {
                             'Conversion Factor' : '0.1'
@@ -54,8 +54,8 @@ INDICATORS_INFO = {
                     'Adequacy' : {
                         'info' : 'AD = (Raster_1 / (Kc * Raster_2))',
                         'rasters' : {
-                            'AETI' : 'Name of AETI',
-                            'RET' : 'Name of RET'
+                            'AETI' : 'Actual Evapotranspiration and Interception',
+                            'RET' : 'Reference Evapotranspiration'
                         },
                         'factors' : {
                             'Kc' : 'A constant to compute Potential Evapotranspiration'
@@ -69,7 +69,7 @@ INDICATORS_INFO = {
                     'Relative Water Deficit' : {
                         'info' : 'RWD = 1 - (Raster / ETx)',
                         'rasters' : {
-                            'AETI' : 'Name of AETI'
+                            'AETI' : 'Actual Evapotranspiration and Interception'
                         },
                         'factors' : {
                             'ETx' : '99 percentile of the Raster'

@@ -346,6 +346,12 @@ class WAPlugin:
 
         self.dlg.indicInfoLabel.setText(''.join(raster_info))
 
+        if self.indicator_key == 'Equity':
+            self.dlg.outputIndicName.setEnabled(False)
+        else:
+            self.dlg.outputIndicName.setEnabled(True)
+
+
     def cubeChange(self):
         try:
             QApplication.processEvents()
@@ -490,24 +496,25 @@ class WAPlugin:
         
         param1_name = self.dlg.Param1ComboBox.currentText()
         param2_name = self.dlg.Param2ComboBox.currentText()
-        try:
-            param3_name = float(self.dlg.Param3TextBox.text())
-        except ValueError:
-            print("Param 3 Input is not a float. Using Default value 1.25 instead")
-            self.dlg.Param3TextBox.setText('1.25')
-            param3_name = 1.25
+
             
         output_name = self.dlg.outputIndicName.text()+".tif"
         
         print(self.indicator_key)
         if self.indicator_key == 'Equity':
-            self.dlg.outputIndicName.setEnabled(False)
             self.indic_calc.equity(raster=param1_name)
         elif self.indicator_key == 'Beneficial Fraction':
             self.indic_calc.beneficial_fraction(param1_name, param2_name, output_name)
             self.canv_manag.add_rast(output_name)
         elif self.indicator_key == 'Adequacy':
             # print("Reached Here")
+            try:
+                param3_name = float(self.dlg.Param3TextBox.text())
+            except ValueError:
+                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.dlg.Param3TextBox.setText('1.25')
+                param3_name = 1.25
+                
             self.indic_calc.adequacy(param1_name, param2_name, output_name, Kc=param3_name)
             self.canv_manag.add_rast(output_name)
         elif self.indicator_key == 'Relative Water Deficit':
