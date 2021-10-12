@@ -34,9 +34,9 @@ from .resources import *
 from .wap_plugin_dialog import WAPluginDialog
 import os.path
 
-from .managers import WaporAPIManager, FileManager, CanvasManager
-from .indicators import IndicatorCalculator, INDICATORS_INFO
-from .tools import CoordinatesSelectorTool
+from .utils.managers import WaporAPIManager, FileManager, CanvasManager
+from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
+from .utils.tools import CoordinatesSelectorTool
 
 # from PyQt5.QtGui import *
 import requests
