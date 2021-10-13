@@ -6,6 +6,27 @@ from qgis.PyQt.QtGui import QColor
 from shapely.geometry import Polygon
 
 class CoordinatesSelectorTool(QgsMapTool):   
+    """
+        Class used to define a tool to select coordinates from the canvas of QGIS.
+
+        ...
+
+        Attributes
+        ----------
+        canvas : QgsCanvas
+            Canvas from which the coordinates will be selected.
+        label : QtLabel
+            Label to comunicate events from the tool.
+        savePolygonButton : QtButton
+            Button to coordinate the closure of the polygon.
+        rubberBand : QgsRubberBand
+            Entity to storage the coordinates and draw the resulting polygon in
+            canvas.
+
+        Methods
+        -------
+
+    """
     def __init__(self, canvas, label, savePolygonButton):
         QgsMapTool.__init__(self, canvas)
         
@@ -20,13 +41,18 @@ class CoordinatesSelectorTool(QgsMapTool):
         self.reset()
 
     def reset(self):
+        """
+            Resets the coordinates storaged by the tool and clean the canvas.
+        """
         self.rubberCoordinates = list()
         self.polygonCoordinates = list()
 
-        self.isEmittingPoint = False
         self.rubberBand.reset(True)
     
     def updateShape(self):
+        """
+            Updates the coordinates storaged by the tool and refreshes the canvas.
+        """
         self.rubberBand.reset(True)
         for idx, point in enumerate(self.rubberCoordinates):
             if idx != len(self.rubberCoordinates)-1:
@@ -36,6 +62,14 @@ class CoordinatesSelectorTool(QgsMapTool):
         self.rubberBand.show()
 
     def canvasPressEvent(self, event):
+        """
+            Captures the press events held on the canvas.
+            ...
+            Parameters
+            ----------
+            event : PressEvent
+                Holds the information associated to the press event over the canvas.
+        """
         x = float(self.toMapCoordinates(event.pos()).x())
         y = float(self.toMapCoordinates(event.pos()).y())
         self.label.setText('x:{} || y:{}'.format(x,y))
@@ -49,32 +83,55 @@ class CoordinatesSelectorTool(QgsMapTool):
         print(self.rubberCoordinates)
         print(self.polygonCoordinates)
 
-        self.isEmittingPoint = True
         self.updateShape()
 
         
     def canvasMoveEvent(self, event):
+        """
+            Captures the move events held on the canvas.
+            ...
+            Parameters
+            ----------
+            event : MoveEvent
+                Holds the information associated to the move event over the canvas.
+        """
         x = event.pos().x()
         y = event.pos().y()
         point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
 
-        # print('The cordinates are: ', point)
-
     def canvasReleaseEvent(self, event):
-        #Get the click
+        """
+            Captures the release events held on the canvas.
+            ...
+            Parameters
+            ----------
+            event : ReleaseEvent
+                Holds the information associated to the release event over the canvas.
+        """
         x = event.pos().x()
         y = event.pos().y()
 
         point = self.canvas.getCoordinateTransform().toMapCoordinates(x, y)
 
     def activate(self):
+        """
+            Code to execute when the tool is activated.
+        """
         self.setCursor(Qt.CrossCursor)
         self.reset()
 
     def deactivate(self):
+        """
+            Code to execute when the tool is deactivated.
+        """
         pass
 
     def getCoordinatesBuffer(self):
+        """
+            Returns a list with the coordinates of a closed polygon generated
+            with the coordinated gathered by the tool if the resulting polygon
+            is valid.
+        """
         self.rubberBand.closePoints(True)
         polygon = Polygon(self.polygonCoordinates)
         if polygon.is_valid:

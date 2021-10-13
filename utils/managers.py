@@ -8,6 +8,77 @@ from .api_queries import crop_raster_query
 from qgis.PyQt.QtWidgets import QApplication
 
 class WaporAPIManager:
+    """
+        Class used to manage the API of Wapor an all its functions associated.
+
+        ...
+
+        Attributes
+        ----------
+        APIToken : String
+            Token associated to the users account on Wapor platform.
+        connected : bool
+            If the plugin is currently connected to the Wapor database.
+        sign_in_url : string
+            URL prefix for sign into the Wapor database.
+        query_url : string
+            URL prefix for querying the Wapor database.
+        catalog_url : string
+            URL prefix for pulling the Wapor catalog.
+        payload : Dict
+            Dictionary with the payload of the query.
+        time_out : int
+            Seconds of waiting before claiming a time out.
+
+        Methods
+        -------
+        signin(APIToken)
+            Performs de sign in into the Wapor platform using the API token, and
+            returns the state of the connection.
+        isConnected():
+            Returns if the API of Wapor is connected based in the sign in 
+            function or an expired time event.
+        query_crop_raster(params):
+            Performs de crop and download raster query from the Wapor platform 
+            using a dictionary with the parameters of the operation.
+        query_listing(url):
+            Performs de listing query for an URL which will return a list of
+            elements in a catalog e.g workspaces, cubes, dimensions and measures.
+        query_info(url):
+            Performs de info query for an URL which will return the information
+            of an specific element in the catalog e.g workspaces, cubes, 
+            dimensions and measures.
+        pull_workspaces():
+            Pulls all the workspaces available in the catalog.
+        get_info_workspace(workspace):
+            Gets the information contained in the catalog with respect to a 
+            given workspace code.
+        pull_cubes(workspace):
+            Pulls all the cubes available in the catalog for a given workspace.
+            def get_info_cube(self, workspace, cube):
+        get_info_cube(workspace, cube):
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace and cube codes.
+        pull_cube_dims(workspace, cube):
+                Pulls all the dimensions available in the catalog for a given set of
+                workspace and cube codes.
+        get_info_cube_dim(workspace, cube, dimension):
+                Gets the information contained in the catalog with respect to a 
+                given set of workspace, cube and dimension codes.
+        pull_cube_dim_membs(workspace, cube, dimension):
+                Pulls all the members available in the catalog for a given set of
+                workspace, cube and dimension codes.
+        get_info_cube_dim_memb(workspace, cube, dimension, member):
+                Gets the information contained in the catalog with respect to a 
+                given set of workspace, cube, dimension and member codes.
+        pull_cube_meas(workspace, cube):
+                Pulls all the measures available in the catalog for a given set of
+                workspace and cube codes.
+        get_info_cube_mea(workspace, cube, measure):
+                Gets the information contained in the catalog with respect to a 
+                given set of workspace and cube codes.
+    """
+
     def __init__(self, APIToken=None):
 
         self.APIToken = APIToken
@@ -20,6 +91,16 @@ class WaporAPIManager:
         self.time_out = 5
 
     def signin(self, APIToken):
+        """
+            Performs de sign in into the Wapor platform using the API token, and
+            returns the state of the connection.
+
+            ...
+            Parameters
+            ----------
+            APIToken : String
+                Token associated to the users account on Wapor platform.
+        """       
         request_headers = {'X-GISMGR-API-KEY': APIToken}
 
         resp = requests.post(
@@ -43,55 +124,52 @@ class WaporAPIManager:
 
         return self.connected
 
-    def connectWapor(self):
-        if self.APIToken == None:
-            self.APIToken = '1ba703cd638a4a473a62472d744fc3d3079e888494f9ca1ed492418a79e3f090eb1756e8284ef483'
-            print("WARNING: API Token not provided, using developers Token, please Sign In . . .")
-            
-        request_headers = {'X-GISMGR-API-KEY': self.APIToken}
-
-        resp = requests.post(
-                        self.sign_in_url,
-                        headers=request_headers)
-
-        print('Connecting to WaPOR Database . . .')
-
-        resp_json = resp.json()
-        if resp_json['message']=='OK':
-            self.AccessToken=resp_json['response']['accessToken']
-            print('SUCCESS: Access granted')
-            print('Access expires in 3600s')
-
-            self.lastConnection_time = time.time()
-            self.connected = True
-
-        else:
-            print('Fail to connect to Wapor Database . . .')
-            self.connected = False
-
-        return self.connected
-
     def isConnected(self):
+        """
+            Returns if the API of Wapor is connected based in the sign in 
+            function or an expired time event.
+        """
         if not self.connected:
             return False
         elif time.time() - self.lastConnection_time > 3600:
             self.connected = False
         return self.connected
 
-    def disconnectWapor(self):
-        pass
-
-    def login(self):
-        pass
-
     def query_crop_raster(self, params):
+        """
+            Performs de crop and download raster query from the Wapor platform 
+            using a dictionary with the parameters of the operation.
+
+            ...
+            Parameters
+            ----------
+            params : Dict
+                Parameters of configuration for the query crop and download.
+
+                properties['outputFileName'] : String
+                    Path and name to the resulting raster file.
+                cube['workspaceCode'] : String
+                    Code of the workspace to which the raster belongs.
+                cube['code'] : String
+                    Code of the type of raster to download.
+                dimensions : List
+                    Definition of the List of time frames used to delimite the 
+                    raster.
+                measures : List
+                    Definition of the List of measurements used to delimite the 
+                    raster.
+                shape['coordinates'] : List
+                    List of points that defines the polygon of the raster.
+                shape['crs'] : String
+                    Reference system to define de coordinates.
+        """
         if not self.isConnected():
-            raise Exception("Query [crop_raster] error, no Wapor conection")
+            raise Exception("Query [crop_raster] error, no Wapor connection")
         else:
             request_json = crop_raster_query.copy()
             request_json['params']['properties']['outputFileName'] = params['outputFileName']
-            request_json['params']['cube']['code'] = params['cube_code']
             request_json['params']['cube']['workspaceCode'] = params['cube_workspaceCode']
+            request_json['params']['cube']['code'] = params['cube_code']
             request_json['params']['dimensions'] = params['dimensions']
             request_json['params']['measures'] = params['measures']
 
@@ -99,7 +177,7 @@ class WaporAPIManager:
                 request_json['params']['shape']['coordinates'] = params['coordinates']
                 request_json['params']['shape']['crs'] = params['crs']
             else:
-                print('WARNING: Valid coordiantes not provided, using default ones . . . ')
+                print('WARNING: Valid coordinates not provided, using default ones . . . ')
             
             request_headers = {'Authorization': "Bearer " + self.AccessToken}
 
@@ -131,6 +209,16 @@ class WaporAPIManager:
                 print('Fail to get job url')
     
     def query_listing(self, url):
+        """
+            Performs de listing query for an URL which will return a list of
+            elements in a catalog e.g workspaces, cubes, dimensions and measures.
+
+            ...
+            Parameters
+            ----------
+            params : url
+                URL to get listed from the query.
+        """
         try:
             resp = requests.get(url,self.payload,timeout=self.time_out).json()
 
@@ -144,6 +232,17 @@ class WaporAPIManager:
             return {'---':None}
 
     def query_info(self, url):
+        """
+            Performs de info query for an URL which will return the information
+            of an specific element in the catalog e.g workspaces, cubes, 
+            dimensions and measures.
+
+            ...
+            Parameters
+            ----------
+            url : String
+                URL to get the info from the query.
+        """
         try:
             resp = requests.get(url,timeout=self.time_out).json()
             return resp['response']
@@ -151,96 +250,262 @@ class WaporAPIManager:
             return None
 
     def pull_workspaces(self):
+        """
+            Pulls all the workspaces available in the catalog.
+        """
         workspaces_url = self.catalog_url+'workspaces'
         workspaces_dict = self.query_listing(workspaces_url)
         if workspaces_dict is None:
-            raise Exception("Query [pull_workspaces] error, no internet conection or timeout")
+            raise Exception("Query [pull_workspaces] error, no internet connection or timeout")
         else:
             return workspaces_dict
         
     def get_info_workspace(self, workspace):
+        """
+            Gets the information contained in the catalog with respect to a 
+            given workspace code.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to get the info from the query.
+        """
         workspace_url = self.catalog_url+'workspaces/{}'.format(workspace)
         workspace_resp = self.query_info(workspace_url)
         if workspace_resp is None:
-            raise Exception("Query [info_workspaces] error, no internet conection or timeout")
+            raise Exception("Query [info_workspaces] error, no internet connection or timeout")
         else:
             return workspace_resp['caption'], workspace_resp['description']
 
     def pull_cubes(self, workspace):
+        """
+            Pulls all the cubes available in the catalog for a given workspace.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code from which the query will pull the cubes.
+        """
         cubes_url = self.catalog_url+'workspaces/{}/cubes'.format(workspace)
         cubes_dict = self.query_listing(cubes_url)
         if cubes_dict is None:
-            raise Exception("Query [pull_cubes] error, no internet conection or timeout")
+            raise Exception("Query [pull_cubes] error, no internet connection or timeout")
         else:
             return cubes_dict
     
     def get_info_cube(self, workspace, cube):
+        """
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace and cube codes.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code to get the info from the query.
+        """
         cube_url = self.catalog_url+'workspaces/{}/cubes/{}'.format(workspace,cube)
         cube_resp = self.query_info(cube_url)
         if cube_resp is None:
-            raise Exception("Query [info_cube] error, no internet conection or timeout")
+            raise Exception("Query [info_cube] error, no internet connection or timeout")
         else:
             return cube_resp['caption'], cube_resp['description']
 
     def pull_cube_dims(self, workspace, cube):
+        """
+            Pulls all the dimensions available in the catalog for a given set of
+            workspace and cube codes.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code from which the query will pull the dimensions.
+        """
         cube_dims_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions'.format(workspace,cube)
         cube_dims_dict = self.query_listing(cube_dims_url)
         if cube_dims_dict is None:
-            raise Exception("Query [pull_cube_dims] error, no internet conection or timeout")
+            raise Exception("Query [pull_cube_dims] error, no internet connection or timeout")
         else:
             return cube_dims_dict
 
     def get_info_cube_dim(self, workspace, cube, dimension):
+        """
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace, cube and dimension codes.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code to which the dimension belongs.
+            dimension : String
+                Dimension code to get the info from the query.
+        """
         cube_dim_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}'.format(workspace,cube,dimension)
         cube_dim_resp = self.query_info(cube_dim_url)
         if cube_dim_resp is None:
-            raise Exception("Query [info_cube_dim] error, no internet conection or timeout")
+            raise Exception("Query [info_cube_dim] error, no internet connection or timeout")
         else:
             return cube_dim_resp['caption'], cube_dim_resp['description']
 
     def pull_cube_dim_membs(self, workspace, cube, dimension):
+        """
+            Pulls all the members available in the catalog for a given set of
+            workspace, cube and dimension codes.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code to which the dimension belongs.
+            dimension : String
+                Dimension code from which the query will pull the members.
+        """
         cube_dim_membs_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}/members'.format(workspace,cube,dimension)
         cube_dim_membs_dict = self.query_listing(cube_dim_membs_url)
         if cube_dim_membs_dict is None:
-            raise Exception("Query [pull_cube_dim_membs] error, no internet conection or timeout")
+            raise Exception("Query [pull_cube_dim_membs] error, no internet connection or timeout")
         else:
             return cube_dim_membs_dict
 
     def get_info_cube_dim_memb(self, workspace, cube, dimension, member):
+        """
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace, cube, dimension and member codes.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code to which the dimension belongs.
+            dimension : String
+                Dimension code to which the Member belongs.
+            member : String
+                Member code to get the info from the query.
+        """
         cube_dim_memb_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}/members/{}'.format(workspace,cube,dimension,member)
         cube_dim_memb_resp = self.query_info(cube_dim_memb_url)
         if cube_dim_memb_resp is None:
-            raise Exception("Query [info_cube_dim_memb] error, no internet conection or timeout")
+            raise Exception("Query [info_cube_dim_memb] error, no internet connection or timeout")
         else:
             return cube_dim_memb_resp['caption'], cube_dim_memb_resp['description']
 
     def pull_cube_meas(self, workspace, cube):
+        """
+            Pulls all the measures available in the catalog for a given set of
+            workspace and cube codes.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code from which the query will pull the measures.
+        """
         cube_meas_url = self.catalog_url+'workspaces/{}/cubes/{}/measures'.format(workspace,cube)
         cube_meas_dict = self.query_listing(cube_meas_url)
         if cube_meas_dict is None:
-            raise Exception("Query [pull_cube_meas] error, no internet conection or timeout")
+            raise Exception("Query [pull_cube_meas] error, no internet connection or timeout")
         else:
             return cube_meas_dict
 
     def get_info_cube_mea(self, workspace, cube, measure):
+        """
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace and cube codes.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code to which the dimension belongs.
+            measure : String
+                Measure code to get the info from the query.
+        """
         cube_meas_url = self.catalog_url+'workspaces/{}/cubes/{}/measures/{}'.format(workspace,cube,measure)
         cube_meas_resp = self.query_info(cube_meas_url)
         if cube_meas_resp is None:
-            raise Exception("Query [info_cube_meas] error, no internet conection or timeout")
+            raise Exception("Query [info_cube_meas] error, no internet connection or timeout")
         else:
             return cube_meas_resp['caption'], cube_meas_resp['description']
 
 
 class FileManager:
+    """
+        Class used to manage the files in the workspace of the plugin.
+
+        ...
+
+        Attributes
+        ----------
+        plugin_dir : String
+            Path of the plugin workspace in the system.
+        rasters_dir : String
+            Path of the rasters workspace in the system.
+
+        Methods
+        -------
+        check_path(path):
+            Checks if a path exists system.
+        create_path(path):
+            Creates a path in the system if it does not exist.
+        list_rasters(rasters_path):
+            Returns a list of raster files contained in a path of the system if
+            the path exist, otherwise it will create the path.
+        download_raster(rast_url):
+            Downloads a raster file into the systems memory from an URL.
+        save_token(APIToken):
+            Saves into the systems memory a file with the token associated to a
+            WaPOR account.
+        load_token():
+            Loads from the file in the systems memory the token associated to a
+            WaPOR account.
+        filterRasterFiles(files, raster_types):
+            Filters the raster files in the systems memory based on a type.
+    """
     def __init__(self, plugin_dir, rasters_path):
         self.plugin_dir = plugin_dir
-        self.rasters_dir = os.path.join(self.plugin_dir,rasters_path)
+        self.rasters_dir = os.path.join(self.plugin_dir, rasters_path)
 
     def check_path(self, path):
+        """
+            Checks if a path exists system.
+
+            ...
+            Parameters
+            ----------
+            path : String
+                Path to be checked.
+        """
         dir = os.path.join(self.plugin_dir,path)
         return os.path.exists(dir)
 
     def create_path(self, path):
+        """
+            Creates a path in the system if it does not exist.
+
+            ...
+            Parameters
+            ----------
+            path : String
+                Path to be created.
+        """
         dir = os.path.join(self.plugin_dir,path)
         if not os.path.exists(dir):
             os.mkdir(dir)
@@ -248,6 +513,17 @@ class FileManager:
             print('The path [{}] is already in the workspace'.format(path))
 
     def list_rasters(self, rasters_path):
+        """
+            Returns a list of raster files contained in a path of the system if
+            the path exist, otherwise it will create the path.
+
+            ...
+            Parameters
+            ----------
+            rasters_path : String
+                Path from where the raster files will be listed with respect to
+                the plugin absolute path.
+        """
         rasters_dir = os.path.join(self.plugin_dir,rasters_path)
         tif_files_dict = dict()
         if os.path.exists(rasters_dir):
@@ -261,6 +537,15 @@ class FileManager:
         return tif_files_dict
 
     def download_raster(self, rast_url):
+        """
+            Downloads a raster file into the systems memory from an URL.
+
+            ...
+            Parameters
+            ----------
+            rast_url : String
+                Download URL of the raster file.
+        """
         file_name = rast_url.rsplit('/', 1)[1]
         file_dir = os.path.join(self.rasters_dir, file_name)
         wget.download(rast_url, file_dir)
@@ -271,11 +556,25 @@ class FileManager:
                 break
 
     def save_token(self, APIToken):
+        """
+            Saves into the systems memory a file with the token associated to a
+            WaPOR account.
+
+            ...
+            Parameters
+            ----------
+            APIToken : String
+                Token associated to a WaPOR account.
+        """
         tokendir = os.path.join(self.plugin_dir,'apitoken.token')
         with open(tokendir, 'w') as tokenFile:
             tokenFile.write(APIToken)
 
     def load_token(self):
+        """
+            Loads from the file in the systems memory the token associated to a
+            WaPOR account.
+        """
         tokendir = os.path.join(self.plugin_dir,'apitoken.token')
         if os.path.isfile(tokendir):
             with open(tokendir, 'r') as tokenFile:
@@ -286,6 +585,17 @@ class FileManager:
             return None
 
     def filterRasterFiles(self, files, raster_types):
+        """
+            Filters the raster files in the systems memory based on a type.
+
+            ...
+            Parameters
+            ----------
+            files : List
+                Token associated to a WaPOR account.
+            raster_types : List
+                List of strings with the code of raster types to filter out.
+        """
         filteredRasterFiles = dict()
         for name, path in files.items():
             for raster_type in raster_types:
@@ -297,12 +607,41 @@ class FileManager:
         return filteredRasterFiles
 
 class CanvasManager:
+    """
+        Class used to manage the files in the workspace of the plugin.
+
+        ...
+
+        Attributes
+        ----------
+        plugin_dir : String
+            Path of the plugin workspace in the system.
+        rasters_dir : String
+            Path of the rasters workspace in the system.
+        iface : QgsInterface
+            Interface instance to manipulate the QGIS application at run time.
+
+        Methods
+        -------
+        check_path(path):
+            Checks if a path exists system.
+    """
     def __init__(self, interface, plugin_dir, rasters_path):
         self.iface = interface
         self.plugin_dir = plugin_dir
         self.rasters_dir = os.path.join(self.plugin_dir,rasters_path)
 
     def add_rast(self, raster_name):
+        """
+            Includes the raster given from memory into the canvas of QGIS.
+
+            ...
+            Parameters
+            ----------
+            raster_name : String
+                Name of the raster file in the systems memory to be included
+                in the canvas.
+        """
         raster_dir = os.path.join(self.rasters_dir,raster_name)
         if not self.iface.addRasterLayer(raster_dir,raster_name):
             print("Layer failed to load raster [{}]".format(raster_name))

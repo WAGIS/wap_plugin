@@ -39,9 +39,6 @@ from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
 from .utils.tools import CoordinatesSelectorTool
 
 # from PyQt5.QtGui import *
-import requests
-import json
-import wget
 import os  
 
 class WAPlugin:
