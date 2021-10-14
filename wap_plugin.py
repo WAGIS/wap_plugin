@@ -82,33 +82,32 @@ class WAPlugin:
         self.cwd = os.path.dirname(os.path.realpath(__file__))
         self.layer_folder_dir = os.path.join(self.cwd, "layers")
 
-        # Default Values
-        self.waterProductivityVar = "GBWP"
-        self.resolutionVar = "100m"  #"250m" or "100m" , maybe "30m" works for some area
-        self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
-        self.endSeasonVar = "2015-18"  # "YYYY-DK" (Dekad)
-        self.indicator_index = 0
-        self.indicator = "Equity"
+        ## Default Values
+        # self.waterProductivityVar = "GBWP"
+        # self.resolutionVar = "100m"  #"250m" or "100m" , maybe "30m" works for some area
+        # self.startSeasonVar = "2015-01"  # "YYYY-DK" (Dekad)
+        # self.endSeasonVar = "2015-18"  # "YYYY-DK" (Dekad)
+        # self.indicator_index = 0
+        # self.indicator = "Equity"
 
-        # Locations
-        self.locListContinental = ["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Canary Islands"
-            ,"Cape Verde","Central African Republic","Ceuta","Chad","Comoros","Côte d'Ivoire"
-            ,"Democratic Republic of the Congo","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia"
-            ,"Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya"
-            ,"Madagascar","Madeira","Malawi","Mali","Mauritania","Mauritius","Mayotte","Melilla"
-            ,"Morocco"  ,"Mozambique","Namibia","Niger","Nigeria"  ,"Republic of the Congo"
-            ,"Réunion","Rwanda","Saint Helena","São Tomé and Príncipe","Senegal","Seychelles"
-            ,"Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia"
-            ,"Uganda","Western Sahara","Zambia","Zimbabwe"]
+        # # Locations
+        # self.locListContinental = ["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Canary Islands"
+        #     ,"Cape Verde","Central African Republic","Ceuta","Chad","Comoros","Côte d'Ivoire"
+        #     ,"Democratic Republic of the Congo","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia"
+        #     ,"Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya"
+        #     ,"Madagascar","Madeira","Malawi","Mali","Mauritania","Mauritius","Mayotte","Melilla"
+        #     ,"Morocco"  ,"Mozambique","Namibia","Niger","Nigeria"  ,"Republic of the Congo"
+        #     ,"Réunion","Rwanda","Saint Helena","São Tomé and Príncipe","Senegal","Seychelles"
+        #     ,"Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia"
+        #     ,"Uganda","Western Sahara","Zambia","Zimbabwe"]
 
-        self.locListNational = ["Benin","Burundi","Egypt","Ghana","Iraq","Jordan","Kenya","Lebanon","Mali","Morocco"
-            ,"Mozambique","Niger","Palestine","Rwanda","South Sudan","Sudan","Syrian Arab Republic"
-            ,"Tunisia","Uganda","Yemen"]
+        # self.locListNational = ["Benin","Burundi","Egypt","Ghana","Iraq","Jordan","Kenya","Lebanon","Mali","Morocco"
+        #     ,"Mozambique","Niger","Palestine","Rwanda","South Sudan","Sudan","Syrian Arab Republic"
+        #     ,"Tunisia","Uganda","Yemen"]
 
-        self.locListSubNational = ["Awash, Ethiopia", "Bekaa, Lebanon", "Busia, Kenya", "Gezira, Sudan", "Koga, Ethiopia",
-                "Lamego, Mozambique", "Office du Niger, Mali", "Zankalon, Egypt"] 
+        # self.locListSubNational = ["Awash, Ethiopia", "Bekaa, Lebanon", "Busia, Kenya", "Gezira, Sudan", "Koga, Ethiopia",
+        #         "Lamego, Mozambique", "Office du Niger, Mali", "Zankalon, Egypt"] 
 
-        # MODIFICATIONS AFTER OOP
         self.rasters_path = "layers"
 
         self.api_manag = WaporAPIManager()
@@ -116,8 +115,6 @@ class WAPlugin:
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
         self.indic_calc = IndicatorCalculator(self.plugin_dir, self.rasters_path)
-
-
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -231,6 +228,10 @@ class WAPlugin:
             self.iface.removeToolBarIcon(action)
 
     def signin(self):
+        """
+            Calls the sign in function of the API manager and updates the UI
+            in response to the result.
+        """
         self.dlg.signinStateLabel.setText('Signing into your WaPOR profile . . .')
         connected = self.api_manag.signin(self.dlg.apiTokenTextBox.text())
 
@@ -247,10 +248,18 @@ class WAPlugin:
             self.dlg.progressLabel.setText ('Fail to connect to Wapor Database . . .')
 
     def saveToken(self):
+        """
+            Calls the save token function of the file manager and updates the UI.
+        """
         self.file_manag.save_token(self.dlg.apiTokenTextBox.text())
         self.dlg.signinStateLabel.setText('Token file saved in memory . . .')
 
     def loadToken(self):
+        """
+            Calls the load token function of the file manager, connects the 
+            plugin with the WaPOR database and updates the UI in response to the 
+            result.
+        """
         APIToken = self.file_manag.load_token()
 
         if APIToken is not None:
@@ -272,6 +281,10 @@ class WAPlugin:
             self.dlg.signinStateLabel.setText('No token file found in memory . . .')
 
     def listWorkspaces(self):
+        """
+            Calls the pull workspaces function of the API manager and updates 
+            the UI in response to the result.
+        """
         self.dlg.workspaceComboBox.clear()
         workspaces = self.api_manag.pull_workspaces()
         self.dlg.workspaceComboBox.addItems(workspaces.values())
@@ -281,11 +294,20 @@ class WAPlugin:
             self.dlg.workspaceComboBox.setCurrentIndex(index)
 
     def listRasterMemory(self):
+        """
+            Calls the list rasters function of the file manager and updates 
+            the UI in response to the result.
+        """
         self.tif_files = self.file_manag.list_rasters(self.rasters_path)
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
 
     def workspaceChange(self):
+        """
+            Detects changes on the workspace selection, calls the pull cubes
+            function of the API manager, filters the result leaving out the 
+            clipped cubes and updates the UI in response to the result.
+        """
         QApplication.processEvents()
         self.workspace = self.dlg.workspaceComboBox.currentText()
         self.cubes = self.api_manag.pull_cubes(self.workspace)
@@ -296,6 +318,10 @@ class WAPlugin:
         self.dlg.cubeComboBox.addItems(listCubes)
 
     def indicatorChange(self):
+        """
+            Detects changes on the indicator selection and updates the UI in 
+            response to the result.
+        """
         self.indicator_key = self.dlg.indicatorListComboBox.currentText()
         self.dlg.indicInfoLabel.setWordWrap(True)
         
@@ -338,8 +364,7 @@ class WAPlugin:
         else:
             self.dlg.Param3Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_3'])
             self.dlg.Param3TextBox.setEnabled(True)
-
-        
+  
 
         self.dlg.indicInfoLabel.setText(''.join(raster_info))
 
@@ -350,6 +375,11 @@ class WAPlugin:
 
 
     def cubeChange(self):
+        """
+            Detects changes on the cube selection, calls the pull dimensions and
+            measures functions of the API manager and updates the UI in response
+            to the result.
+        """
         try:
             QApplication.processEvents()
             self.cube = self.cubes[self.dlg.cubeComboBox.currentText()]
@@ -366,18 +396,31 @@ class WAPlugin:
             pass
 
     def measureChange(self):
+        """
+            Detects changes on the measure selection and updates the UI in 
+            response to the result.
+        """
         try:
             self.measure = self.measures[self.dlg.measureComboBox.currentText()]
         except (KeyError) as exception:
             pass
 
     def memberChange(self):
+        """
+            Detects changes on the member selection and updates the UI in 
+            response to the result.
+        """
         try:
             self.member = self.members[self.dlg.memberComboBox.currentText()]
         except (KeyError) as exception:
             pass
 
     def dimensionChange(self):
+        """
+            Detects changes on the dimension selection, calls the pull members
+            function of the API manager and updates the UI in response to the 
+            result.
+        """
         try:
             QApplication.processEvents()
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
@@ -388,7 +431,13 @@ class WAPlugin:
         except (KeyError) as exception:
                     pass
     
-    def downloadCropedRaster(self):
+    def downloadCroppedRaster(self):
+        """
+            Construct the parameters needed to download a cropped raster, the URL
+            and calls the query crop raster of the API manager and the download 
+            raster function of the file manager, then updates the UI in response
+            to the result.
+        """
         self.dlg.progressBar.setValue(20)
         self.dlg.progressLabel.setText ('Downloading Raster')
         
@@ -413,51 +462,46 @@ class WAPlugin:
         
         self.listRasterMemory()
 
-    def onStartDateChanged(self, qDate):
-        # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
-        self.startSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
-        print("Set Start Date: ", self.startSeasonVar)
+    # def onStartDateChanged(self, qDate):
+    #     # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
+    #     self.startSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
+    #     print("Set Start Date: ", self.startSeasonVar)
 
-    def onEndDateChanged(self, qDate):
-        # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
-        self.endSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
-        print("Set End Date: ", self.endSeasonVar)
+    # def onEndDateChanged(self, qDate):
+    #     # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
+    #     self.endSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
+    #     print("Set End Date: ", self.endSeasonVar)
 
     def loadRaster(self):
+        """
+            Calls the add raster function of the canvas manager.
+        """
         raster_name = self.dlg.rasterMemoryComboBox.currentText()
         self.canv_manag.add_rast(raster_name)
 
-    def refreshRasters(self):
-        indic_dir = os.path.join(self.layer_folder_dir, "indic")
-        self.raster1 = []
-        self.raster1_dir = []
-        for _, _, files in os.walk(indic_dir):
-            for name in files:
-                self.raster1_dir.append(os.path.join(indic_dir, name))
-            self.raster1 = list(files)
-        self.raster2 = self.raster1
-        self.raster2_dir = self.raster1_dir
-
-        self.dlg.raster1.clear()
-        self.dlg.raster2.clear()
-
-        self.dlg.raster1.addItems(self.raster1)
-        self.dlg.raster2.addItems(self.raster2)
-
     def selectCoordinatesTool(self):
+        """
+            Changes the active tool of Qgis to the coordinates selection tool 
+            and storages the previous tool.
+        """
         self.dlg.getEdgesButton.setEnabled(False)
         self.dlg.resetToolButton.setEnabled(True)
         self.prev_tool = self.iface.mapCanvas().mapTool()
-        self.coord_selc_tool.activate()
-        self.iface.mapCanvas().setMapTool(self.coord_selc_tool)
+        self.coord_select_tool.activate()
+        self.iface.mapCanvas().setMapTool(self.coord_select_tool)
     
     def savePolygon(self):
+        """
+            Closes the polygon generated by the coordinates selection tool, saves
+            its coordinates in a local list, records the active CRS reference,
+            restores the previous tool used in Qgis and  updates the UI in 
+            response to the resulting polygon.
+        """
         self.dlg.savePolygonButton.setEnabled(False)
-        self.queryCoordinates = self.coord_selc_tool.getCoordinatesBuffer()
+        self.queryCoordinates = self.coord_select_tool.getCoordinatesBuffer()
         self.queryCrs = self.getCrs()
-        print(self.queryCoordinates)
         print(self.queryCrs)
-        self.coord_selc_tool.deactivate()
+        self.coord_select_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
         if self.queryCoordinates:
             self.dlg.TestCanvasLabel.setText ('The polygon selected has {} edges'.format(len(self.queryCoordinates)-1))
@@ -466,29 +510,20 @@ class WAPlugin:
 
     def resetTool(self):
         """ 
-        1. Get Edges
-        2. Save Polygon
-        3. Reset
-
-        Initially:
-            2 and 3 are disabled
-        When 1 is clicked,
-        Once 1 is clicked, its disabled too. And 3 is enabled.
-        2 will be enabled only after getting three points. 
-
-        When 2 is clicked, 1 and 2 are disabled and 3 is enabled. 
-
-        When 3 is clicked, remove polygon and clear edges and 1 is enabled
-
-        Show Number of Edges selected. Info """
-        self.coord_selc_tool.reset()
+            Cleans the polygon and the CRS reference from the local memory and
+            updates the UI.
+        """
+        self.coord_select_tool.reset()
         self.queryCoordinates = None
         self.queryCrs = None
         self.dlg.TestCanvasLabel.setText ('Coordinates cleared, using default ones . . .')
         self.dlg.getEdgesButton.setEnabled(True)
         self.dlg.resetToolButton.setEnabled(False)
 
-    def calculateIndex(self):
+    def calculateIndicator(self):
+        """ 
+            Calculates the selected indicator.
+        """
         print('Calculating . . . ')
         
         param1_name = self.dlg.Param1ComboBox.currentText()
@@ -504,7 +539,6 @@ class WAPlugin:
             self.indic_calc.beneficial_fraction(param1_name, param2_name, output_name)
             self.canv_manag.add_rast(output_name)
         elif self.indicator_key == 'Adequacy':
-            # print("Reached Here")
             try:
                 param3_name = float(self.dlg.Param3TextBox.text())
             except ValueError:
@@ -525,6 +559,9 @@ class WAPlugin:
         # self.canv_manag.add_rast(output_name)
     
     def getCrs(self):
+        """
+            Returns the active CRS reference in Qgis.
+        """
         return self.iface.mapCanvas().mapSettings().destinationCrs().authid()
 
     def run(self):
@@ -540,7 +577,7 @@ class WAPlugin:
 
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
 
-            self.coord_selc_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
+            self.coord_select_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
                                                            self.dlg.TestCanvasLabel,
                                                            self.dlg.savePolygonButton)
 
@@ -555,7 +592,7 @@ class WAPlugin:
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
 
-            self.dlg.downloadButton.clicked.connect(self.downloadCropedRaster)
+            self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
 
@@ -568,8 +605,7 @@ class WAPlugin:
             # self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
-            self.dlg.calculateButton.clicked.connect(self.calculateIndex)
-            # self.dlg.tabWidget.currentChanged.connect(self.refreshRasters)
+            self.dlg.calculateButton.clicked.connect(self.calculateIndicator)
 
             self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)
             self.dlg.savePolygonButton.clicked.connect(self.savePolygon)
