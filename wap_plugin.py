@@ -23,7 +23,7 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QDate, QTime, QDateTime, Qt
 from qgis.PyQt.QtGui import QIcon 
-from qgis.PyQt.QtWidgets import QAction, QApplication
+from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer
@@ -33,13 +33,25 @@ from .resources import *
 # Import the code for the dialog
 from .wap_plugin_dialog import WAPluginDialog
 import os.path
-
-from .utils.managers import WaporAPIManager, FileManager, CanvasManager
-from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
-from .utils.tools import CoordinatesSelectorTool
-
-# from PyQt5.QtGui import *
 import os  
+
+try:
+    from .utils.managers import WaporAPIManager, FileManager, CanvasManager
+    from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
+    from .utils.tools import CoordinatesSelectorTool
+
+except ModuleNotFoundError as e:
+    print('Module [{}] required and not found please install it'.format(e.name))
+    QMessageBox.information(None, "Module import error", '''<html><head/><body>
+    <p>Module [<b>{}</b>] required and not found please install it. You can find
+     some instructions on how to do it with <b>OSGeo4W Shell</b> on our <a href=
+     "https://github.com/WAP-Plugin/wap_plugin"><span style=" text-decoration: 
+     underline; color: #0000ff;">GitHub Repository</span></a>.
+    <br>
+    <br>
+    Closing the plugin with System Exit . . .</p></body></html>'''.format(e.name))
+    quit()
+
 
 class WAPlugin:
     """QGIS Plugin Implementation."""
