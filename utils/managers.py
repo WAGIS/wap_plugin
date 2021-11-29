@@ -1,7 +1,8 @@
 import time
 import requests
 import os
-import wget
+# import wget
+import processing
 
 from .api_queries import crop_raster_query
 
@@ -548,7 +549,16 @@ class FileManager:
         """
         file_name = rast_url.rsplit('/', 1)[1]
         file_dir = os.path.join(self.rasters_dir, file_name)
-        wget.download(rast_url, file_dir)
+
+        # wget.download(rast_url, file_dir)
+        parameter_dictionary = {
+                                    'URL' : rast_url,
+                                    'OUTPUT' : file_dir
+                                }
+                                
+        processing.run("qgis:filedownloader", parameter_dictionary)
+
+
         while True:
             QApplication.processEvents()
             if os.path.isfile(file_dir):
