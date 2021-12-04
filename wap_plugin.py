@@ -462,7 +462,11 @@ class WAPlugin:
                                     "code": self.dimension,
                                     "values": [self.member]
                                 }]
-        params['coordinates'] = [self.queryCoordinates]
+        if self.dlg.useCanvasCoordCheckBox.checkState():
+            params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
+            self.queryCrs = self.getCrs()
+        else:
+            params['coordinates'] = [self.queryCoordinates]
         params['crs'] = self.queryCrs
 
         rast_url = self.api_manag.query_crop_raster(params)
@@ -532,6 +536,16 @@ class WAPlugin:
         self.dlg.getEdgesButton.setEnabled(True)
         self.dlg.resetToolButton.setEnabled(False)
 
+    def useCanvasCoord(self):
+        if self.dlg.useCanvasCoordCheckBox.checkState():
+            self.dlg.getEdgesButton.setEnabled(False)
+            self.dlg.savePolygonButton.setEnabled(False)
+            self.dlg.resetToolButton.setEnabled(False)
+        else:
+            self.dlg.getEdgesButton.setEnabled(True)
+            self.dlg.savePolygonButton.setEnabled(True)
+            self.dlg.resetToolButton.setEnabled(True)
+
     def calculateIndicator(self):
         """ 
             Calculates the selected indicator.
@@ -600,6 +614,8 @@ class WAPlugin:
             self.dlg.savePolygonButton.setEnabled(False)
             self.dlg.resetToolButton.setEnabled(False)
 
+            self.dlg.useCanvasCoordCheckBox.clicked.connect(self.useCanvasCoord)
+
             self.dlg.signinButton.clicked.connect(self.signin)
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
@@ -629,6 +645,7 @@ class WAPlugin:
 
             self.queryCoordinates = None
             self.queryCrs = None
+            self.dlg.useCanvasCoordCheckBox.setChecked(True)
 
         # show the dialog
         self.dlg.show()

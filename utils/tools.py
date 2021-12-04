@@ -150,3 +150,20 @@ class CoordinatesSelectorTool(QgsMapTool):
 
     def isEditTool(self):
         return True
+
+    def getCanvasScopeCoord(self):
+        canvScope = self.canvas.extent()
+        canvScopeCoord = list()
+
+        xmax = canvScope.xMaximum()
+        ymax = canvScope.yMaximum()
+        xmin = canvScope.xMinimum()
+        ymin = canvScope.yMinimum()
+
+        canvScopeCoord.append([xmin,ymin])
+        canvScopeCoord.append([xmax,ymin])
+        canvScopeCoord.append([xmax,ymax])
+        canvScopeCoord.append([xmin,ymax])
+        canvScopeCoord.append([xmin,ymin])
+
+        return canvScopeCoord
