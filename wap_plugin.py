@@ -322,12 +322,35 @@ class WAPlugin:
         """
         QApplication.processEvents()
         self.workspace = self.dlg.workspaceComboBox.currentText()
-        self.cubes = self.api_manag.pull_cubes(self.workspace)
+        self.cubes, timeOptions, countryOptions = self.api_manag.pull_cubes(self.workspace)
 
-        listCubes = [cube for cube in self.cubes.keys() if 'clipped' not in cube]
+        timeOptions.insert(0,'None')
+        countryOptions.insert(0,'None')
+
+        self.dlg.timeFilterComboBox.clear()
+        self.dlg.countryFilterComboBox.clear()
+        self.dlg.timeFilterComboBox.addItems(timeOptions)
+        self.dlg.countryFilterComboBox.addItems(countryOptions)
+
+    def updateCubesFiltered(self):
+        timeFilterValue = self.dlg.timeFilterComboBox.currentText()
+        countryFilterValue = self.dlg.countryFilterComboBox.currentText()
+
+        if self.dlg.workspaceComboBox.currentText() == 'WAPOR_2':
+            if timeFilterValue == 'None' and countryFilterValue == 'None':
+                filters = ['-', 'clipped', ')']
+                mode = 'neg'
+            else:
+                filters = [timeFilterValue, countryFilterValue]
+                mode = 'pos'
+            filteredCubes = self.api_manag.filter_cubes(self.cubes, filters, mode)
+            if not filteredCubes:
+                filteredCubes =['---']
+        else:
+            filteredCubes = self.cubes
 
         self.dlg.cubeComboBox.clear()
-        self.dlg.cubeComboBox.addItems(listCubes)
+        self.dlg.cubeComboBox.addItems(filteredCubes)
 
     def indicatorChange(self):
         """
@@ -376,7 +399,6 @@ class WAPlugin:
         else:
             self.dlg.Param3Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_3'])
             self.dlg.Param3TextBox.setEnabled(True)
-  
 
         self.dlg.indicInfoLabel.setText(''.join(raster_info))
 
@@ -402,8 +424,11 @@ class WAPlugin:
             self.dlg.measureComboBox.addItems(self.measures.keys())
             self.dlg.dimensionComboBox.clear()
             self.dlg.dimensionComboBox.addItems(self.dimensions.keys())
-
-            self.dlg.outputRasterCubeID.setText('_'+self.cube+'.tif')
+            if self.cube:
+                self.dlg.outputRasterCubeID.setText('_'+self.cube+'.tif')
+            else:
+                self.dlg.outputRasterCubeID.setText('---')
+                
         except (KeyError) as exception:
             pass
 
@@ -477,16 +502,6 @@ class WAPlugin:
         self.dlg.progressLabel.setText ('Raster Download Complete')
         
         self.listRasterMemory()
-
-    # def onStartDateChanged(self, qDate):
-    #     # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
-    #     self.startSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
-    #     print("Set Start Date: ", self.startSeasonVar)
-
-    # def onEndDateChanged(self, qDate):
-    #     # print('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
-    #     self.endSeasonVar = str(qDate.year()) + "-" + str(qDate.day())
-    #     print("Set End Date: ", self.endSeasonVar)
 
     def loadRaster(self):
         """
@@ -629,8 +644,9 @@ class WAPlugin:
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
             self.dlg.measureComboBox.currentIndexChanged.connect(self.measureChange)
-            # self.dlg.startDate.dateChanged.connect(self.onStartDateChanged)
-            # self.dlg.endDate.dateChanged.connect(self.onEndDateChanged)
+
+            self.dlg.timeFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
+            self.dlg.countryFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.calculateButton.clicked.connect(self.calculateIndicator)

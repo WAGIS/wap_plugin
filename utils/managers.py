@@ -289,12 +289,59 @@ class WaporAPIManager:
             workspace : String
                 Workspace code from which the query will pull the cubes.
         """
+        timeOptions = set()
+        countryOptions = set()
+
         cubes_url = self.catalog_url+'workspaces/{}/cubes'.format(workspace)
         cubes_dict = self.query_listing(cubes_url)
         if cubes_dict is None:
             raise Exception("Query [pull_cubes] error, no internet connection or timeout")
         else:
-            return cubes_dict
+            keys2remove = list()
+            for cube in cubes_dict.keys():
+                if 'clipped' in cube and workspace == 'WAPOR_2':
+                    keys2remove.append(cube)
+                if '-' in cube and workspace == 'WAPOR_2':
+                    temp = cube.split(" - ")
+                    timeOp = temp[-1].replace(')','')
+                    countryOp = temp[-2].split(", ")[-1]
+                    timeOptions.add(timeOp)
+                    countryOptions.add(countryOp)
+
+            for key in keys2remove:
+                cubes_dict.pop(key, None)
+            return cubes_dict, list(sorted(timeOptions)), list(sorted(countryOptions))
+    
+    def filter_cubes(self, unfilteredCubes, filters, mode):
+        filteredCubes = list()
+        while 'None' in filters:
+            filters.remove('None')
+        print(filters)
+        if mode == 'pos':
+            for cube in unfilteredCubes.keys():
+                addFlag = False
+                for filter_in in filters:
+                    if filter_in in cube:
+                        addFlag = True
+                    else:
+                        addFlag = False
+                        break
+                # for filter_out in ['clipped']:
+                #     if filter_out in cube:
+                #         addFlag = False
+                if addFlag:    
+                    filteredCubes.append(cube)
+                    
+        elif mode == 'neg':
+            for cube in unfilteredCubes.keys():
+                addFlag = True
+                for filter_out in filters:
+                    if filter_out in cube:
+                        addFlag = False
+                if addFlag:    
+                    filteredCubes.append(cube)
+                    
+        return filteredCubes
     
     def get_info_cube(self, workspace, cube):
         """
