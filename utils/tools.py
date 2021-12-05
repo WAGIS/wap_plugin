@@ -5,6 +5,7 @@ from qgis.PyQt.QtGui import QColor
 
 from shapely.geometry import Polygon
 
+
 class CoordinatesSelectorTool(QgsMapTool):   
     """
         Class used to define a tool to select coordinates from the canvas of QGIS.
