@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>551</width>
-    <height>628</height>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabMaganer">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -168,7 +168,7 @@
           <height>511</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="allBoxLayput" stretch="10,3,5">
+        <layout class="QVBoxLayout" name="allBoxLayput" stretch="13,4,6">
          <item>
           <widget class="QGroupBox" name="rasterSelectionBox">
            <property name="title">
@@ -180,10 +180,13 @@
               <x>10</x>
               <y>30</y>
               <width>461</width>
-              <height>246</height>
+              <height>250</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout">
                <item>
@@ -195,6 +198,30 @@
                </item>
                <item>
                 <widget class="QComboBox" name="workspaceComboBox"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_19">
+               <item>
+                <widget class="QLabel" name="timeFilter">
+                 <property name="text">
+                  <string>Time Filter:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="timeFilterComboBox"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="countryFilter">
+                 <property name="text">
+                  <string>Country Filter:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="countryFilterComboBox"/>
                </item>
               </layout>
              </item>
