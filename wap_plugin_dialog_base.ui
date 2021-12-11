@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
-    <height>623</height>
+    <width>556</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>20</x>
      <y>20</y>
      <width>511</width>
-     <height>591</height>
+     <height>621</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
@@ -165,10 +165,10 @@
           <x>10</x>
           <y>10</y>
           <width>477</width>
-          <height>511</height>
+          <height>541</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="allBoxLayput" stretch="13,4,6">
+        <layout class="QVBoxLayout" name="allBoxLayput" stretch="11,3,5">
          <item>
           <widget class="QGroupBox" name="rasterSelectionBox">
            <property name="title">
@@ -180,10 +180,10 @@
               <x>10</x>
               <y>30</y>
               <width>461</width>
-              <height>250</height>
+              <height>274</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
+            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>6</number>
              </property>
@@ -198,6 +198,20 @@
                </item>
                <item>
                 <widget class="QComboBox" name="workspaceComboBox"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_20">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Level Filter:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="levelFilterComboBox"/>
                </item>
               </layout>
              </item>
