@@ -1,7 +1,6 @@
 import time
 import requests
 import os
-# import wget
 import processing
 
 from .api_queries import crop_raster_query
@@ -291,6 +290,7 @@ class WaporAPIManager:
         """
         timeOptions = set()
         countryOptions = set()
+        levelOptions = set()
 
         cubes_url = self.catalog_url+'workspaces/{}/cubes'.format(workspace)
         cubes_dict = self.query_listing(cubes_url)
@@ -298,39 +298,51 @@ class WaporAPIManager:
             raise Exception("Query [pull_cubes] error, no internet connection or timeout")
         else:
             keys2remove = list()
-            for cube in cubes_dict.keys():
-                if 'clipped' in cube and workspace == 'WAPOR_2':
-                    keys2remove.append(cube)
-                if '-' in cube and workspace == 'WAPOR_2':
-                    temp = cube.split(" - ")
-                    timeOp = temp[-1].replace(')','')
-                    countryOp = temp[-2].split(", ")[-1]
-                    timeOptions.add(timeOp)
-                    countryOptions.add(countryOp)
+            for cube_key, cube_value in cubes_dict.items():
+                temp = cube_value.split("_")
+                cube_level = temp[0]
+                values_dict = {'id':cube_value,'time':None, 'country':None, 'level':cube_level}
+                levelOptions.add(cube_level)
 
+                # info =  self.get_info_cube(workspace, cube_value)
+                # print(json.dumps(info, indent=2))
+                # input()
+
+                if 'clipped' in cube_key and workspace == 'WAPOR_2':
+                    keys2remove.append(cube_key)
+                if '-' in cube_key and workspace == 'WAPOR_2':
+                    temp = cube_key.split(" - ")
+                    cube_time = temp[-1].replace(')','')
+                    cube_country = temp[-2].split(", ")[-1]
+                    values_dict['time'] = cube_time
+                    values_dict['country'] = cube_country
+                    timeOptions.add(cube_time)
+                    countryOptions.add(cube_country)
+                cubes_dict[cube_key] = values_dict
             for key in keys2remove:
                 cubes_dict.pop(key, None)
-            return cubes_dict, list(sorted(timeOptions)), list(sorted(countryOptions))
+            return cubes_dict, list(sorted(timeOptions)), list(sorted(countryOptions)), list(sorted(levelOptions))
     
     def filter_cubes(self, unfilteredCubes, filters, mode):
         filteredCubes = list()
-        while 'None' in filters:
-            filters.remove('None')
-        print(filters)
+
         if mode == 'pos':
-            for cube in unfilteredCubes.keys():
+            keys2remove = list()
+            for filter_key, filter_value in filters.items():
+                if filter_value == 'None':
+                    keys2remove.append(filter_key)
+            for key in keys2remove:
+                    filters.pop(key, None)
+            for cube_key, cube_dict in unfilteredCubes.items():
                 addFlag = False
-                for filter_in in filters:
-                    if filter_in in cube:
+                for filter_key, filter_value in filters.items():
+                    if filter_value == cube_dict[filter_key]:
                         addFlag = True
                     else:
                         addFlag = False
                         break
-                # for filter_out in ['clipped']:
-                #     if filter_out in cube:
-                #         addFlag = False
-                if addFlag:    
-                    filteredCubes.append(cube)
+                if addFlag:   
+                    filteredCubes.append(cube_key)
                     
         elif mode == 'neg':
             for cube in unfilteredCubes.keys():
