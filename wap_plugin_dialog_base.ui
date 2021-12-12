@@ -282,13 +282,19 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3,2,2">
+               <property name="sizeConstraint">
+                <enum>QLayout::SetDefaultConstraint</enum>
+               </property>
                <item>
                 <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>Output file name:                               </string>
+                  <string>Output file:</string>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <widget class="QgsFileWidget" name="mQgsFileWidget"/>
                </item>
                <item>
                 <widget class="QLineEdit" name="outputRasterName"/>
@@ -617,6 +623,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFileWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfilewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
