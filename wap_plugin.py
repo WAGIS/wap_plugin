@@ -496,7 +496,8 @@ class WAPlugin:
 
         rast_url = self.api_manag.query_crop_raster(params)
 
-        self.file_manag.download_raster(rast_url)
+        rast_directory = self.dlg.downloadFileExplorer.filePath()
+        self.file_manag.download_raster(rast_url, rast_directory)
         
         self.dlg.progressBar.setValue(100)
         self.dlg.progressLabel.setText ('Raster Download Complete')
@@ -594,10 +595,6 @@ class WAPlugin:
             self.canv_manag.add_rast(output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
-        
-        # self.canv_manag.add_rast(tbp_name)
-        # self.canv_manag.add_rast(aeti_name)
-        # self.canv_manag.add_rast(output_name)
     
     def getCrs(self):
         """
@@ -635,6 +632,7 @@ class WAPlugin:
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
 
+            self.dlg.downloadFileExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)

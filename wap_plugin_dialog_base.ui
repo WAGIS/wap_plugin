@@ -294,7 +294,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QgsFileWidget" name="fileExplorer"/>
+                <widget class="QgsFileWidget" name="downloadFileExplorer">
+                 <property name="storageMode">
+                  <enum>QgsFileWidget::GetDirectory</enum>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="QLineEdit" name="outputRasterName"/>

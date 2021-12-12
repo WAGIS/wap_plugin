@@ -584,7 +584,7 @@ class FileManager:
             self.create_path(rasters_path)
         return tif_files_dict
 
-    def download_raster(self, rast_url):
+    def download_raster(self, rast_url, rast_directory):
         """
             Downloads a raster file into the systems memory from an URL.
 
@@ -595,7 +595,7 @@ class FileManager:
                 Download URL of the raster file.
         """
         file_name = rast_url.rsplit('/', 1)[1]
-        file_dir = os.path.join(self.rasters_dir, file_name)
+        file_dir = os.path.join(rast_directory, file_name)
 
         # wget.download(rast_url, file_dir)
         parameter_dictionary = {
