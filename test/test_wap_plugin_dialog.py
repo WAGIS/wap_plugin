@@ -8,7 +8,7 @@
 
 """
 
-__author__ = 'waporteam17@gmail.com'
+__author__ = 'waplugin.qgis@gmail.com'
 __date__ = '2020-12-01'
 __copyright__ = 'Copyright 2020, WAP Team'
 
