@@ -9,7 +9,7 @@
         begin                : 2020-12-01
         git sha              : $Format:%H$
         copyright            : (C) 2020 by WAP Team
-        email                : waporteam17@gmail.com
+        email                : waplugin.qgis@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -45,7 +45,7 @@ except ModuleNotFoundError as e:
     QMessageBox.information(None, "Module import error", '''<html><head/><body>
     <p>Module [<b>{}</b>] required and not found please install it. You can find
      some instructions on how to do it with <b>OSGeo4W Shell</b> on our <a href=
-     "https://github.com/WAP-Plugin/wap_plugin"><span style=" text-decoration: 
+     "https://github.com/WAGIS/wap_plugin"><span style=" text-decoration: 
      underline; color: #0000ff;">GitHub Repository</span></a>.
     <br>
     <br>

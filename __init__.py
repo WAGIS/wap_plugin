@@ -8,7 +8,7 @@
                              -------------------
         begin                : 2020-12-01
         copyright            : (C) 2020 by WAP Team
-        email                : waporteam17@gmail.com
+        email                : waplugin.qgis@gmail.com
         git sha              : $Format:%H$
  ***************************************************************************/
 
