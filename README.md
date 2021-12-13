@@ -1,13 +1,13 @@
 # WAP Plugin: WAGIS Tools and Services
 
-<img src="https://github.com/fhfonsecaa/wap_plugin/blob/master/img/WaPlugin_LogoScale.png">
+<img src="img/WaPlugin_LogoScale.png">
 
 ## User Interface design
 ### Interface for downloading Rasters 
-<img src="https://github.com/fhfonsecaa/wap_plugin/blob/master/img/waporCatalog.JPG" width="400" height="400">
+<img src="img/waporCatalog.JPG" width="400" height="400">
 
 ### Interface for calculating Indicators
-<img src="https://github.com/fhfonsecaa/wap_plugin/blob/master/img/indicator.JPG" width="400" height="400">
+<img src="img/indicator.JPG" width="400" height="400">
 
 ## For contributors
 ### Requirements 
