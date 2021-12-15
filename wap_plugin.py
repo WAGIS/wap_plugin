@@ -310,7 +310,8 @@ class WAPlugin:
             Calls the list rasters function of the file manager and updates 
             the UI in response to the result.
         """
-        self.tif_files = self.file_manag.list_rasters(self.rasters_path)
+        rasterFolder = self.dlg.rasterFolderExplorer.filePath()
+        self.tif_files = self.file_manag.list_rasters(rasterFolder)
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
 
@@ -496,12 +497,18 @@ class WAPlugin:
 
         rast_url = self.api_manag.query_crop_raster(params)
 
-        rast_directory = self.dlg.downloadFileExplorer.filePath()
+        rast_directory = self.dlg.downloadFolderExplorer.filePath()
         self.file_manag.download_raster(rast_url, rast_directory)
         
         self.dlg.progressBar.setValue(100)
         self.dlg.progressLabel.setText ('Raster Download Complete')
         
+        self.listRasterMemory()
+
+    def updateRasterFolder(self):
+        rasterFolder = self.dlg.rasterFolderExplorer.filePath()
+        self.canv_manag.set_rasters_dir(rasterFolder)
+
         self.listRasterMemory()
 
     def loadRaster(self):
@@ -632,10 +639,15 @@ class WAPlugin:
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
 
-            self.dlg.downloadFileExplorer.setFilePath(self.layer_folder_dir)
+            self.dlg.rasterFolderExplorer.setFilePath(self.layer_folder_dir)
+            self.dlg.indicatorRasterFolderExplorer.setFilePath(self.layer_folder_dir)
+            self.dlg.downloadFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
+
+            self.dlg.rasterFolderExplorer.fileChanged.connect(self.updateRasterFolder)
+            # self.dlg.indicatorRasterFolderExplorer.fileChanged.connect(self.layer_folder_dir)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
