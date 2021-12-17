@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabMaganer">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -499,27 +499,6 @@
             <string>WaPOR Data</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,1">
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Rasters Folder</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QgsFileWidget" name="indicatorRasterFolderExplorer">
-                <property name="filter">
-                 <string/>
-                </property>
-                <property name="storageMode">
-                 <enum>QgsFileWidget::GetDirectory</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>

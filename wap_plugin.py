@@ -647,7 +647,6 @@ class WAPlugin:
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
 
             self.dlg.rasterFolderExplorer.fileChanged.connect(self.updateRasterFolder)
-            # self.dlg.indicatorRasterFolderExplorer.fileChanged.connect(self.layer_folder_dir)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
