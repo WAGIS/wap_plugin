@@ -322,35 +322,46 @@ class WAPlugin:
         """
         QApplication.processEvents()
         self.workspace = self.dlg.workspaceComboBox.currentText()
-        self.cubes, timeOptions, countryOptions = self.api_manag.pull_cubes(self.workspace)
+        self.cubes, timeOptions, countryOptions, levelOptions = self.api_manag.pull_cubes(self.workspace)
 
+        levelOptions.insert(0,'None')
         timeOptions.insert(0,'None')
         countryOptions.insert(0,'None')
 
+        self.dlg.levelFilterComboBox.clear()
+        self.dlg.levelFilterComboBox.addItems(levelOptions)
         self.dlg.timeFilterComboBox.clear()
         self.dlg.countryFilterComboBox.clear()
         self.dlg.timeFilterComboBox.addItems(timeOptions)
         self.dlg.countryFilterComboBox.addItems(countryOptions)
 
     def updateCubesFiltered(self):
+        levelFilterValue = self.dlg.levelFilterComboBox.currentText()
         timeFilterValue = self.dlg.timeFilterComboBox.currentText()
         countryFilterValue = self.dlg.countryFilterComboBox.currentText()
-
-        if self.dlg.workspaceComboBox.currentText() == 'WAPOR_2':
-            if timeFilterValue == 'None' and countryFilterValue == 'None':
-                filters = ['-', 'clipped', ')']
-                mode = 'neg'
+        if not self.first_start and \
+           not levelFilterValue  == '' and \
+           not timeFilterValue == '' and \
+           not countryFilterValue == '':
+            if self.dlg.workspaceComboBox.currentText() == 'WAPOR_2':
+                if timeFilterValue == 'None' and \
+                countryFilterValue == 'None' and \
+                levelFilterValue == 'None':
+                    filters = ['-', 'clipped', ')'] #Can I remove clipped???
+                    mode = 'neg'
+                else:
+                    filters = {'level':levelFilterValue,
+                            'time':timeFilterValue,
+                            'country':countryFilterValue}
+                    mode = 'pos'
+                filteredCubes = self.api_manag.filter_cubes(self.cubes, filters, mode)
+                if not filteredCubes:
+                    filteredCubes =['---']
             else:
-                filters = [timeFilterValue, countryFilterValue]
-                mode = 'pos'
-            filteredCubes = self.api_manag.filter_cubes(self.cubes, filters, mode)
-            if not filteredCubes:
-                filteredCubes =['---']
-        else:
-            filteredCubes = self.cubes
+                filteredCubes = self.cubes
 
-        self.dlg.cubeComboBox.clear()
-        self.dlg.cubeComboBox.addItems(filteredCubes)
+            self.dlg.cubeComboBox.clear()
+            self.dlg.cubeComboBox.addItems(filteredCubes)
 
     def indicatorChange(self):
         """
@@ -416,7 +427,7 @@ class WAPlugin:
         """
         try:
             QApplication.processEvents()
-            self.cube = self.cubes[self.dlg.cubeComboBox.currentText()]
+            self.cube = self.cubes[self.dlg.cubeComboBox.currentText()]['id']
             self.dimensions = self.api_manag.pull_cube_dims(self.workspace,self.cube)
             self.measures = self.api_manag.pull_cube_meas(self.workspace,self.cube)
 
@@ -645,6 +656,7 @@ class WAPlugin:
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
             self.dlg.measureComboBox.currentIndexChanged.connect(self.measureChange)
 
+            self.dlg.levelFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
             self.dlg.timeFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
             self.dlg.countryFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
 
