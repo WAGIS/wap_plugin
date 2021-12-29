@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabMaganer">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -296,11 +296,21 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3,2,2">
+               <property name="sizeConstraint">
+                <enum>QLayout::SetDefaultConstraint</enum>
+               </property>
                <item>
                 <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>Output file name:                               </string>
+                  <string>Output file:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QgsFileWidget" name="downloadFolderExplorer">
+                 <property name="storageMode">
+                  <enum>QgsFileWidget::GetDirectory</enum>
                  </property>
                 </widget>
                </item>
@@ -352,27 +362,33 @@
               <height>61</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="4,4,2,1">
+             <item>
+              <widget class="QgsFileWidget" name="rasterFolderExplorer">
+               <property name="filter">
+                <string/>
+               </property>
+               <property name="storageMode">
+                <enum>QgsFileWidget::GetDirectory</enum>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="QComboBox" name="rasterMemoryComboBox"/>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_13">
-               <item>
-                <widget class="QPushButton" name="loadRasterButton">
-                 <property name="text">
-                  <string>Load in canvas</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="RasterRefreshButton">
-                 <property name="text">
-                  <string>Refresh</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <widget class="QPushButton" name="loadRasterButton">
+               <property name="text">
+                <string>Load in canvas</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="RasterRefreshButton">
+               <property name="text">
+                <string>Refresh</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -631,6 +647,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFileWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfilewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

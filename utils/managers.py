@@ -572,7 +572,7 @@ class FileManager:
         else:
             print('The path [{}] is already in the workspace'.format(path))
 
-    def list_rasters(self, rasters_path):
+    def list_rasters(self, rasters_folder):
         """
             Returns a list of raster files contained in a path of the system if
             the path exist, otherwise it will create the path.
@@ -584,19 +584,18 @@ class FileManager:
                 Path from where the raster files will be listed with respect to
                 the plugin absolute path.
         """
-        rasters_dir = os.path.join(self.plugin_dir,rasters_path)
         tif_files_dict = dict()
-        if os.path.exists(rasters_dir):
-            for dirpath, _, fnames in os.walk(rasters_dir):
+        if os.path.exists(rasters_folder):
+            for dirpath, _, fnames in os.walk(rasters_folder):
                 for file in fnames:
                     if file.endswith(".tif"):
                         tif_files_dict[file] = os.path.join(dirpath, file)
-            print('Found {} layers in the workspace [{}]'.format(len(tif_files_dict),rasters_path))
+            print('Found {} layers in the workspace [{}]'.format(len(tif_files_dict),rasters_folder))
         else:
-            self.create_path(rasters_path)
+            self.create_path(rasters_folder)
         return tif_files_dict
 
-    def download_raster(self, rast_url):
+    def download_raster(self, rast_url, rast_directory):
         """
             Downloads a raster file into the systems memory from an URL.
 
@@ -607,7 +606,7 @@ class FileManager:
                 Download URL of the raster file.
         """
         file_name = rast_url.rsplit('/', 1)[1]
-        file_dir = os.path.join(self.rasters_dir, file_name)
+        file_dir = os.path.join(rast_directory, file_name)
 
         # wget.download(rast_url, file_dir)
         parameter_dictionary = {
@@ -717,6 +716,9 @@ class CanvasManager:
             return False
         return True
     
+    def set_rasters_dir(self, dir):
+        self.rasters_dir = dir
+
     def rm_rast(self, raster):
         raise NotImplementedError("Canvar Manager, Remove raster not implemented.")
 
