@@ -3,8 +3,7 @@ from qgis.core import QgsPointXY, QgsWkbTypes
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QColor 
 
-from shapely.geometry import Polygon
-
+from .geometry import isValid
 
 class CoordinatesSelectorTool(QgsMapTool):   
     """
@@ -134,12 +133,15 @@ class CoordinatesSelectorTool(QgsMapTool):
             is valid.
         """
         self.rubberBand.closePoints(True)
-        polygon = Polygon(self.polygonCoordinates)
-        if polygon.is_valid:
+        # polygon = Polygon(self.polygonCoordinates)
+        # if polygon.is_valid:
+        if isValid(self.polygonCoordinates):
+            print('Poligon validity check manually: ', True)
             self.label.setText('{} vertex sel.'.format(len(self.polygonCoordinates)))
             self.polygonCoordinates.append(self.polygonCoordinates[0])
             return self.polygonCoordinates
         else:
+            print('Poligon validity check manually: ', False)
             self.label.setText('Shape not valid')
             return None
         

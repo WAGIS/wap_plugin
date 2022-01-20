@@ -651,7 +651,6 @@ class WAPlugin:
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
 
             self.dlg.rasterFolderExplorer.setFilePath(self.layer_folder_dir)
-            self.dlg.indicatorRasterFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
