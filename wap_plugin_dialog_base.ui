@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabMaganer">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -415,6 +415,9 @@
                 <widget class="QCheckBox" name="useCanvasCoordCheckBox">
                  <property name="text">
                   <string>Use Canvas Scope</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
