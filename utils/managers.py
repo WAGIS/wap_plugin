@@ -100,7 +100,7 @@ class WaporAPIManager:
             # Do something
             print("The internet connection is down")
             QMessageBox.information(None, "No internet connection", '''<html><head/><body>
-            <p>To interact with the WAPOR database an stable internet connection
+            <p>To interact with the WAPOR database a stable internet connection
             is required, you can still use the offline features.</p></body></html>''')
             return False
 
