@@ -643,7 +643,7 @@ class WAPlugin:
             self.first_start = False
             self.dlg = WAPluginDialog()
             
-            self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
+            # self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.dlg.setFixedSize(self.dlg.size())
 
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
