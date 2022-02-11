@@ -526,7 +526,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QgsFileWidget" name="rasterFolderCalcExplorer"/>
+               <widget class="QgsFileWidget" name="rasterFolderCalcExplorer">
+                <property name="storageMode">
+                 <enum>QgsFileWidget::GetDirectory</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
