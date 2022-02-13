@@ -626,6 +626,33 @@ class WAPlugin:
         elif self.indicator_key == 'Relative Water Deficit':
             self.indic_calc.relative_water_deficit(param1_name, output_name)
             self.canv_manag.add_rast(output_name)
+        elif self.indicator_key == 'Overall Consumed Ratio':
+            try:
+                param3_name = float(self.dlg.Param3TextBox.text())
+            except ValueError:
+                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.dlg.Param3TextBox.setText('1.25')
+                param3_name = 1.25
+            self.indic_calc.overall_consumed_ratio(param1_name, param2_name, output_name, V_ws=param3_name)
+            self.canv_manag.add_rast(output_name)
+        elif self.indicator_key == 'Field Application Ratio (efficiency)':
+            try:
+                param3_name = float(self.dlg.Param3TextBox.text())
+            except ValueError:
+                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.dlg.Param3TextBox.setText('1.25')
+                param3_name = 1.25
+            self.indic_calc.field_application_ratio(param1_name, param2_name, output_name, V_wd=param3_name)
+            self.canv_manag.add_rast(output_name)
+        elif self.indicator_key == 'Depleted Fraction':
+            try:
+                param3_name = float(self.dlg.Param3TextBox.text())
+            except ValueError:
+                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.dlg.Param3TextBox.setText('1.25')
+                param3_name = 1.25
+            self.indic_calc.depleted_fraction(param1_name, param2_name, output_name, V_c=param3_name)
+            self.canv_manag.add_rast(output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
     
