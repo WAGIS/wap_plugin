@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>663</height>
+    <width>556</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabMaganer">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -172,7 +172,7 @@
          <item>
           <widget class="QGroupBox" name="rasterSelectionBox">
            <property name="title">
-            <string>Raster Download</string>
+            <string>Choose Raster</string>
            </property>
            <widget class="QWidget" name="layoutWidget_3">
             <property name="geometry">
@@ -301,7 +301,7 @@
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
                <item>
-                <widget class="QLabel" name="outputFileCatalogLabel">
+                <widget class="QLabel" name="label">
                  <property name="text">
                   <string>Output file:</string>
                  </property>
@@ -351,7 +351,7 @@
          <item>
           <widget class="QGroupBox" name="rasterLoadBox">
            <property name="title">
-            <string>Raster Load</string>
+            <string>Available Rasters</string>
            </property>
            <widget class="QWidget" name="layoutWidget_5">
             <property name="geometry">
@@ -397,7 +397,7 @@
          <item>
           <widget class="QGroupBox" name="coordinateSelectionBox">
            <property name="title">
-            <string>Coordinate Selection</string>
+            <string>Co-ordinate Selection</string>
            </property>
            <widget class="QWidget" name="layoutWidget_4">
             <property name="geometry">
@@ -483,7 +483,7 @@
           <height>511</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="4,4,3">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <widget class="QGroupBox" name="indicatorBox">
            <property name="title">
@@ -516,24 +516,6 @@
             <string>WaPOR Data</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,4">
-              <item>
-               <widget class="QLabel" name="rasterFolderCalculatorLabel">
-                <property name="text">
-                 <string>Rasters Folder</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QgsFileWidget" name="rasterFolderCalcExplorer">
-                <property name="storageMode">
-                 <enum>QgsFileWidget::GetDirectory</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>

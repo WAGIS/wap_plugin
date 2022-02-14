@@ -5,7 +5,7 @@ import processing
 
 from .api_queries import crop_raster_query
 
-from qgis.PyQt.QtWidgets import QApplication, QMessageBox
+from qgis.PyQt.QtWidgets import QApplication
 
 class WaporAPIManager:
     """
@@ -89,21 +89,6 @@ class WaporAPIManager:
 
         self.payload = {'overview':False,'paged':False}
         self.time_out = 5
-    
-    def checkInternet(self, url="http://www.google.com/", timeout = 3):
-        try:
-            requests.head(url, timeout=timeout)
-            # Do something
-            print('The internet connection is active')
-            return True
-        except requests.ConnectionError:
-            # Do something
-            print("The internet connection is down")
-            QMessageBox.information(None, "No internet connection", '''<html><head/><body>
-            <p>To interact with the WAPOR database a stable internet connection
-            is required, you can still use the offline features.</p></body></html>''')
-            return False
-
 
     def signin(self, APIToken):
         """
@@ -118,25 +103,24 @@ class WaporAPIManager:
         """       
         request_headers = {'X-GISMGR-API-KEY': APIToken}
 
-        if self.checkInternet():
-            resp = requests.post(
-                            self.sign_in_url,
-                            headers=request_headers)
+        resp = requests.post(
+                        self.sign_in_url,
+                        headers=request_headers)
 
-            print('Connecting to WaPOR Database . . .')
+        print('Connecting to WaPOR Database . . .')
 
-            resp_json = resp.json()
-            if resp_json['message']=='OK':
-                self.AccessToken=resp_json['response']['accessToken']
-                print('SUCCESS: Access granted')
-                print('Access expires in 3600s')
+        resp_json = resp.json()
+        if resp_json['message']=='OK':
+            self.AccessToken=resp_json['response']['accessToken']
+            print('SUCCESS: Access granted')
+            print('Access expires in 3600s')
 
-                self.lastConnection_time = time.time()
-                self.connected = True
-                self.APIToken = APIToken
-            else:
-                print('Failed to connect to Wapor Database . . .')
-                self.connected = False
+            self.lastConnection_time = time.time()
+            self.connected = True
+            self.APIToken = APIToken
+        else:
+            print('Fail to connect to Wapor Database . . .')
+            self.connected = False
 
         return self.connected
 
@@ -222,7 +206,7 @@ class WaporAPIManager:
 
             else:
                 #  TODO raise something
-                print('Failed to get job url')
+                print('Fail to get job url')
     
     def query_listing(self, url):
         """
@@ -272,9 +256,7 @@ class WaporAPIManager:
         workspaces_url = self.catalog_url+'workspaces'
         workspaces_dict = self.query_listing(workspaces_url)
         if workspaces_dict is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [pull_workspaces] error, no internet connection or timeout")
+            raise Exception("Query [pull_workspaces] error, no internet connection or timeout")
         else:
             return workspaces_dict
         
@@ -313,9 +295,7 @@ class WaporAPIManager:
         cubes_url = self.catalog_url+'workspaces/{}/cubes'.format(workspace)
         cubes_dict = self.query_listing(cubes_url)
         if cubes_dict is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [pull_cubes] error, no internet connection or timeout")
+            raise Exception("Query [pull_cubes] error, no internet connection or timeout")
         else:
             keys2remove = list()
             for cube_key, cube_value in cubes_dict.items():
@@ -391,9 +371,7 @@ class WaporAPIManager:
         cube_url = self.catalog_url+'workspaces/{}/cubes/{}'.format(workspace,cube)
         cube_resp = self.query_info(cube_url)
         if cube_resp is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [info_cube] error, no internet connection or timeout")
+            raise Exception("Query [info_cube] error, no internet connection or timeout")
         else:
             return cube_resp['caption'], cube_resp['description']
 
@@ -413,9 +391,7 @@ class WaporAPIManager:
         cube_dims_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions'.format(workspace,cube)
         cube_dims_dict = self.query_listing(cube_dims_url)
         if cube_dims_dict is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [pull_cube_dims] error, no internet connection or timeout")
+            raise Exception("Query [pull_cube_dims] error, no internet connection or timeout")
         else:
             return cube_dims_dict
 
@@ -437,9 +413,7 @@ class WaporAPIManager:
         cube_dim_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}'.format(workspace,cube,dimension)
         cube_dim_resp = self.query_info(cube_dim_url)
         if cube_dim_resp is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [info_cube_dim] error, no internet connection or timeout")
+            raise Exception("Query [info_cube_dim] error, no internet connection or timeout")
         else:
             return cube_dim_resp['caption'], cube_dim_resp['description']
 
@@ -461,9 +435,7 @@ class WaporAPIManager:
         cube_dim_membs_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}/members'.format(workspace,cube,dimension)
         cube_dim_membs_dict = self.query_listing(cube_dim_membs_url)
         if cube_dim_membs_dict is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [pull_cube_dim_membs] error, no internet connection or timeout")
+            raise Exception("Query [pull_cube_dim_membs] error, no internet connection or timeout")
         else:
             return cube_dim_membs_dict
 
@@ -487,9 +459,7 @@ class WaporAPIManager:
         cube_dim_memb_url = self.catalog_url+'workspaces/{}/cubes/{}/dimensions/{}/members/{}'.format(workspace,cube,dimension,member)
         cube_dim_memb_resp = self.query_info(cube_dim_memb_url)
         if cube_dim_memb_resp is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [info_cube_dim_memb] error, no internet connection or timeout")
+            raise Exception("Query [info_cube_dim_memb] error, no internet connection or timeout")
         else:
             return cube_dim_memb_resp['caption'], cube_dim_memb_resp['description']
 
@@ -509,9 +479,7 @@ class WaporAPIManager:
         cube_meas_url = self.catalog_url+'workspaces/{}/cubes/{}/measures'.format(workspace,cube)
         cube_meas_dict = self.query_listing(cube_meas_url)
         if cube_meas_dict is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [pull_cube_meas] error, no internet connection or timeout")
+            raise Exception("Query [pull_cube_meas] error, no internet connection or timeout")
         else:
             return cube_meas_dict
 
@@ -533,9 +501,7 @@ class WaporAPIManager:
         cube_meas_url = self.catalog_url+'workspaces/{}/cubes/{}/measures/{}'.format(workspace,cube,measure)
         cube_meas_resp = self.query_info(cube_meas_url)
         if cube_meas_resp is None:
-            if not self.checkInternet():
-                return {}
-                # raise Exception("Query [info_cube_meas] error, no internet connection or timeout")
+            raise Exception("Query [info_cube_meas] error, no internet connection or timeout")
         else:
             return cube_meas_resp['caption'], cube_meas_resp['description']
 
