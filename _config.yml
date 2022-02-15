@@ -1,4 +1,5 @@
 theme: jekyll-theme-leap-day
 title: WAPlugin
+site_url: https://github.com/WAGIS/wap_plugin
 description: Water Accounting and Productivity Plugin
 show_downloads: true
