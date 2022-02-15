@@ -515,6 +515,7 @@ class WAPlugin:
         self.dlg.progressLabel.setText ('Raster Download Complete')
         
         self.listRasterMemory()
+        self.indicatorChange()
 
     def updateRasterFolder(self):
         rasterFolder = self.dlg.rasterFolderExplorer.filePath()
@@ -611,9 +612,43 @@ class WAPlugin:
         elif self.indicator_key == 'Relative Water Deficit':
             self.indic_calc.relative_water_deficit(param1_name, output_name)
             self.canv_manag.add_rast(output_name)
+        elif self.indicator_key == 'Overall Consumed Ratio':
+            try:
+                param3_name = float(self.dlg.Param3TextBox.text())
+            except ValueError:
+                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.dlg.Param3TextBox.setText('1.25')
+                param3_name = 1.25
+            self.indic_calc.overall_consumed_ratio(param1_name, param2_name, output_name, V_ws=param3_name)
+            self.canv_manag.add_rast(output_name)
+        elif self.indicator_key == 'Field Application Ratio (efficiency)':
+            try:
+                param3_name = float(self.dlg.Param3TextBox.text())
+            except ValueError:
+                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.dlg.Param3TextBox.setText('1.25')
+                param3_name = 1.25
+            self.indic_calc.field_application_ratio(param1_name, param2_name, output_name, V_wd=param3_name)
+            self.canv_manag.add_rast(output_name)
+        elif self.indicator_key == 'Depleted Fraction':
+            try:
+                param3_name = float(self.dlg.Param3TextBox.text())
+            except ValueError:
+                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.dlg.Param3TextBox.setText('1.25')
+                param3_name = 1.25
+            self.indic_calc.depleted_fraction(param1_name, param2_name, output_name, V_c=param3_name)
+            self.canv_manag.add_rast(output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
-    
+
+    def tabChange(self):
+        """
+            Updates few things when a tab is changed.
+        """
+        if self.dlg.tabManager.currentIndex() == 2:
+            self.indicatorChange()
+
     def getCrs(self):
         """
             Returns the active CRS reference in Qgis.
@@ -669,6 +704,8 @@ class WAPlugin:
             self.dlg.countryFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
+            self.dlg.tabManager.currentChanged.connect(self.tabChange)
+
             self.dlg.calculateButton.clicked.connect(self.calculateIndicator)
 
             self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)

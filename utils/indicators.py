@@ -18,6 +18,36 @@ import os
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer
 
+"""
+    '<NAME_INDICATOR>' : {
+        'info' : '<FORMULA_TO_COMPUTE_THE_INDICATOR>',
+        'rasters' : { 
+            # Pairs code and name of the rasters used 
+            '<CODE_RASTER_1>' : '<NAME_RASTER_1>',
+            '<CODE_RASTER_2>' : '<NAME_RASTER_2>',
+            .
+            .
+            .
+            '<CODE_RASTER_N>' : '<NAME_RASTER_N>' 
+        },
+        'factors' : {
+            # Coeficients used in the formula, might or might not be provided
+            # by the user through the UI
+            'FACTOR_1' : 'DESCRIPTION_FACTOR_1',
+            'FACTOR_2' : 'DESCRIPTION_FACTOR_2',
+            .
+            .
+            .
+            'FACTOR_N' : 'DESCRIPTION_FACTOR_N'
+        },
+        'params' : {
+            # Parameters to be readed from the UI
+            'PARAM_1' : {'label':'AETI or PE', 'type': ['AETI','PE']},
+            'PARAM_2' : '',
+            'PARAM_3' : ''
+        }
+"""
+
 INDICATORS_INFO = {
                     'Equity' : {
                         'info' : 'equity = 0.1 * (sd_raster / mean_raster) * 100',
@@ -78,6 +108,51 @@ INDICATORS_INFO = {
                             'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
                             'PARAM_2' : '',
                             'PARAM_3' : ''
+                        }
+                    },
+                    'Overall Consumed Ratio' : {
+                        'info' : 'OCR = (AETI - PCP) / V_ws',
+                        'rasters' : {
+                            'AETI' : 'Actual Evapotranspiration and Interception',
+                            'PCP' : 'Precipitation'
+                        },
+                        'factors' : {
+                            'V_ws' : 'Volume of water supplied to command area in mm.'
+                        },
+                        'params' : {
+                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                            'PARAM_2' : {'label':'PCP Raster', 'type': ['PCP']},
+                            'PARAM_3' : 'V_ws'
+                        }
+                    },
+                    'Field Application Ratio (efficiency)' : {
+                        'info' : 'FAR = (AETI - PCP) / V_wd',
+                        'rasters' : {
+                            'AETI' : 'Actual Evapotranspiration and Interception',
+                            'PCP' : 'Precipitation'
+                        },
+                        'factors' : {
+                            'V_wd' : 'Volume of water delivered to field(s) in mm.'
+                        },
+                        'params' : {
+                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                            'PARAM_2' : {'label':'PCP Raster', 'type': ['PCP']},
+                            'PARAM_3' : 'V_wd'
+                        }
+                    },
+                    'Depleted Fraction' : {
+                        'info' : 'DF = 1 - AETI / (PCP + V_c)',
+                        'rasters' : {
+                            'AETI' : 'Actual Evapotranspiration and Interception',
+                            'PCP' : 'Precipitation'
+                        },
+                        'factors' : {
+                            'V_c' : 'Volume of water consumed in mm.'
+                        },
+                        'params' : {
+                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                            'PARAM_2' : {'label':'PCP Raster', 'type': ['PCP']},
+                            'PARAM_3' : 'V_c'
                         }
                     }
                   }
@@ -266,6 +341,157 @@ class IndicatorCalculator:
                                     ras_atei.height(),
                                     entries)
         print(calc.processCalculation())
+
+    def overall_consumed_ratio(self, aeti_dir, pcp_dir, output_name, V_ws):
+        """
+        Overall consumed ratio is computed from the formula:
+        --- OCR = 1 - (AETI -PCP)/ V_ws
+        --- Resolution: Continental
+        where:
+            -- AETI - (raster) - Actual Evapotranspiration and Interception 
+                --- Raster Types: AETI (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+            -- PCP - (raster) - Precipitation 
+                --- Raster Types: PCP (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+            -- V_ws - (real number) - Volume of water supplied to command area 
+                --- User input -in mm (1mm=1l/m² or 1mm=10m³/ha) 
+
+        Output:
+            --- OCR - Raster
+
+        """
+        ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
+        ras_pcp_dir = os.path.join(self.rasters_dir, pcp_dir)
+        output_dir = os.path.join(self.rasters_dir, output_name)
+
+        ras_atei = QgsRasterLayer(ras_atei_dir)
+        ras_pcp = QgsRasterLayer(ras_pcp_dir)
+
+        entries = []
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@1'
+        ras.raster = ras_atei
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@2'
+        ras.raster = ras_pcp
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_ws)),
+                                    output_dir,
+                                    'GTiff',
+                                    ras_atei.extent(),
+                                    ras_atei.width(),
+                                    ras_atei.height(),
+                                    entries)
+        print(calc.processCalculation())
+
+    def field_application_ratio(self, aeti_dir, pcp_dir, output_name, V_wd):
+        """
+        Field appliation ratio is computed from the formula:
+        --- FAR = 1 - (AETI -PCP)/Vwd
+        --- Resolution: Continental
+        where:
+            -- AETI - (raster) - Actual Evapotranspiration and Interception 
+                --- Raster Types: AETI (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+            -- PCP - (raster) - Precipitation 
+                --- Raster Types: PCP (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+            -- Vwd - (real number) - Volume of water delivered to field(s)
+                --- User input -in mm (1mm=1l/m² or 1mm=10m³/ha) 
+
+        --- Units: decimal or percentage(*100)
+
+        Output:
+        --- FAR - Raster
+        """
+        ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
+        ras_pcp_dir = os.path.join(self.rasters_dir, pcp_dir)
+        output_dir = os.path.join(self.rasters_dir, output_name)
+
+        ras_atei = QgsRasterLayer(ras_atei_dir)
+        ras_pcp = QgsRasterLayer(ras_pcp_dir)
+
+        entries = []
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@1'
+        ras.raster = ras_atei
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@2'
+        ras.raster = ras_pcp
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_wd)),
+                                    output_dir,
+                                    'GTiff',
+                                    ras_atei.extent(),
+                                    ras_atei.width(),
+                                    ras_atei.height(),
+                                    entries)
+        print(calc.processCalculation())
+
+
+    def depleted_fraction(self, aeti_dir, pcp_dir, output_name, V_c):
+        """
+        Depleted fraction is computed from the formula:
+        --- DF = 1 - AETI /(PCP + Vc)
+        --- Resolution: Continental
+        where:
+            -- AETI - (raster) - Actual Evapotranspiration and Interception 
+                --- Raster Types: AETI (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+            -- PCP - (raster) - Precipitation 
+                --- Raster Types: PCP (annual, monthly, dekadal)
+                --- Conversion Factor: 0.1
+            -- Vc - (real number) - Volume of water consumed
+                --- User input -in mm (1mm=1l/m² or 1mm=10m³/ha) 
+        
+        --- Units: decimal or percentage(*100)
+
+        Output:
+        --- DF - Raster
+        """
+        ras_atei_dir = os.path.join(self.rasters_dir, aeti_dir)
+        ras_pcp_dir = os.path.join(self.rasters_dir, pcp_dir)
+        output_dir = os.path.join(self.rasters_dir, output_name)
+
+        ras_atei = QgsRasterLayer(ras_atei_dir)
+        ras_pcp = QgsRasterLayer(ras_pcp_dir)
+
+        entries = []
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@1'
+        ras.raster = ras_atei
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        ras = QgsRasterCalculatorEntry()
+        ras.ref = 'ras@2'
+        ras.raster = ras_pcp
+        ras.bandNumber = 1
+        entries.append(ras)
+
+        calc = QgsRasterCalculator('1.0 - ras@1 / (ras@2 + {})'.format(str(V_c)),
+                                    output_dir,
+                                    'GTiff',
+                                    ras_atei.extent(),
+                                    ras_atei.width(),
+                                    ras_atei.height(),
+                                    entries)
+        print(calc.processCalculation())
+
 
     def crop_yield(self):
         raise NotImplementedError("Indicator: 'Crop Yield' not implemented yet.")
