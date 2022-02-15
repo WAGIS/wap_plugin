@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>672</height>
+    <width>556</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -172,7 +172,7 @@
          <item>
           <widget class="QGroupBox" name="rasterSelectionBox">
            <property name="title">
-            <string>Raster Download</string>
+            <string>Choose Raster</string>
            </property>
            <widget class="QWidget" name="layoutWidget_3">
             <property name="geometry">
@@ -291,19 +291,86 @@
                 </widget>
                </item>
                <item>
+                <widget class="QComboBox" name="yearFilterComboBox"/>
+               </item>
+               <item>
+                <widget class="QComboBox" name="monthFilterComboBox">
+                 <item>
+                  <property name="text">
+                   <string>01</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>02</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>03</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>04</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>05</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>06</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>07</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>08</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>09</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>11</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>12</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
                 <widget class="QComboBox" name="memberComboBox"/>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3,2,2">
+              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3,0,2,2">
                <property name="sizeConstraint">
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
                <item>
-                <widget class="QLabel" name="outputFileCatalogLabel">
+                <widget class="QLabel" name="outputPathCatalogLabel">
                  <property name="text">
-                  <string>Output file:</string>
+                  <string>Output path:</string>
                  </property>
                 </widget>
                </item>
@@ -311,6 +378,13 @@
                 <widget class="QgsFileWidget" name="downloadFolderExplorer">
                  <property name="storageMode">
                   <enum>QgsFileWidget::GetDirectory</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="outputNameCatalogLabel">
+                 <property name="text">
+                  <string>Name:</string>
                  </property>
                 </widget>
                </item>
@@ -327,18 +401,11 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,3">
+              <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1">
                <item>
                 <widget class="QPushButton" name="downloadButton">
                  <property name="text">
                   <string>Download</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="downloadLabel">
-                 <property name="text">
-                  <string>Nothing in memory</string>
                  </property>
                 </widget>
                </item>
@@ -351,7 +418,7 @@
          <item>
           <widget class="QGroupBox" name="rasterLoadBox">
            <property name="title">
-            <string>Raster Load</string>
+            <string>Available Rasters</string>
            </property>
            <widget class="QWidget" name="layoutWidget_5">
             <property name="geometry">
@@ -397,7 +464,7 @@
          <item>
           <widget class="QGroupBox" name="coordinateSelectionBox">
            <property name="title">
-            <string>Coordinate Selection</string>
+            <string>Co-ordinate Selection</string>
            </property>
            <widget class="QWidget" name="layoutWidget_4">
             <property name="geometry">
@@ -414,7 +481,7 @@
                <item>
                 <widget class="QCheckBox" name="useCanvasCoordCheckBox">
                  <property name="text">
-                  <string>Use Canvas Scope</string>
+                  <string>Use Canvas Extend</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -483,7 +550,7 @@
           <height>511</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="4,4,3">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <widget class="QGroupBox" name="indicatorBox">
            <property name="title">
@@ -516,24 +583,6 @@
             <string>WaPOR Data</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,4">
-              <item>
-               <widget class="QLabel" name="rasterFolderCalculatorLabel">
-                <property name="text">
-                 <string>Rasters Folder</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QgsFileWidget" name="rasterFolderCalcExplorer">
-                <property name="storageMode">
-                 <enum>QgsFileWidget::GetDirectory</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>
