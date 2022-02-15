@@ -1,4 +1,5 @@
 ## WAPlugin
+<img src="https://github.com/WAGIS/wap_plugin/blob/master/img/WaPlugin_Logo.png" width="256">
 
 You can use the [editor on GitHub](https://github.com/WAGIS/wap_plugin/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
 
