@@ -1,1 +1,4 @@
 theme: jekyll-theme-leap-day
+title: WAPlugin
+description: Water Accounting and Productivity Plugin
+show_downloads: true
