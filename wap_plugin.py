@@ -34,7 +34,7 @@ from .resources import *
 from .wap_plugin_dialog import WAPluginDialog
 import os.path
 import os  
-
+from itertools import compress
 try:
     from .utils.managers import WaporAPIManager, FileManager, CanvasManager
     from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
@@ -127,6 +127,8 @@ class WAPlugin:
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
         self.indic_calc = IndicatorCalculator(self.plugin_dir, self.rasters_path)
+
+        self.years_available = list() 
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -456,13 +458,28 @@ class WAPlugin:
 
     def memberChange(self):
         """
-            Detects changes on the member selection and updates the UI in 
-            response to the result.
+            Detects changes on the member selection and storages it in memory.
         """
         try:
             self.member = self.members[self.dlg.memberComboBox.currentText()]
         except (KeyError) as exception:
             pass
+    
+    def getYearsAvailable(self, members_keys):
+        years = set([key.split(' ')[0].split('-')[0] for key in members_keys])
+        self.years_available = sorted(years)
+        self.dlg.yearFilterComboBox.clear()
+        self.dlg.yearFilterComboBox.addItems(self.years_available)
+
+    def updateMembersFiltered(self):
+        members_keys = self.members.keys()
+        
+        year = self.dlg.yearFilterComboBox.currentText()
+        month = self.dlg.monthFilterComboBox.currentText()
+        bool_list = [year in key and '-'+month in key for key in list(members_keys)]
+
+        self.dlg.memberComboBox.clear()
+        self.dlg.memberComboBox.addItems(list(compress(members_keys, bool_list)))
 
     def dimensionChange(self):
         """
@@ -474,9 +491,29 @@ class WAPlugin:
             QApplication.processEvents()
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
             self.members = self.api_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
+            members_keys = self.members.keys()
 
-            self.dlg.memberComboBox.clear()
-            self.dlg.memberComboBox.addItems(self.members.keys())
+            if self.dlg.timeFilterComboBox.currentText() == 'Dekadal':
+                if len(self.years_available) == 0:
+                    self.getYearsAvailable(members_keys)
+                self.updateMembersFiltered()
+                self.dlg.yearFilterComboBox.show()
+                self.dlg.monthFilterComboBox.show()
+                self.dlg.memberComboBox.show()
+            elif self.dlg.timeFilterComboBox.currentText() == 'Monthly':
+                if len(self.years_available) == 0:
+                    self.getYearsAvailable(members_keys)
+                self.updateMembersFiltered()
+                self.dlg.yearFilterComboBox.show()
+                self.dlg.monthFilterComboBox.show()
+                self.dlg.memberComboBox.hide()
+            else:
+                self.dlg.yearFilterComboBox.hide()
+                self.dlg.monthFilterComboBox.hide()
+                self.dlg.memberComboBox.show()
+
+                self.dlg.memberComboBox.clear()
+                self.dlg.memberComboBox.addItems(members_keys)
         except (KeyError) as exception:
                     pass
     
@@ -702,6 +739,9 @@ class WAPlugin:
             self.dlg.levelFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
             self.dlg.timeFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
             self.dlg.countryFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
+
+            self.dlg.yearFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
+            self.dlg.monthFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.tabManager.currentChanged.connect(self.tabChange)
