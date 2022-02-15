@@ -111,18 +111,14 @@ class WaporAPIManager:
         request_headers = {'X-GISMGR-API-KEY': APIToken}
 
         try:
-            resp = requests.post(
-                            self.sign_in_url,
-                            headers=request_headers)
+            resp = requests.post(self.sign_in_url, headers=request_headers)
+            print('Connecting to WaPOR Database . . .')
 
-        print('Connecting to WaPOR Database . . .')
-
-        resp_json = resp.json()
-        if resp_json['message']=='OK':
-            self.AccessToken=resp_json['response']['accessToken']
-            print('SUCCESS: Access granted')
-            print('Access expires in 3600s')
-
+            resp_json = resp.json()
+            if resp_json['message'] == 'OK':
+                self.AccessToken=resp_json['response']['accessToken']
+                print('SUCCESS: Access granted')
+                print('Access expires in 3600s')
                 self.lastConnection_time = time.time()
                 self.connected = True
                 self.APIToken = APIToken
@@ -130,7 +126,7 @@ class WaporAPIManager:
                 print('Failed to connect to Wapor Database . . .')
                 self.connected = False
         except requests.exceptions.ConnectionError:
-                self.showInternetMsg()
+            self.showInternetMsg()
 
         return self.connected
 
