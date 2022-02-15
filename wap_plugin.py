@@ -506,18 +506,21 @@ class WAPlugin:
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.updateMembersFiltered()
-                self.dlg.yearFilterComboBox.setEnabled(True)
-                self.dlg.monthFilterComboBox.setEnabled(True)
+                self.dlg.yearFilterComboBox.show()
+                self.dlg.monthFilterComboBox.show()
+                self.dlg.memberComboBox.show()
             elif self.dlg.timeFilterComboBox.currentText() == 'Monthly':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.updateMembersFiltered()
-                self.dlg.yearFilterComboBox.setEnabled(True)
-                self.dlg.monthFilterComboBox.setEnabled(True)
+                self.dlg.yearFilterComboBox.show()
+                self.dlg.monthFilterComboBox.show()
+                self.dlg.memberComboBox.hide()
             else:
-                self.dlg.yearFilterComboBox.setEnabled(False)
-                self.dlg.monthFilterComboBox.setEnabled(False)
-                
+                self.dlg.yearFilterComboBox.hide()
+                self.dlg.monthFilterComboBox.hide()
+                self.dlg.memberComboBox.show()
+
                 self.dlg.memberComboBox.clear()
                 self.dlg.memberComboBox.addItems(members_keys)
         except (KeyError) as exception:
@@ -692,9 +695,6 @@ class WAPlugin:
             
             self.dlg.savePolygonButton.setEnabled(False)
             self.dlg.resetToolButton.setEnabled(False)
-
-            self.dlg.yearFilterComboBox.setEnabled(False)
-            self.dlg.monthFilterComboBox.setEnabled(False)
 
             self.dlg.useCanvasCoordCheckBox.clicked.connect(self.useCanvasCoord)
 
