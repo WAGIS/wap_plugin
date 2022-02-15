@@ -524,6 +524,7 @@ class WAPlugin:
         self.dlg.progressLabel.setText ('Raster Download Complete')
         
         self.listRasterMemory()
+        self.indicatorChange()
 
     def updateRasterFolder(self):
         rasterFolder = self.dlg.rasterFolderExplorer.filePath()
@@ -655,7 +656,14 @@ class WAPlugin:
             self.canv_manag.add_rast(output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
-    
+
+    def tabChange(self):
+        """
+            Updates few things when a tab is changed.
+        """
+        if self.dlg.tabManager.currentIndex() == 2:
+            self.indicatorChange()
+
     def getCrs(self):
         """
             Returns the active CRS reference in Qgis.
@@ -713,6 +721,8 @@ class WAPlugin:
             self.dlg.countryFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
+            self.dlg.tabManager.currentChanged.connect(self.tabChange)
+
             self.dlg.calculateButton.clicked.connect(self.calculateIndicator)
 
             self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)

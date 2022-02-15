@@ -24,7 +24,7 @@
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
     <item>
-     <widget class="QTabWidget" name="tabMaganer">
+     <widget class="QTabWidget" name="tabManager">
       <property name="currentIndex">
        <number>0</number>
       </property>
