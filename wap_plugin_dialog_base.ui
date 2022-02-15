@@ -24,7 +24,7 @@
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
     <item>
-     <widget class="QTabWidget" name="tabMaganer">
+     <widget class="QTabWidget" name="tabManager">
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -363,14 +363,14 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3,2,2">
+              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3,0,2,2">
                <property name="sizeConstraint">
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
                <item>
-                <widget class="QLabel" name="outputFileCatalogLabel">
+                <widget class="QLabel" name="outputPathCatalogLabel">
                  <property name="text">
-                  <string>Output file:</string>
+                  <string>Output path:</string>
                  </property>
                 </widget>
                </item>
@@ -378,6 +378,13 @@
                 <widget class="QgsFileWidget" name="downloadFolderExplorer">
                  <property name="storageMode">
                   <enum>QgsFileWidget::GetDirectory</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="outputNameCatalogLabel">
+                 <property name="text">
+                  <string>Name:</string>
                  </property>
                 </widget>
                </item>
@@ -394,18 +401,11 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,3">
+              <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1">
                <item>
                 <widget class="QPushButton" name="downloadButton">
                  <property name="text">
                   <string>Download</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="downloadLabel">
-                 <property name="text">
-                  <string>Nothing in memory</string>
                  </property>
                 </widget>
                </item>
@@ -481,7 +481,7 @@
                <item>
                 <widget class="QCheckBox" name="useCanvasCoordCheckBox">
                  <property name="text">
-                  <string>Use Canvas Scope</string>
+                  <string>Use Canvas Extend</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
