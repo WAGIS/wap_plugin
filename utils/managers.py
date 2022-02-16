@@ -5,7 +5,7 @@ import processing
 
 from .api_queries import crop_raster_query
 
-from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
 class WaporAPIManager:
     """
@@ -320,20 +320,26 @@ class WaporAPIManager:
                 # info =  self.get_info_cube(workspace, cube_value)
                 # print(json.dumps(info, indent=2))
                 # input()
+                if workspace == 'WAPOR_2':
+                    if 'clipped' in cube_key:
+                        keys2remove.append(cube_key)
+                    if '-' in cube_key:
+                        temp = cube_key.split(" - ")
+                        cube_time = temp[-1].replace(')','')
+                        cube_country = temp[-2].split(", ")[-1]
+                        values_dict['time'] = cube_time
+                        values_dict['country'] = cube_country
+                        timeOptions.add(cube_time)
+                        countryOptions.add(cube_country)
 
-                if 'clipped' in cube_key and workspace == 'WAPOR_2':
-                    keys2remove.append(cube_key)
-                if '-' in cube_key and workspace == 'WAPOR_2':
-                    temp = cube_key.split(" - ")
-                    cube_time = temp[-1].replace(')','')
-                    cube_country = temp[-2].split(", ")[-1]
-                    values_dict['time'] = cube_time
-                    values_dict['country'] = cube_country
-                    timeOptions.add(cube_time)
-                    countryOptions.add(cube_country)
+                    if cube_level == 'L1' or cube_level == 'L2':
+                        values_dict['time'] = cube_key.split(" (")[-1].split(")")[0]
                 cubes_dict[cube_key] = values_dict
+
+
             for key in keys2remove:
                 cubes_dict.pop(key, None)
+
             return cubes_dict, list(sorted(timeOptions)), list(sorted(countryOptions)), list(sorted(levelOptions))
     
     def filter_cubes(self, unfilteredCubes, filters, mode):
