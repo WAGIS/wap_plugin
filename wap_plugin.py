@@ -316,6 +316,15 @@ class WAPlugin:
         self.tif_files = self.file_manag.list_rasters(rasterFolder)
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
+    
+    def listRasterCalcMemory(self):
+        """
+            Calls the list rasters function of the file manager to get the rasters
+            for the indicator calculator.
+        """
+        rasterFolderCalc = self.dlg.rasterFolderCalcExplorer.filePath()
+        self.tif_calc_files = self.file_manag.list_rasters(rasterFolderCalc)
+
 
     def workspaceChange(self):
         """
@@ -384,7 +393,7 @@ class WAPlugin:
                             for factor in INDICATORS_INFO[self.indicator_key]['factors']])
         
         """ Raster Files Filtered Update """
-        self.listRasterMemory()
+        self.listRasterCalcMemory()
 
         """ Parameters Update """
         if INDICATORS_INFO[self.indicator_key]['params']['PARAM_1'] == '':
@@ -392,7 +401,7 @@ class WAPlugin:
             self.dlg.Param1ComboBox.setEnabled(False)
         else:
             self.dlg.Param1Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_1']['label'])
-            filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_files, INDICATORS_INFO[self.indicator_key]['params']['PARAM_1']['type'])
+            filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_calc_files, INDICATORS_INFO[self.indicator_key]['params']['PARAM_1']['type'])
             self.dlg.Param1ComboBox.clear()
             self.dlg.Param1ComboBox.addItems(filteredRasterFiles.keys())
             self.dlg.Param1ComboBox.setEnabled(True)
@@ -402,7 +411,7 @@ class WAPlugin:
             self.dlg.Param2ComboBox.setEnabled(False)
         else:
             self.dlg.Param2Label.setText(INDICATORS_INFO[self.indicator_key]['params']['PARAM_2']['label'])
-            filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_files, INDICATORS_INFO[self.indicator_key]['params']['PARAM_2']['type'])
+            filteredRasterFiles = self.file_manag.filterRasterFiles(self.tif_calc_files, INDICATORS_INFO[self.indicator_key]['params']['PARAM_2']['type'])
             self.dlg.Param2ComboBox.clear()
             self.dlg.Param2ComboBox.addItems(filteredRasterFiles.keys())
             self.dlg.Param2ComboBox.setEnabled(True)
@@ -497,21 +506,18 @@ class WAPlugin:
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.updateMembersFiltered()
-                self.dlg.yearFilterComboBox.show()
-                self.dlg.monthFilterComboBox.show()
-                self.dlg.memberComboBox.show()
+                self.dlg.yearFilterComboBox.setEnabled(True)
+                self.dlg.monthFilterComboBox.setEnabled(True)
             elif self.dlg.timeFilterComboBox.currentText() == 'Monthly':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.updateMembersFiltered()
-                self.dlg.yearFilterComboBox.show()
-                self.dlg.monthFilterComboBox.show()
-                self.dlg.memberComboBox.hide()
+                self.dlg.yearFilterComboBox.setEnabled(True)
+                self.dlg.monthFilterComboBox.setEnabled(True)
             else:
-                self.dlg.yearFilterComboBox.hide()
-                self.dlg.monthFilterComboBox.hide()
-                self.dlg.memberComboBox.show()
-
+                self.dlg.yearFilterComboBox.setEnabled(False)
+                self.dlg.monthFilterComboBox.setEnabled(False)
+                
                 self.dlg.memberComboBox.clear()
                 self.dlg.memberComboBox.addItems(members_keys)
         except (KeyError) as exception:
@@ -559,6 +565,12 @@ class WAPlugin:
         self.canv_manag.set_rasters_dir(rasterFolder)
 
         self.listRasterMemory()
+
+        self.dlg.rasterFolderCalcExplorer.setFilePath(rasterFolder)
+
+
+    def updateRasterFolderCalc(self):
+        self.indicatorChange()
 
     def loadRaster(self):
         """
@@ -678,7 +690,7 @@ class WAPlugin:
             self.canv_manag.add_rast(output_name)
         else:
             raise NotImplementedError("Indicator: '{}' not implemented yet.".format(self.indicator))
-
+    
     def tabChange(self):
         """
             Updates few things when a tab is changed.
@@ -700,7 +712,7 @@ class WAPlugin:
             self.first_start = False
             self.dlg = WAPluginDialog()
             
-            self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
+            # self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.dlg.setFixedSize(self.dlg.size())
 
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
@@ -723,12 +735,14 @@ class WAPlugin:
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
 
             self.dlg.rasterFolderExplorer.setFilePath(self.layer_folder_dir)
+            self.dlg.rasterFolderCalcExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
 
             self.dlg.rasterFolderExplorer.fileChanged.connect(self.updateRasterFolder)
+            self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
@@ -745,7 +759,7 @@ class WAPlugin:
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.tabManager.currentChanged.connect(self.tabChange)
-
+        
             self.dlg.calculateButton.clicked.connect(self.calculateIndicator)
 
             self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)
