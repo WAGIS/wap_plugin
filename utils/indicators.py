@@ -185,7 +185,7 @@ class IndicatorCalculator:
         ras_atei_dir = os.path.join(self.rasters_dir, raster)
         ds = gdal.Open(ras_atei_dir)
         atei_band1 = ds.GetRasterBand(1).ReadAsArray()
-        atei_band1 = atei_band1.astype(np.float)
+        atei_band1 = atei_band1.astype(np.float64)
         atei_band1[atei_band1 == -9999] = float('nan')
         AETIm   = np.nanmean(atei_band1 * 0.1)
         AETIsd  = np.nanstd(atei_band1 * 0.1)
