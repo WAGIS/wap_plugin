@@ -495,9 +495,3 @@ class IndicatorCalculator:
 
     def crop_yield(self):
         raise NotImplementedError("Indicator: 'Crop Yield' not implemented yet.")
-
-    def field_app_ratio(self):
-        raise NotImplementedError("Indicator: 'Field Application Ratio' not implemented yet.")
-
-    def depleted_fraction(self):
-        raise NotImplementedError("Indicator: 'Depletion Fraction' not implemented yet.")
