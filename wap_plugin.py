@@ -574,6 +574,7 @@ class WAPlugin:
 
     def updateRasterFolderCalc(self):
         self.indicatorChange()
+        self.indic_calc.setRastersDir(self.dlg.rasterFolderCalcExplorer.filePath())
 
     def loadRaster(self):
         """
@@ -647,7 +648,7 @@ class WAPlugin:
         
         print(self.indicator_key)
         if self.indicator_key == 'Equity':
-            self.indic_calc.equity(raster=param1_name)
+            self.indic_calc.equity(raster=param1_name, outLabel=self.dlg.outputIndicValue)
         elif self.indicator_key == 'Beneficial Fraction':
             self.indic_calc.beneficial_fraction(param1_name, param2_name, output_name)
             self.canv_manag.add_rast(output_name)

@@ -160,9 +160,12 @@ INDICATORS_INFO = {
 class IndicatorCalculator:
     def __init__(self, plugin_dir, rasters_path):
         self.plugin_dir = plugin_dir
-        self.rasters_dir = os.path.join(self.plugin_dir,rasters_path)
+        self.rasters_dir = os.path.join(self.plugin_dir, rasters_path)
 
-    def equity(self, raster):
+    def setRastersDir(self, newPath):
+        self.rasters_dir = os.path.join(self.plugin_dir, newPath)
+
+    def equity(self, raster, outLabel):
         """
         [FORMULA PASSED THE TEST WITH TRUE VALUES]
         Equity is computed from the formula:
@@ -183,6 +186,10 @@ class IndicatorCalculator:
         --- equity - real number
         """
         ras_atei_dir = os.path.join(self.rasters_dir, raster)
+        print('test equity')
+        print(self.rasters_dir)
+        print(ras_atei_dir)
+        print(raster)
         ds = gdal.Open(ras_atei_dir)
         atei_band1 = ds.GetRasterBand(1).ReadAsArray()
         atei_band1 = atei_band1.astype(np.float64)
@@ -193,6 +200,7 @@ class IndicatorCalculator:
         equity = (AETIsd / AETIm) * 100
         
         print("Equity for the given Raster is: ", equity)
+        outLabel.setText('Equity {}'.format(equity))
 
     def beneficial_fraction(self, aeti_dir, ta_dir, output_name):
         """
