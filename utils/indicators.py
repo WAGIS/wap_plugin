@@ -390,7 +390,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_ws)),
+        calc = QgsRasterCalculator('1.0 - (ras@1 * 0.1 - ras@2 * 0.1) / {}'.format(str(V_ws)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -402,7 +402,7 @@ class IndicatorCalculator:
     def field_application_ratio(self, aeti_dir, pcp_dir, output_name, V_wd):
         """
         Field appliation ratio is computed from the formula:
-        --- FAR = 1 - (AETI -PCP)/Vwd
+        --- FAR = 1 - (AETI - PCP)/Vwd
         --- Resolution: Continental
         where:
             -- AETI - (raster) - Actual Evapotranspiration and Interception 
@@ -440,7 +440,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_wd)),
+        calc = QgsRasterCalculator('1.0 - (ras@1 * 0.1 - ras@2 * 0.1) / {}'.format(str(V_wd)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -491,7 +491,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - ras@1 / (ras@2 + {})'.format(str(V_c)),
+        calc = QgsRasterCalculator('1.0 - ras@1 * 0.1/ (ras@2 * 0.1 + {})'.format(str(V_c)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
