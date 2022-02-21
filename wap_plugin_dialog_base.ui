@@ -481,7 +481,7 @@
                <item>
                 <widget class="QCheckBox" name="useCanvasCoordCheckBox">
                  <property name="text">
-                  <string>Use Canvas Extend</string>
+                  <string>Use Canvas Extent</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
