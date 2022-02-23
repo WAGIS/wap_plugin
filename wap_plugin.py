@@ -554,14 +554,19 @@ class WAPlugin:
 
         rast_url = self.api_manag.query_crop_raster(params)
 
-        rast_directory = self.dlg.downloadFolderExplorer.filePath()
-        self.file_manag.download_raster(rast_url, rast_directory)
-        
-        self.dlg.progressBar.setValue(100)
-        self.dlg.progressLabel.setText ('Raster Download Complete')
-        
-        self.listRasterMemory()
-        self.indicatorChange()
+        if not rast_url == None:
+            rast_directory = self.dlg.downloadFolderExplorer.filePath()
+            self.file_manag.download_raster(rast_url, rast_directory)
+            
+            self.dlg.progressBar.setValue(100)
+            self.dlg.progressLabel.setText ('Raster Download Complete')
+            
+            self.listRasterMemory()
+            self.indicatorChange()
+        else:
+            self.dlg.progressBar.setValue(0)
+            self.dlg.progressLabel.setText ('Raster Download Failed')
+
 
     def updateRasterFolder(self):
         rasterFolder = self.dlg.rasterFolderExplorer.filePath()
