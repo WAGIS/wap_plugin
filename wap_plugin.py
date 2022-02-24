@@ -633,6 +633,24 @@ class WAPlugin:
             self.dlg.getEdgesButton.setEnabled(True)
             self.dlg.savePolygonButton.setEnabled(True)
             self.dlg.resetToolButton.setEnabled(True)
+    
+    def checkIndicatorRequirements(self):
+        requirementsFlag = False
+
+        param1_name = self.dlg.Param1ComboBox.currentText()
+        param2_name = self.dlg.Param2ComboBox.currentText()
+
+        if self.indicator_key == 'Equity' or \
+           self.indicator_key == 'Relative Water Deficit':
+            requirementsFlag = True if param1_name != '' else False
+        elif self.indicator_key == 'Beneficial Fraction' or \
+             self.indicator_key == 'Adequacy' or \
+             self.indicator_key == 'Overall Consumed Ratio' or \
+             self.indicator_key == 'Field Application Ratio (efficiency)' or \
+             self.indicator_key == 'Depleted Fraction':
+            requirementsFlag = True if param1_name != '' and param2_name != '' else False
+        
+        self.dlg.calculateButton.setEnabled(requirementsFlag)
 
     def calculateIndicator(self):
         """ 
@@ -669,7 +687,7 @@ class WAPlugin:
             try:
                 param3_name = float(self.dlg.Param3TextBox.text())
             except ValueError:
-                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.indic_calc.showErrorMsg("Param 3 Input is not a float. Using Default value 1.25 instead")
                 self.dlg.Param3TextBox.setText('1.25')
                 param3_name = 1.25
             self.indic_calc.overall_consumed_ratio(param1_name, param2_name, output_name, V_ws=param3_name)
@@ -678,7 +696,7 @@ class WAPlugin:
             try:
                 param3_name = float(self.dlg.Param3TextBox.text())
             except ValueError:
-                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.indic_calc.showErrorMsg("Param 3 Input is not a float. Using Default value 1.25 instead")
                 self.dlg.Param3TextBox.setText('1.25')
                 param3_name = 1.25
             self.indic_calc.field_application_ratio(param1_name, param2_name, output_name, V_wd=param3_name)
@@ -687,7 +705,7 @@ class WAPlugin:
             try:
                 param3_name = float(self.dlg.Param3TextBox.text())
             except ValueError:
-                print("Param 3 Input is not a float. Using Default value 1.25 instead")
+                self.indic_calc.showErrorMsg("Param 3 Input is not a float. Using Default value 1.25 instead")
                 self.dlg.Param3TextBox.setText('1.25')
                 param3_name = 1.25
             self.indic_calc.depleted_fraction(param1_name, param2_name, output_name, V_c=param3_name)
@@ -726,6 +744,7 @@ class WAPlugin:
                                                            self.dlg.savePolygonButton)
 
             self.dlg.downloadButton.setEnabled(False)
+            self.dlg.calculateButton.setEnabled(False)
 
             self.dlg.saveTokenButton.setEnabled(False)
             
@@ -763,6 +782,9 @@ class WAPlugin:
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.tabManager.currentChanged.connect(self.tabChange)
+
+            self.dlg.Param1ComboBox.currentIndexChanged.connect(self.checkIndicatorRequirements)
+            self.dlg.Param2ComboBox.currentIndexChanged.connect(self.checkIndicatorRequirements)
         
             self.dlg.calculateButton.clicked.connect(self.calculateIndicator)
 
