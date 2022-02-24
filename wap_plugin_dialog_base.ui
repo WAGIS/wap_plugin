@@ -547,10 +547,10 @@
           <x>10</x>
           <y>10</y>
           <width>491</width>
-          <height>511</height>
+          <height>541</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="6,6,5">
+        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="8,8,7">
          <item>
           <widget class="QGroupBox" name="indicatorBox">
            <property name="title">
