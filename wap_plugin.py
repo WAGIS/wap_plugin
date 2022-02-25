@@ -475,6 +475,10 @@ class WAPlugin:
             pass
     
     def getYearsAvailable(self, members_keys):
+        """
+            Updates the year available in the given members when the dimension 
+            selected changes
+        """
         years = set([key.split(' ')[0].split('-')[0] for key in members_keys])
         self.years_available = sorted(years)
         
@@ -482,6 +486,10 @@ class WAPlugin:
         self.dlg.yearFilterComboBox.addItems(self.years_available)
 
     def getMonthsAvailable(self):
+        """
+            Detects changes in the year and filters the months available in the 
+            members of the cube for a give time dimensions
+        """
         year = self.dlg.yearFilterComboBox.currentText()
         members_keys = self.members.keys()
 
@@ -498,6 +506,10 @@ class WAPlugin:
         self.updateMembersFiltered()
 
     def updateMembersFiltered(self):
+        """
+            Detects changes in the year and month and filters the members of the
+            cube
+        """
         members_keys = self.members.keys()
         
         year = self.dlg.yearFilterComboBox.currentText()
