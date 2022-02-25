@@ -784,6 +784,8 @@ class WAPlugin:
             # self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.dlg.setFixedSize(self.dlg.size())
 
+            self.prev_tool = self.iface.mapCanvas().mapTool()
+
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
 
             self.coord_select_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
@@ -856,3 +858,7 @@ class WAPlugin:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             pass
+        else:
+            # Clean up when closing
+            self.iface.mapCanvas().setMapTool(self.prev_tool)
+            self.resetTool()
