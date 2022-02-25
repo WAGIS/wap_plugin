@@ -18,6 +18,8 @@ import os
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer
 
+from qgis.PyQt.QtWidgets import QMessageBox
+
 """
     '<NAME_INDICATOR>' : {
         'info' : '<FORMULA_TO_COMPUTE_THE_INDICATOR>',
@@ -164,6 +166,11 @@ class IndicatorCalculator:
 
     def setRastersDir(self, newPath):
         self.rasters_dir = os.path.join(self.plugin_dir, newPath)
+
+    def showErrorMsg(self, msg):
+        print("The internet connection is down")
+        QMessageBox.information(None, "Calculation error", '''<html><head/><body>
+        <p>{}.</p></body></html>'''.format(msg))
 
     def equity(self, raster, outLabel):
         """
