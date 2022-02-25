@@ -792,3 +792,4 @@ class WAPlugin:
         else:
             # Clean up when closing
             self.iface.mapCanvas().setMapTool(self.prev_tool)
+            self.resetTool()
