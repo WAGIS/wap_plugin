@@ -347,14 +347,24 @@ class WAPlugin:
         self.dlg.timeFilterComboBox.addItems(timeOptions)
         self.dlg.countryFilterComboBox.addItems(countryOptions)
 
+    def levelFilterChange(self):
+        levelFilterValue = self.dlg.levelFilterComboBox.currentText()
+        if levelFilterValue == 'L1' or levelFilterValue == 'L2':
+            self.dlg.countryFilterComboBox.setEnabled(False)
+            self.dlg.countryFilterComboBox.setCurrentIndex(0)
+        else:
+            self.dlg.countryFilterComboBox.setEnabled(True)
+
+        self.updateCubesFiltered()
+
     def updateCubesFiltered(self):
         levelFilterValue = self.dlg.levelFilterComboBox.currentText()
         timeFilterValue = self.dlg.timeFilterComboBox.currentText()
         countryFilterValue = self.dlg.countryFilterComboBox.currentText()
         if not self.first_start and \
-           not levelFilterValue  == '' and \
-           not timeFilterValue == '' and \
-           not countryFilterValue == '':
+        not levelFilterValue  == '' and \
+        not timeFilterValue == '' and \
+        not countryFilterValue == '':
             if self.dlg.workspaceComboBox.currentText() == 'WAPOR_2':
                 if timeFilterValue == 'None' and \
                 countryFilterValue == 'None' and \
@@ -783,7 +793,7 @@ class WAPlugin:
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
             self.dlg.measureComboBox.currentIndexChanged.connect(self.measureChange)
 
-            self.dlg.levelFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
+            self.dlg.levelFilterComboBox.currentIndexChanged.connect(self.levelFilterChange)
             self.dlg.timeFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
             self.dlg.countryFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
 
