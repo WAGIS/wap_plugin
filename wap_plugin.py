@@ -554,7 +554,7 @@ class WAPlugin:
                 self.getMonthsAvailable()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
-                self.dlg.memberComboBox.show()
+                self.dlg.memberComboBox.hide()
             else:
                 self.dlg.yearFilterComboBox.hide()
                 self.dlg.monthFilterComboBox.hide()
