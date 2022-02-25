@@ -475,12 +475,41 @@ class WAPlugin:
             pass
     
     def getYearsAvailable(self, members_keys):
+        """
+            Updates the year available in the given members when the dimension 
+            selected changes
+        """
         years = set([key.split(' ')[0].split('-')[0] for key in members_keys])
         self.years_available = sorted(years)
+        
         self.dlg.yearFilterComboBox.clear()
         self.dlg.yearFilterComboBox.addItems(self.years_available)
 
+    def getMonthsAvailable(self):
+        """
+            Detects changes in the year and filters the months available in the 
+            members of the cube for a give time dimensions
+        """
+        year = self.dlg.yearFilterComboBox.currentText()
+        members_keys = self.members.keys()
+
+        months = set()
+        for key in members_keys:
+            ym = key.split(' ')[0]
+            if ym.split('-')[0] == year:
+                months.add(ym.split('-')[1])
+
+        self.months_available = sorted(months)
+
+        self.dlg.monthFilterComboBox.clear()
+        self.dlg.monthFilterComboBox.addItems(self.months_available)
+        self.updateMembersFiltered()
+
     def updateMembersFiltered(self):
+        """
+            Detects changes in the year and month and filters the members of the
+            cube
+        """
         members_keys = self.members.keys()
         
         year = self.dlg.yearFilterComboBox.currentText()
@@ -505,17 +534,17 @@ class WAPlugin:
             if self.dlg.timeFilterComboBox.currentText() == 'Dekadal':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
-                self.updateMembersFiltered()
+                self.getMonthsAvailable()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
                 self.dlg.memberComboBox.show()
             elif self.dlg.timeFilterComboBox.currentText() == 'Monthly':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
-                self.updateMembersFiltered()
+                self.getMonthsAvailable()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
-                self.dlg.memberComboBox.hide()
+                self.dlg.memberComboBox.show()
             else:
                 self.dlg.yearFilterComboBox.hide()
                 self.dlg.monthFilterComboBox.hide()
@@ -758,7 +787,7 @@ class WAPlugin:
             self.dlg.timeFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
             self.dlg.countryFilterComboBox.currentIndexChanged.connect(self.updateCubesFiltered)
 
-            self.dlg.yearFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
+            self.dlg.yearFilterComboBox.currentIndexChanged.connect(self.getMonthsAvailable)
             self.dlg.monthFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
