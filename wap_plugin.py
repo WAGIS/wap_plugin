@@ -625,6 +625,10 @@ class WAPlugin:
         self.dlg.resetToolButton.setEnabled(False)
 
     def useCanvasCoord(self):
+        """
+            Detects state of the use canvas checkbox and modifies the behaviour
+            of the coordinates selector tool
+        """
         if self.dlg.useCanvasCoordCheckBox.checkState():
             self.dlg.getEdgesButton.setEnabled(False)
             self.dlg.savePolygonButton.setEnabled(False)
@@ -635,6 +639,10 @@ class WAPlugin:
             self.dlg.resetToolButton.setEnabled(True)
     
     def checkIndicatorRequirements(self):
+        """
+            Detects changes in the parameters of the indicators and check its 
+            requirements and enable the button to calculate them.
+        """
         requirementsFlag = False
 
         param1_name = self.dlg.Param1ComboBox.currentText()
