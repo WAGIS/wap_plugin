@@ -97,6 +97,21 @@ class WaporAPIManager:
             is required, you can still use the offline features.</p></body></html>''')
             return False
 
+    def showCropErrorMsg(self, error_msg):
+            print("Completed with errors [Crop raster]")
+            QMessageBox.information(None, "Error in crop raster", '''<html><head/><body>
+            <p>There was an error in the query on the query with FAO WAPOR portal:
+            <br><br>
+            ERROR: {}
+            <br><br>
+            Please check if the error is considered in our wiki page
+            <a href="https://github.com/WAGIS/wap_plugin/wiki"><span style="text-decoration: 
+            underline; color: #0000ff;">Wiki page</span></a>,
+            if not please submit an 
+            <a href="https://github.com/WAGIS/wap_plugin/issues"><span style="text-decoration: 
+            underline; color: #0000ff;">issue</span></a>.</p></body></html>'''.format(error_msg))
+            return False
+
     def signin(self, APIToken):
         """
             Performs de sign in into the Wapor platform using the API token, and
@@ -204,7 +219,9 @@ class WaporAPIManager:
                             rast_url = resp_json['response']['output']['downloadUrl']
                             return rast_url
                         elif resp_json['response']['status']=='COMPLETED WITH ERRORS':
-                            print(resp_json['response']['log'][-3:-1])
+                            log_resp = resp_json['response']['log'][-3:-1]
+                            print(log_resp)
+                            self.showCropErrorMsg(log_resp[-1].split('ERROR: ')[-1])
                             return None
                         elif resp_json['response']['status'] == 'WAITING' or resp_json['response']['status'] == 'RUNNING':
                             pass
@@ -641,14 +658,14 @@ class FileManager:
         file_name = rast_url.rsplit('/', 1)[1]
         file_dir = os.path.join(rast_directory, file_name)
 
-        # wget.download(rast_url, file_dir)
+        #TODO Check if file already exist
+
         parameter_dictionary = {
                                     'URL' : rast_url,
                                     'OUTPUT' : file_dir
                                 }
                                 
         processing.run("qgis:filedownloader", parameter_dictionary)
-
 
         while True:
             QApplication.processEvents()
