@@ -1,34 +1,32 @@
 # WAP Plugin: WAGIS Tools and Services
+<img src="https://github.com/WAGIS/wap_plugin/blob/master/img/WaPlugin_Logo.png" width="256">
 
-<img src="img/WaPlugin_LogoScale.png">
+1. [What is wap_plugin?](#what-is-wap_plugin)
+2. [What is wap_plugin for?](#what-is-wap_plugin-for)
+3. [What problem does wap_plugin solve?](#what-problem-does-wap_plugin-solve)
+4. [How does wap_plugin accomplish its goals?](#how-does-wap_plugin-accomplish-its-goals)
+5. [Releases](https://github.com/WAGIS/wap_plugin/releases)
 
-## User Interface design
-### Interface for downloading Rasters 
-<img src="img/waporCatalog.JPG" width="400" height="400">
+## What is wap_plugin?
+The WAPlugin is a tool created on the open-source software QGIS to compute water accounting and crop water productivity indicators based on WaPOR data, the open-access remote sensing database from FAO. The plugin creates a bridge between WaPOR information and QGIS. It offers some tools to process and calculate the indicators, such as the overall consumed ratio, the depleted fraction, the overall field application ratio, etc. Most of these water accounting and productivity indicators reflect agriculture's impact on water resources. Hence, their analysis will help identify specific issues that can be addressed by policymakers, large scheme irrigation managers, river basin authorities, water professionals, among others.
 
-### Interface for calculating Indicators
-<img src="img/indicator.JPG" width="400" height="400">
+## How to install the plugin?
+The installation instructions for the plugin are [here](https://github.com/WAGIS/wap_plugin/wiki/Getting-Started#installation).
 
-## For contributors
-### Requirements 
-* QGIS 3.10
+## How to use?
+Check the [wiki page](https://github.com/WAGIS/wap_plugin/wiki) for detailed tutorials on using this plugin.
 
-### Installation for contributors
-1. Go to the QGIS plugins folder in the path 
+## What is wap_plugin for?
+The WAPlugin is a bridge that connects WaPOR, the free FAO portal, and QGIS, the open-source software, making the WaPOR data easy to access and providing the possibility to calculate water accounting and productivity indicators for agricultural purposes.
 
-    C:\Users\ (USER) \AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\
+## What problem does wap_plugin solve?
+The WAPlugin facilitates the water accounting and productivity analysis by bringing together two powerful open-source platforms for the water and remote sensing community. The plugin reduces the time consuming and enables the easy access and processing of WaPOR data, making this less time consuming for GIS analysts. Furthermore, the indicators will support users by generating maps and reports for further assessment and evaluation, identifying the places of high and low irrigation efficiency and the crop and water productivity behaviour.
 
-2. Clone or download the git repository
-3. Execute the file *compile.bat*
-    *If there is a different version of QGIS (3.10) modify the compiler with the actual version*
+## How does wap_plugin accomplish its goals?
+It is possible to access the WAPlugin as any other QGIS plugin. The workflow figure below shows that it has two main features: the `WaPOR Catalog` and the `Indicators Calculator`. 
 
-### Installing new pip packages
+<img src="https://github.com/WAGIS/wap_plugin/blob/master/img/waplugin_workflow.png" width="640">
 
-1. Open OSGeo4W Shell
-2. Run python -m pip install [Package Name]
+The `WaPOR Catalog` can bring data from WaPOR to QGIS, providing direct access to the entire catalogue. The selection will depend on the user specifications (date, location, parameter, resolution). The selected map data will appear on the canvas as a raster layer.
 
-### Keeping the requirements file updated
-
-1. Open OSGeo4W Shell
-2. Run cd C:\Users\ (USER) \AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\wap_plugin
-3. Run python3 -m pip freeze > requirements.txt                                                                                   
+The `Indicators Calculator` allows calculating some of the essential water accounting and productivity indicators based on WaPOR data. As in the first feature, the user must specify the primary data like date, location, resolution and units. Depending on the indicator, the input data can also include information provided by the user, apart from the WaPOR data. Finally, the resulting indicator map will be added as a raster layer in the QGIS canvas, facilitating access to WaPOR data for QGIS users and providing compatibility with the QGIS tools for further processing.
