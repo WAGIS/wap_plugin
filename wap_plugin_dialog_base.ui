@@ -499,7 +499,7 @@
          <item>
           <widget class="QGroupBox" name="indicatorBox">
            <property name="title">
-            <string>Indicator</string>
+            <string>Indicator Selection</string>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
@@ -525,7 +525,7 @@
             <bool>true</bool>
            </property>
            <property name="title">
-            <string>WaPOR Data</string>
+            <string>Formula Parameters</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
@@ -598,7 +598,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_5">
            <property name="title">
-            <string>Compute Indicator</string>
+            <string>Indicator Computation</string>
            </property>
            <widget class="QPushButton" name="calculateButton">
             <property name="geometry">
