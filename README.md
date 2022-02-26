@@ -8,6 +8,8 @@
 5. [Releases](https://github.com/WAGIS/wap_plugin/releases)
 
 ## What is wap_plugin?
+<img src="https://user-images.githubusercontent.com/30596797/155859481-a92cadc9-a136-48b4-974b-8cd7233b94fd.png" width="1080">
+
 The WAPlugin is a tool created on the open-source software QGIS to compute water accounting and crop water productivity indicators based on WaPOR data, the open-access remote sensing database from FAO. The plugin creates a bridge between WaPOR information and QGIS. It offers some tools to process and calculate the indicators, such as the overall consumed ratio, the depleted fraction, the overall field application ratio, etc. Most of these water accounting and productivity indicators reflect agriculture's impact on water resources. Hence, their analysis will help identify specific issues that can be addressed by policymakers, large scheme irrigation managers, river basin authorities, water professionals, among others.
 
 ## How to install the plugin?
