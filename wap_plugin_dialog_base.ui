@@ -321,6 +321,9 @@
                </item>
                <item>
                 <widget class="QgsFileWidget" name="downloadFolderExplorer">
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
                  <property name="storageMode">
                   <enum>QgsFileWidget::GetDirectory</enum>
                  </property>
@@ -450,6 +453,9 @@
             <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="4,4,2,1">
              <item>
               <widget class="QgsFileWidget" name="rasterFolderExplorer">
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
                <property name="filter">
                 <string/>
                </property>
@@ -539,6 +545,9 @@
               </item>
               <item>
                <widget class="QgsFileWidget" name="rasterFolderCalcExplorer">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
                 <property name="storageMode">
                  <enum>QgsFileWidget::GetDirectory</enum>
                 </property>
