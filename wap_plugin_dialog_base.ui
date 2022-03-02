@@ -60,7 +60,7 @@
              <item>
               <widget class="QLabel" name="signinDescriptionLabel">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to have access to the WaPOR resources you sould provide the API Token associated to your &lt;a href=&quot;https://wapor.apps.fao.org/profile&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;account&lt;/span&gt;&lt;/a&gt;. In case you do not have one or do not know how to get the API Token, please refer to the instructions in our &lt;a href=&quot;https://github.com/trngbich/examples_WaPOR_API&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to have access to the WaPOR resources you sould provide the API Token associated to your &lt;a href=&quot;https://wapor.apps.fao.org/profile&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;account&lt;/span&gt;&lt;/a&gt;. In case you do not have one or do not know how to get the API Token, please refer to the instructions in our &lt;a href=&quot;https://github.com/WAGIS/wap_plugin/wiki/Login-to-database&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -349,6 +349,19 @@
               </layout>
              </item>
             </layout>
+           </widget>
+           <widget class="QLabel" name="label">
+            <property name="geometry">
+             <rect>
+              <x>430</x>
+              <y>0</y>
+              <width>41</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/WAGIS/wap_plugin/wiki/Tutorials&quot;&gt;&lt;span style=&quot; font-size:9pt; text-decoration: underline; color:#0000ff;&quot;&gt;Help?&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
            </widget>
           </widget>
          </item>
