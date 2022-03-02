@@ -202,11 +202,27 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="7,1,7">
                <item>
                 <widget class="QLabel" name="label_4">
                  <property name="text">
                   <string>Level Filter:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="levelHelpLabel">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/WAGIS/wap_plugin/wiki/Interaction-with-Catalogue#step-2-set-level-filter-param-to-either-level-1-250m-resolution-level-2-100m-resolution-or-level-3-30m-resolution-based-on-the-requirement&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Help?&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="openExternalLinks">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -350,17 +366,26 @@
              </item>
             </layout>
            </widget>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="catalogHelpLabel">
             <property name="geometry">
              <rect>
               <x>430</x>
               <y>0</y>
               <width>41</width>
-              <height>20</height>
+              <height>27</height>
              </rect>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/WAGIS/wap_plugin/wiki/Tutorials&quot;&gt;&lt;span style=&quot; font-size:9pt; text-decoration: underline; color:#0000ff;&quot;&gt;Help?&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/WAGIS/wap_plugin/wiki/Tutorials&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Help?&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
             </property>
            </widget>
           </widget>
