@@ -47,13 +47,13 @@ class CoordinatesSelectorTool(QgsMapTool):
         self.rubberCoordinates = list()
         self.polygonCoordinates = list()
 
-        self.rubberBand.reset(True)
+        self.rubberBand.reset()
     
     def updateShape(self):
         """
             Updates the coordinates storaged by the tool and refreshes the canvas.
         """
-        self.rubberBand.reset(True)
+        self.rubberBand.reset()
         for idx, point in enumerate(self.rubberCoordinates):
             if idx != len(self.rubberCoordinates)-1:
                 self.rubberBand.addPoint(QgsPointXY(point.x(), point.y()), False)
