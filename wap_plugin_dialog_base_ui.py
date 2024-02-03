@@ -245,7 +245,7 @@ class Ui_WAPluginDialogBase(object):
         self.coordinateSelectionBox = QtWidgets.QGroupBox(self.layoutWidget_2)
         self.coordinateSelectionBox.setObjectName("coordinateSelectionBox")
         self.verticalLayoutWidget_3 = QtWidgets.QWidget(self.coordinateSelectionBox)
-        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(10, 20, 451, 154))
+        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(10, 20, 451, 195))
         self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_3)
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
@@ -258,6 +258,9 @@ class Ui_WAPluginDialogBase(object):
         self.useCanvasCoordCheckBox.setChecked(True)
         self.useCanvasCoordCheckBox.setObjectName("useCanvasCoordCheckBox")
         self.verticalLayout_10.addWidget(self.useCanvasCoordCheckBox)
+        self.shapeLayerComboBox_2 = QgsMapLayerComboBox(self.verticalLayoutWidget_3)
+        self.shapeLayerComboBox_2.setObjectName("shapeLayerComboBox_2")
+        self.verticalLayout_10.addWidget(self.shapeLayerComboBox_2)
         self.getEdgesButton = QtWidgets.QPushButton(self.verticalLayoutWidget_3)
         self.getEdgesButton.setEnabled(False)
         self.getEdgesButton.setObjectName("getEdgesButton")
@@ -318,10 +321,10 @@ class Ui_WAPluginDialogBase(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.workspace3ComboBox = QtWidgets.QComboBox(self.tab)
-        self.workspace3ComboBox.setGeometry(QtCore.QRect(270, 30, 211, 22))
+        self.workspace3ComboBox.setGeometry(QtCore.QRect(270, 30, 161, 22))
         self.workspace3ComboBox.setObjectName("workspace3ComboBox")
         self.mapsetComboBox = QtWidgets.QComboBox(self.tab)
-        self.mapsetComboBox.setGeometry(QtCore.QRect(270, 80, 225, 22))
+        self.mapsetComboBox.setGeometry(QtCore.QRect(270, 80, 161, 22))
         self.mapsetComboBox.setObjectName("mapsetComboBox")
         self.tabManager.addTab(self.tab, "")
         self.indicTab = QtWidgets.QWidget()
@@ -454,7 +457,7 @@ class Ui_WAPluginDialogBase(object):
         self.tabWindowsLayout.addLayout(self.progressBarLayout)
 
         self.retranslateUi(WAPluginDialogBase)
-        self.tabManager.setCurrentIndex(2)
+        self.tabManager.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(WAPluginDialogBase)
 
     def retranslateUi(self, WAPluginDialogBase):
@@ -511,3 +514,4 @@ class Ui_WAPluginDialogBase(object):
         self.tabManager.setTabText(self.tabManager.indexOf(self.indicTab), _translate("WAPluginDialogBase", "Indicators Calculator"))
         self.progressLabel.setText(_translate("WAPluginDialogBase", "Waiting for WaPOR Connection"))
 from qgsfilewidget import QgsFileWidget
+from qgsmaplayercombobox import QgsMapLayerComboBox

@@ -26,7 +26,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
-from qgis.core import QgsRasterLayer
+from qgis.core import QgsRasterLayer, QgsMapLayerProxyModel
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -636,10 +636,14 @@ class WAPlugin:
                                 }]
         if self.dlg.useCanvasCoordCheckBox.checkState():
             params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
-            self.queryCrs = self.getCrs()
+            params['crs'] = self.getCrs()
         else:
             params['coordinates'] = [self.queryCoordinates]
-        params['crs'] = self.queryCrs
+            params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
+            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs()
+
+        print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
+        print("From SHAPE", params['coordinates'])
 
         rast_url = self.api2_manag.query_crop_raster(params)
 
@@ -853,6 +857,8 @@ class WAPlugin:
             
             self.dlg.savePolygonButton.setEnabled(False)
             self.dlg.resetToolButton.setEnabled(False)
+
+            self.dlg.shapeLayerComboBox_2.setFilters(QgsMapLayerProxyModel.PolygonLayer)
 
             self.dlg.useCanvasCoordCheckBox.clicked.connect(self.useCanvasCoord)
 

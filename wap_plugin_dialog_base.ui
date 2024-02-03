@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabManager">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -443,7 +443,7 @@
               <x>10</x>
               <y>20</y>
               <width>451</width>
-              <height>154</height>
+              <height>195</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -460,6 +460,9 @@
                     <bool>true</bool>
                    </property>
                   </widget>
+                 </item>
+                 <item>
+                  <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2"/>
                  </item>
                  <item>
                   <widget class="QPushButton" name="getEdgesButton">
@@ -577,7 +580,7 @@
          <rect>
           <x>270</x>
           <y>30</y>
-          <width>211</width>
+          <width>161</width>
           <height>22</height>
          </rect>
         </property>
@@ -587,7 +590,7 @@
          <rect>
           <x>270</x>
           <y>80</y>
-          <width>225</width>
+          <width>161</width>
           <height>22</height>
          </rect>
         </property>
@@ -817,6 +820,11 @@
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
    <header>qgsfilewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
