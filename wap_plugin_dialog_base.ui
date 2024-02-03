@@ -177,7 +177,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QRadioButton" name="Wapor2radioButton">
+           <widget class="QRadioButton" name="wapor2radioButton">
             <property name="text">
              <string>WaPOR v2</string>
             </property>
@@ -187,7 +187,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="Wapor3radioButton">
+           <widget class="QRadioButton" name="wapor3radioButton">
             <property name="text">
              <string>WaPOR v3</string>
             </property>
@@ -578,6 +578,16 @@
           <x>270</x>
           <y>30</y>
           <width>211</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="mapsetComboBox">
+        <property name="geometry">
+         <rect>
+          <x>270</x>
+          <y>80</y>
+          <width>225</width>
           <height>22</height>
          </rect>
         </property>

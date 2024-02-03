@@ -53,6 +53,9 @@ class Wapor3APIManager:
         get_info_workspace(workspace):
             Gets the information contained in the catalog with respect to a 
             given workspace code.
+        pull_mapsets(workspace):
+            Pulls all the pull_mapsets available in the catalog for a given workspace.
+            
     """
 
     def __init__(self, APIToken=None):
@@ -107,9 +110,10 @@ class Wapor3APIManager:
 
             resp_json = resp.json()
             if resp_json['message'] == 'OK':
-                self.AccessToken=resp_json['response']['accessToken']
+                self.AccessToken=resp_json['response']['idToken']
+                self.RefreshToken=resp_json['response']['refreshToken']
                 print('SUCCESS: Access granted')
-                print('Access expires in 3600s')
+                print('Access expires in {}'.format(resp_json['response']['expiresIn']))
                 self.lastConnection_time = time.time()
                 self.connected = True
                 self.APIToken = APIToken
@@ -160,55 +164,7 @@ class Wapor3APIManager:
                 shape['crs'] : String
                     Reference system to define de coordinates.
         """
-        if not self.isConnected():
-            raise Exception("Query [crop_raster] error, no WaPOR V3 connection")
-        else:
-            request_json = crop_raster_query.copy()
-            request_json['params']['properties']['outputFileName'] = params['outputFileName']
-            request_json['params']['cube']['workspaceCode'] = params['cube_workspaceCode']
-            request_json['params']['cube']['code'] = params['cube_code']
-            request_json['params']['dimensions'] = params['dimensions']
-            request_json['params']['measures'] = params['measures']
-
-            if params['coordinates'][0] is not None:
-                request_json['params']['shape']['coordinates'] = params['coordinates']
-                request_json['params']['shape']['crs'] = params['crs']
-            else:
-                print('WARNING: Valid coordinates not provided, using default ones . . . ')
-            
-            request_headers = {'Authorization': "Bearer " + self.AccessToken}
-
-            try:
-                resp_json = requests.post(  self.query_url,
-                                            json=request_json,
-                                            headers=request_headers).json()
-
-                if resp_json['message']=='OK':
-                    job_url = resp_json['response']['links'][0]['href']
-
-                    while True:
-                        QApplication.processEvents()
-                        response = requests.get(job_url)
-                        resp_json=response.json()
-                        print(resp_json['response']['status'])
-                        if resp_json['response']['status']=='COMPLETED':
-                            rast_url = resp_json['response']['output']['downloadUrl']
-                            return rast_url
-                        elif resp_json['response']['status']=='COMPLETED WITH ERRORS':
-                            log_resp = resp_json['response']['log'][-3:-1]
-                            print(log_resp)
-                            self.showCropErrorMsg(log_resp[-1].split('ERROR: ')[-1])
-                            return None
-                        elif resp_json['response']['status'] == 'WAITING' or resp_json['response']['status'] == 'RUNNING':
-                            pass
-                        else:
-                            raise Exception("Query [crop_raster] error status not handled")
-            except requests.exceptions.ConnectionError:
-                self.showInternetMsg()
-
-            else:
-                #  TODO raise something
-                print('Fail to get job url')
+        pass
     
     def query_listing(self, url):
         """
@@ -230,8 +186,10 @@ class Wapor3APIManager:
                 url = resp['response']['links'][-1]['href'] if resp['response']['links'][-1]['rel'] == 'next' else None
             return listing
         except (requests.ConnectionError, requests.Timeout) as exception:
+            print(exception)
             return None
         except (KeyError) as exception:
+            print(exception)
             return {'---':None}
 
     def query_info(self, url):
@@ -282,6 +240,17 @@ class Wapor3APIManager:
             raise Exception("Query [info_workspaces] error, no internet connection or timeout")
         else:
             return workspace_resp['caption'], workspace_resp['description']
+        
+    def pull_mapsets(self, workspace):
+        mapsets_url = self.catalog_url+'workspaces/{}/mapsets'.format(workspace)
+        
+        mapsets_dict = self.query_listing(mapsets_url)
+        if mapsets_dict is None:
+            self.showInternetMsg()
+            return {}
+            # raise Exception("Query [pull_cubes] error, no internet connection or timeout")
+        else:
+            return mapsets_dict
 
 class Wapor2APIManager:
     """
@@ -331,28 +300,28 @@ class Wapor2APIManager:
             given workspace code.
         pull_cubes(workspace):
             Pulls all the cubes available in the catalog for a given workspace.
-            def get_info_cube(self, workspace, cube):
+            
         get_info_cube(workspace, cube):
             Gets the information contained in the catalog with respect to a 
             given set of workspace and cube codes.
         pull_cube_dims(workspace, cube):
-                Pulls all the dimensions available in the catalog for a given set of
-                workspace and cube codes.
+            Pulls all the dimensions available in the catalog for a given set of
+            workspace and cube codes.
         get_info_cube_dim(workspace, cube, dimension):
-                Gets the information contained in the catalog with respect to a 
-                given set of workspace, cube and dimension codes.
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace, cube and dimension codes.
         pull_cube_dim_membs(workspace, cube, dimension):
-                Pulls all the members available in the catalog for a given set of
-                workspace, cube and dimension codes.
+            Pulls all the members available in the catalog for a given set of
+            workspace, cube and dimension codes.
         get_info_cube_dim_memb(workspace, cube, dimension, member):
-                Gets the information contained in the catalog with respect to a 
-                given set of workspace, cube, dimension and member codes.
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace, cube, dimension and member codes.
         pull_cube_meas(workspace, cube):
-                Pulls all the measures available in the catalog for a given set of
-                workspace and cube codes.
+            Pulls all the measures available in the catalog for a given set of
+            workspace and cube codes.
         get_info_cube_mea(workspace, cube, measure):
-                Gets the information contained in the catalog with respect to a 
-                given set of workspace and cube codes.
+            Gets the information contained in the catalog with respect to a 
+            given set of workspace and cube codes.
     """
 
     def __init__(self, APIToken=None):
@@ -529,8 +498,10 @@ class Wapor2APIManager:
                 listing[elem['caption']] = elem['code']
             return listing
         except (requests.ConnectionError, requests.Timeout) as exception:
+            print(exception)
             return None
         except (KeyError) as exception:
+            print(exception)
             return {'---':None}
 
     def query_info(self, url):

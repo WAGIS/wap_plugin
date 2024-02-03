@@ -243,7 +243,7 @@ class WAPlugin:
             self.iface.removeToolBarIcon(action)
 
     def updateWaporParams(self):
-        self.isWapor2 = self.dlg.Wapor2radioButton.isChecked()
+        self.isWapor2 = self.dlg.wapor2radioButton.isChecked()
 
         box_text = '''<html><head/><body><p>In order to have access to the WaPOR 
              v{} resources, you sould provide the API Token associated to your 
@@ -271,7 +271,10 @@ class WAPlugin:
             in response to the result.
         """
         self.dlg.signinStateLabel.setText('Signing into your WaPOR profile . . .')
-        connected = self.api2_manag.signin(self.dlg.apiTokenTextBox.text())
+        if self.isWapor2:  
+            connected = self.api2_manag.signin(self.dlg.apiTokenTextBox.text())
+        else:
+            connected = self.api3_manag.signin(self.dlg.apiTokenTextBox.text())
 
         if connected:
             self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
@@ -381,6 +384,18 @@ class WAPlugin:
         self.dlg.countryFilterComboBox.clear()
         self.dlg.timeFilterComboBox.addItems(timeOptions)
         self.dlg.countryFilterComboBox.addItems(countryOptions)
+
+    def workspace3Change(self):
+        """
+            Detects changes on the workspace3 selection, calls the pull mapsets
+            function of the API3 manager.
+        """
+        QApplication.processEvents()
+        self.workspace3 = self.dlg.workspace3ComboBox.currentText()
+        self.mapsets = self.api3_manag.pull_mapsets(self.workspace3)
+
+        self.dlg.mapsetComboBox.clear()
+        self.dlg.mapsetComboBox.addItems(self.mapsets.keys())
 
     def levelFilterChange(self):
         levelFilterValue = self.dlg.levelFilterComboBox.currentText()
@@ -683,7 +698,6 @@ class WAPlugin:
         self.dlg.savePolygonButton.setEnabled(False)
         self.queryCoordinates = self.coord_select_tool.getCoordinatesBuffer()
         self.queryCrs = self.getCrs()
-        print(self.queryCrs)
         self.coord_select_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
         if self.queryCoordinates:
@@ -843,8 +857,8 @@ class WAPlugin:
             self.dlg.useCanvasCoordCheckBox.clicked.connect(self.useCanvasCoord)
 
 
-            self.dlg.Wapor2radioButton.clicked.connect(self.updateWaporParams)
-            self.dlg.Wapor3radioButton.clicked.connect(self.updateWaporParams)
+            self.dlg.wapor2radioButton.clicked.connect(self.updateWaporParams)
+            self.dlg.wapor3radioButton.clicked.connect(self.updateWaporParams)
 
             self.dlg.signinButton.clicked.connect(self.signin)
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
@@ -861,6 +875,7 @@ class WAPlugin:
             self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
+            self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
