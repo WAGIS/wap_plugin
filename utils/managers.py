@@ -7,24 +7,24 @@ from .api_queries import crop_raster_query
 
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 
-class WaporAPIManager:
+class Wapor3APIManager:
     """
-        Class used to manage the API of Wapor an all its functions associated.
+        Class used to manage the API of WaPOR V3 and all its functions associated.
 
         ...
 
         Attributes
         ----------
         APIToken : String
-            Token associated to the users account on Wapor platform.
+            Token associated to the users account on WaPOR V3 platform.
         connected : bool
-            If the plugin is currently connected to the Wapor database.
+            If the plugin is currently connected to the WaPOR V3 database.
         sign_in_url : string
-            URL prefix for sign into the Wapor database.
+            URL prefix for sign into the WaPOR V3 database.
         query_url : string
-            URL prefix for querying the Wapor database.
+            URL prefix for querying the WaPOR V3 database.
         catalog_url : string
-            URL prefix for pulling the Wapor catalog.
+            URL prefix for pulling the WaPOR V3 catalog.
         payload : Dict
             Dictionary with the payload of the query.
         time_out : int
@@ -33,13 +33,289 @@ class WaporAPIManager:
         Methods
         -------
         signin(APIToken)
-            Performs de sign in into the Wapor platform using the API token, and
+            Performs de sign in into the WaPOR V3 platform using the API token, and
             returns the state of the connection.
         isConnected():
-            Returns if the API of Wapor is connected based in the sign in 
+            Returns if the API of WaPOR V3 is connected based in the sign in 
             function or an expired time event.
         query_crop_raster(params):
-            Performs de crop and download raster query from the Wapor platform 
+            Performs de crop and download raster query from the WaPOR V3 platform 
+            using a dictionary with the parameters of the operation.
+        query_listing(url):
+            Performs de listing query for an URL which will return a list of
+            elements in a catalog e.g workspaces, cubes, dimensions and measures.
+        query_info(url):
+            Performs de info query for an URL which will return the information
+            of an specific element in the catalog e.g workspaces, cubes, 
+            dimensions and measures.
+        pull_workspaces():
+            Pulls all the workspaces available in the catalog.
+        get_info_workspace(workspace):
+            Gets the information contained in the catalog with respect to a 
+            given workspace code.
+    """
+
+    def __init__(self, APIToken=None):
+
+        self.APIToken = APIToken
+        self.connected =  False
+        self.sign_in_url = r'https://data.apps.fao.org/gismgr/api/v2/catalog/identity/accounts:signInWithApiKey'
+        # self.query_url = r'https://io.apps.fao.org/gismgr/api/v1/query/'
+        self.catalog_url = r'https://data.apps.fao.org/gismgr/api/v2/catalog/'
+
+        self.payload = {'overview':False,'paged':False}
+        self.time_out = 5
+    
+    def showInternetMsg(self):
+            print("The internet connection is down")
+            QMessageBox.information(None, "No internet connection", '''<html><head/><body>
+            <p>To interact with the WAPOR database a stable internet connection
+            is required, you can still use the offline features.</p></body></html>''')
+            return False
+
+    def showCropErrorMsg(self, error_msg):
+            print("Completed with errors [Crop raster]")
+            QMessageBox.information(None, "Error in crop raster", '''<html><head/><body>
+            <p>There was an error in the query on the query with FAO WAPOR portal:
+            <br><br>
+            ERROR: {}
+            <br><br>
+            Please check if the error is considered in our wiki page
+            <a href="https://github.com/WAGIS/wap_plugin/wiki"><span style="text-decoration: 
+            underline; color: #0000ff;">Wiki page</span></a>,
+            if not please submit an 
+            <a href="https://github.com/WAGIS/wap_plugin/issues"><span style="text-decoration: 
+            underline; color: #0000ff;">issue</span></a>.</p></body></html>'''.format(error_msg))
+            return False
+
+    def signin(self, APIToken):
+        """
+            Performs de sign in into the WaPOR V3 platform using the API token, and
+            returns the state of the connection.
+
+            ...
+            Parameters
+            ----------
+            APIToken : String
+                Token associated to the users account on WaPOR V3 platform.
+        """       
+        request_headers = {'X-GISMGR-API-KEY': APIToken}
+
+        try:
+            resp = requests.post(self.sign_in_url, headers=request_headers)
+            print('Connecting to WaPORv3 Database . . .')
+
+            resp_json = resp.json()
+            if resp_json['message'] == 'OK':
+                self.AccessToken=resp_json['response']['accessToken']
+                print('SUCCESS: Access granted')
+                print('Access expires in 3600s')
+                self.lastConnection_time = time.time()
+                self.connected = True
+                self.APIToken = APIToken
+            else:
+                print('Failed to connect to WaPOR V3 Database . . .')
+                self.connected = False
+        except requests.exceptions.ConnectionError:
+            self.showInternetMsg()
+
+        return self.connected
+
+    def isConnected(self):
+        """
+            Returns if the API of WaPOR V3 is connected based in the sign in 
+            function or an expired time event.
+        """
+        if not self.connected:
+            return False
+        elif time.time() - self.lastConnection_time > 3600:
+            self.connected = False
+        return self.connected
+
+    def query_crop_raster(self, params):
+        """
+            Performs de crop and download raster query from the WaPOR V3 platform 
+            using a dictionary with the parameters of the operation.
+
+            ...
+            Parameters
+            ----------
+            params : Dict
+                Parameters of configuration for the query crop and download.
+
+                properties['outputFileName'] : String
+                    Path and name to the resulting raster file.
+                cube['workspaceCode'] : String
+                    Code of the workspace to which the raster belongs.
+                cube['code'] : String
+                    Code of the type of raster to download.
+                dimensions : List
+                    Definition of the List of time frames used to delimite the 
+                    raster.
+                measures : List
+                    Definition of the List of measurements used to delimite the 
+                    raster.
+                shape['coordinates'] : List
+                    List of points that defines the polygon of the raster.
+                shape['crs'] : String
+                    Reference system to define de coordinates.
+        """
+        if not self.isConnected():
+            raise Exception("Query [crop_raster] error, no WaPOR V3 connection")
+        else:
+            request_json = crop_raster_query.copy()
+            request_json['params']['properties']['outputFileName'] = params['outputFileName']
+            request_json['params']['cube']['workspaceCode'] = params['cube_workspaceCode']
+            request_json['params']['cube']['code'] = params['cube_code']
+            request_json['params']['dimensions'] = params['dimensions']
+            request_json['params']['measures'] = params['measures']
+
+            if params['coordinates'][0] is not None:
+                request_json['params']['shape']['coordinates'] = params['coordinates']
+                request_json['params']['shape']['crs'] = params['crs']
+            else:
+                print('WARNING: Valid coordinates not provided, using default ones . . . ')
+            
+            request_headers = {'Authorization': "Bearer " + self.AccessToken}
+
+            try:
+                resp_json = requests.post(  self.query_url,
+                                            json=request_json,
+                                            headers=request_headers).json()
+
+                if resp_json['message']=='OK':
+                    job_url = resp_json['response']['links'][0]['href']
+
+                    while True:
+                        QApplication.processEvents()
+                        response = requests.get(job_url)
+                        resp_json=response.json()
+                        print(resp_json['response']['status'])
+                        if resp_json['response']['status']=='COMPLETED':
+                            rast_url = resp_json['response']['output']['downloadUrl']
+                            return rast_url
+                        elif resp_json['response']['status']=='COMPLETED WITH ERRORS':
+                            log_resp = resp_json['response']['log'][-3:-1]
+                            print(log_resp)
+                            self.showCropErrorMsg(log_resp[-1].split('ERROR: ')[-1])
+                            return None
+                        elif resp_json['response']['status'] == 'WAITING' or resp_json['response']['status'] == 'RUNNING':
+                            pass
+                        else:
+                            raise Exception("Query [crop_raster] error status not handled")
+            except requests.exceptions.ConnectionError:
+                self.showInternetMsg()
+
+            else:
+                #  TODO raise something
+                print('Fail to get job url')
+    
+    def query_listing(self, url):
+        """
+            Performs de listing query for an URL which will return a list of
+            elements in a catalog e.g workspaces, cubes, dimensions and measures.
+
+            ...
+            Parameters
+            ----------
+            params : url
+                URL to get listed from the query.
+        """
+        try:
+            listing = dict()
+            while url is not None:
+                resp = requests.get(url,timeout=self.time_out).json()
+                for elem in resp['response']['items']:
+                    listing[elem['caption']] = elem['code']
+                url = resp['response']['links'][-1]['href'] if resp['response']['links'][-1]['rel'] == 'next' else None
+            return listing
+        except (requests.ConnectionError, requests.Timeout) as exception:
+            return None
+        except (KeyError) as exception:
+            return {'---':None}
+
+    def query_info(self, url):
+        """
+            Performs de info query for an URL which will return the information
+            of an specific element in the catalog e.g workspaces, cubes, 
+            dimensions and measures.
+
+            ...
+            Parameters
+            ----------
+            url : String
+                URL to get the info from the query.
+        """
+        try:
+            resp = requests.get(url,timeout=self.time_out).json()
+            return resp['response']
+        except (requests.ConnectionError, requests.Timeout) as exception:
+            return None
+
+    def pull_workspaces(self):
+        """
+            Pulls all the workspaces available in the catalog.
+        """
+        workspaces_url = self.catalog_url+'workspaces'
+        workspaces_dict = self.query_listing(workspaces_url)
+        if workspaces_dict is None:
+            self.showInternetMsg()
+            return {}
+            # raise Exception("Query [pull_workspaces] error, no internet connection or timeout")
+        else:
+            return workspaces_dict
+        
+    def get_info_workspace(self, workspace):
+        """
+            Gets the information contained in the catalog with respect to a 
+            given workspace code.
+
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to get the info from the query.
+        """
+        workspace_url = self.catalog_url+'workspaces/{}'.format(workspace)
+        workspace_resp = self.query_info(workspace_url)
+        if workspace_resp is None:
+            raise Exception("Query [info_workspaces] error, no internet connection or timeout")
+        else:
+            return workspace_resp['caption'], workspace_resp['description']
+
+class Wapor2APIManager:
+    """
+        Class used to manage the API of WaPOR V2 and all its functions associated.
+
+        ...
+
+        Attributes
+        ----------
+        APIToken : String
+            Token associated to the users account on WaPOR V2 platform.
+        connected : bool
+            If the plugin is currently connected to the WaPOR V2 database.
+        sign_in_url : string
+            URL prefix for sign into the WaPOR V2 database.
+        query_url : string
+            URL prefix for querying the WaPOR V2 database.
+        catalog_url : string
+            URL prefix for pulling the WaPOR V2 catalog.
+        payload : Dict
+            Dictionary with the payload of the query.
+        time_out : int
+            Seconds of waiting before claiming a time out.
+
+        Methods
+        -------
+        signin(APIToken)
+            Performs de sign in into the WaPOR V2 platform using the API token, and
+            returns the state of the connection.
+        isConnected():
+            Returns if the API of WaPOR V2 is connected based in the sign in 
+            function or an expired time event.
+        query_crop_raster(params):
+            Performs de crop and download raster query from the WaPOR V2 platform 
             using a dictionary with the parameters of the operation.
         query_listing(url):
             Performs de listing query for an URL which will return a list of
@@ -114,20 +390,20 @@ class WaporAPIManager:
 
     def signin(self, APIToken):
         """
-            Performs de sign in into the Wapor platform using the API token, and
+            Performs de sign in into the WaPOR v2 platform using the API token, and
             returns the state of the connection.
 
             ...
             Parameters
             ----------
             APIToken : String
-                Token associated to the users account on Wapor platform.
+                Token associated to the users account on WaPOR v2 platform.
         """       
         request_headers = {'X-GISMGR-API-KEY': APIToken}
 
         try:
             resp = requests.post(self.sign_in_url, headers=request_headers)
-            print('Connecting to WaPOR Database . . .')
+            print('Connecting to WaPOR v2 Database . . .')
 
             resp_json = resp.json()
             if resp_json['message'] == 'OK':
@@ -138,7 +414,7 @@ class WaporAPIManager:
                 self.connected = True
                 self.APIToken = APIToken
             else:
-                print('Failed to connect to Wapor Database . . .')
+                print('Failed to connect to WaPOR v2 Database . . .')
                 self.connected = False
         except requests.exceptions.ConnectionError:
             self.showInternetMsg()
@@ -147,7 +423,7 @@ class WaporAPIManager:
 
     def isConnected(self):
         """
-            Returns if the API of Wapor is connected based in the sign in 
+            Returns if the API of WaPOR v2 is connected based in the sign in 
             function or an expired time event.
         """
         if not self.connected:
@@ -158,7 +434,7 @@ class WaporAPIManager:
 
     def query_crop_raster(self, params):
         """
-            Performs de crop and download raster query from the Wapor platform 
+            Performs de crop and download raster query from the WaPOR v2 platform 
             using a dictionary with the parameters of the operation.
 
             ...
@@ -185,7 +461,7 @@ class WaporAPIManager:
                     Reference system to define de coordinates.
         """
         if not self.isConnected():
-            raise Exception("Query [crop_raster] error, no Wapor connection")
+            raise Exception("Query [crop_raster] error, no WaPOR v2 connection")
         else:
             request_json = crop_raster_query.copy()
             request_json['params']['properties']['outputFileName'] = params['outputFileName']
