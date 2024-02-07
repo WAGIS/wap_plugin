@@ -23,7 +23,7 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QDate, QTime, QDateTime, Qt
 from qgis.PyQt.QtGui import QIcon 
-from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox
+from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox, QTableWidgetItem
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
 from qgis.core import QgsRasterLayer, QgsMapLayerProxyModel
@@ -32,6 +32,7 @@ from qgis.core import QgsRasterLayer, QgsMapLayerProxyModel
 from .resources import *
 # Import the code for the dialog
 from .wap_plugin_dialog import WAPluginDialog
+from .wap_plugin_data_details import WAPluginDataDetails
 import os.path
 import os  
 from itertools import compress
@@ -354,7 +355,7 @@ class WAPlugin:
         self.tif_files = self.file_manag.list_rasters(rasterFolder)
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
-    
+
     def listRasterCalcMemory(self):
         """
             Calls the list rasters function of the file manager to get the rasters
@@ -490,6 +491,22 @@ class WAPlugin:
         else:
             self.dlg.outputIndicName.setEnabled(True)
 
+    def showDetails(self):
+        """
+            Open Details window and print data
+        """
+        self.details_dlg.dataTableWidget.setColumnWidth(0, 200)
+        self.details_dlg.dataTableWidget.setColumnWidth(1, 450)
+        self.info = self.api2_manag.pull_cube_info(self.workspace, self.cube)
+
+        row = 0
+        self.details_dlg.dataTableWidget.setRowCount(len(self.info))
+        for info_ele in self.info:
+            self.details_dlg.dataTableWidget.setItem(row, 0, QTableWidgetItem(info_ele['type']))
+            self.details_dlg.dataTableWidget.setItem(row, 1, QTableWidgetItem(info_ele['details']))
+            self.details_dlg.dataTableWidget.resizeRowToContents(row)
+            row += 1
+        self.details_dlg.show()
 
     def cubeChange(self):
         """
@@ -838,6 +855,7 @@ class WAPlugin:
         if self.first_start == True:
             self.first_start = False
             self.dlg = WAPluginDialog()
+            self.details_dlg = WAPluginDataDetails()
             
             # self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.dlg.setFixedSize(self.dlg.size())
@@ -883,6 +901,8 @@ class WAPlugin:
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
+            self.dlg.DetailsButton.clicked.connect(self.showDetails)
+
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
             self.dlg.measureComboBox.currentIndexChanged.connect(self.measureChange)

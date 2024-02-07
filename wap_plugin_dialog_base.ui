@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>551</width>
-    <height>706</height>
+    <width>541</width>
+    <height>742</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>20</x>
      <y>20</y>
      <width>511</width>
-     <height>671</height>
+     <height>711</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
@@ -207,10 +207,10 @@
           <x>10</x>
           <y>10</y>
           <width>477</width>
-          <height>591</height>
+          <height>311</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="allBoxLayput" stretch="10,6,3">
+        <layout class="QVBoxLayout" name="allBoxLayput" stretch="0">
          <item>
           <widget class="QGroupBox" name="rasterSelectionBox">
            <property name="title">
@@ -304,11 +304,18 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="7,1,7">
                <item>
                 <widget class="QLabel" name="cubeLabel">
                  <property name="text">
                   <string>Raster Type:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="DetailsButton">
+                 <property name="text">
+                  <string>Details</string>
                  </property>
                 </widget>
                </item>
@@ -432,143 +439,155 @@
            </widget>
           </widget>
          </item>
-         <item>
-          <widget class="QGroupBox" name="coordinateSelectionBox">
-           <property name="title">
-            <string>Coordinate Selection</string>
-           </property>
-           <widget class="QWidget" name="verticalLayoutWidget_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>20</y>
-              <width>451</width>
-              <height>195</height>
-             </rect>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_8">
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="2,3,1">
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout_10">
-                 <item>
-                  <widget class="QCheckBox" name="useCanvasCoordCheckBox">
-                   <property name="text">
-                    <string>Use Canvas Extent</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2"/>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="getEdgesButton">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="text">
-                    <string>Get Edges</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="savePolygonButton">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="text">
-                    <string>Save Polygon Co-ordinates</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="TestCanvasLabel">
-                 <property name="text">
-                  <string>Waiting . . .</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="resetToolButton">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="layoutDirection">
-                  <enum>Qt::LeftToRight</enum>
-                 </property>
-                 <property name="text">
-                  <string>Reset Tool</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QPushButton" name="downloadButton">
-               <property name="text">
-                <string>Download</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="rasterLoadBox">
-           <property name="title">
-            <string>Raster Load</string>
-           </property>
-           <widget class="QWidget" name="layoutWidget_5">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>451</width>
-              <height>51</height>
-             </rect>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="4,4,2,1">
-             <item>
-              <widget class="QgsFileWidget" name="rasterFolderExplorer">
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="filter">
-                <string/>
-               </property>
-               <property name="storageMode">
-                <enum>QgsFileWidget::GetDirectory</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="rasterMemoryComboBox"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="loadRasterButton">
-               <property name="text">
-                <string>Load in canvas</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="RasterRefreshButton">
-               <property name="text">
-                <string>Refresh</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </item>
         </layout>
+       </widget>
+       <widget class="QGroupBox" name="rasterLoadBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>550</y>
+          <width>475</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Raster Load</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget_5">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>451</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="4,4,2,1">
+          <item>
+           <widget class="QgsFileWidget" name="rasterFolderExplorer">
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="filter">
+             <string/>
+            </property>
+            <property name="storageMode">
+             <enum>QgsFileWidget::GetDirectory</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="rasterMemoryComboBox"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="loadRasterButton">
+            <property name="text">
+             <string>Load in canvas</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="RasterRefreshButton">
+            <property name="text">
+             <string>Refresh</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="coordinateSelectionBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>330</y>
+          <width>475</width>
+          <height>218</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Coordinate Selection</string>
+        </property>
+        <widget class="QWidget" name="verticalLayoutWidget_3">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>451</width>
+           <height>195</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="2,3,1">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <widget class="QCheckBox" name="useCanvasCoordCheckBox">
+                <property name="text">
+                 <string>Use Canvas Extent</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="getEdgesButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Get Edges</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="savePolygonButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Save Polygon Co-ordinates</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="TestCanvasLabel">
+              <property name="text">
+               <string>Waiting . . .</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="resetToolButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="text">
+               <string>Reset Tool</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="downloadButton">
+            <property name="text">
+             <string>Download</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="tab">
