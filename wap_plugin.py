@@ -901,7 +901,7 @@ class WAPlugin:
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
-            self.dlg.DetailsButton.clicked.connect(self.showDetails)
+            self.dlg.DetailsLink.clicked.connect(self.showDetails)
 
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)

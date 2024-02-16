@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>541</width>
-    <height>742</height>
+    <width>548</width>
+    <height>714</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>20</y>
+     <y>10</y>
      <width>511</width>
-     <height>711</height>
+     <height>681</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
@@ -207,7 +207,7 @@
           <x>10</x>
           <y>10</y>
           <width>477</width>
-          <height>311</height>
+          <height>321</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="allBoxLayput" stretch="0">
@@ -222,12 +222,12 @@
               <x>10</x>
               <y>30</y>
               <width>461</width>
-              <height>274</height>
+              <height>281</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
              <property name="spacing">
-              <number>6</number>
+              <number>5</number>
              </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout">
@@ -304,7 +304,16 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="7,1,7">
+              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="7,0,7">
+               <property name="spacing">
+                <number>7</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SetDefaultConstraint</enum>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
                <item>
                 <widget class="QLabel" name="cubeLabel">
                  <property name="text">
@@ -313,9 +322,46 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="DetailsButton">
+                <widget class="QCommandLinkButton" name="DetailsLink">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>90</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>MS Shell Dlg 2</family>
+                   <kerning>true</kerning>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>ArrowCursor</cursorShape>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
                  <property name="text">
                   <string>Details</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../../../../../../../../../Downloads/icons8-info-50.png</normaloff>../../../../../../../../../Downloads/icons8-info-50.png</iconset>
+                 </property>
+                 <property name="autoRepeat">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -445,7 +491,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>550</y>
+          <y>530</y>
           <width>475</width>
           <height>91</height>
          </rect>
@@ -500,9 +546,9 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>330</y>
+          <y>340</y>
           <width>475</width>
-          <height>218</height>
+          <height>191</height>
          </rect>
         </property>
         <property name="title">
@@ -513,13 +559,13 @@
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>451</width>
-           <height>195</height>
+           <width>461</width>
+           <height>163</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="2,3,1">
+           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="2,3,0">
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
