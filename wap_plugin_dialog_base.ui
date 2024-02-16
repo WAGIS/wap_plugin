@@ -225,7 +225,7 @@
               <height>281</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
+            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>5</number>
              </property>
@@ -403,7 +403,7 @@
                <item>
                 <widget class="QLabel" name="dimensionMemberLabel">
                  <property name="text">
-                  <string>Time Frame:</string>
+                  <string>Time Frame from:</string>
                  </property>
                 </widget>
                </item>
@@ -415,6 +415,26 @@
                </item>
                <item>
                 <widget class="QComboBox" name="memberComboBox"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_22">
+               <item>
+                <widget class="QLabel" name="dimensionMemberLabel_2">
+                 <property name="text">
+                  <string>Time Frame until:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="yearFilterComboBox_2"/>
+               </item>
+               <item>
+                <widget class="QComboBox" name="monthFilterComboBox_2"/>
+               </item>
+               <item>
+                <widget class="QComboBox" name="memberComboBox_2"/>
                </item>
               </layout>
              </item>

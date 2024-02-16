@@ -550,7 +550,16 @@ class WAPlugin:
             self.member = self.members[self.dlg.memberComboBox.currentText()]
         except (KeyError) as exception:
             pass
-    
+        
+    def memberChange_2(self):
+        """
+            Detects changes on the member selection and storages it in memory.
+        """
+        try:
+            self.member_2 = self.members[self.dlg.memberComboBox_2.currentText()]
+        except (KeyError) as exception:
+            pass
+
     def getYearsAvailable(self, members_keys):
         """
             Updates the year available in the given members when the dimension 
@@ -561,6 +570,9 @@ class WAPlugin:
         
         self.dlg.yearFilterComboBox.clear()
         self.dlg.yearFilterComboBox.addItems(self.years_available)
+
+        self.dlg.yearFilterComboBox_2.clear()
+        self.dlg.yearFilterComboBox_2.addItems(self.years_available)
 
     def getMonthsAvailable(self):
         """
@@ -582,6 +594,26 @@ class WAPlugin:
         self.dlg.monthFilterComboBox.addItems(self.months_available)
         self.updateMembersFiltered()
 
+    def getMonthsAvailable_2(self):
+        """
+            Detects changes in the year and filters the months available in the 
+            members of the cube for a give time dimensions
+        """
+        year = self.dlg.yearFilterComboBox_2.currentText()
+        members_keys = self.members.keys()
+
+        months = set()
+        for key in members_keys:
+            ym = key.split(' ')[0]
+            if ym.split('-')[0] == year:
+                months.add(ym.split('-')[1])
+
+        self.months_available = sorted(months)
+
+        self.dlg.monthFilterComboBox_2.clear()
+        self.dlg.monthFilterComboBox_2.addItems(self.months_available)
+        self.updateMembersFiltered_2()
+
     def updateMembersFiltered(self):
         """
             Detects changes in the year and month and filters the members of the
@@ -595,6 +627,20 @@ class WAPlugin:
 
         self.dlg.memberComboBox.clear()
         self.dlg.memberComboBox.addItems(list(compress(members_keys, bool_list)))
+
+    def updateMembersFiltered_2(self):
+        """
+            Detects changes in the year and month and filters the members of the
+            cube
+        """
+        members_keys = self.members.keys()
+        
+        year = self.dlg.yearFilterComboBox_2.currentText()
+        month = self.dlg.monthFilterComboBox_2.currentText()
+        bool_list = [year in key and '-'+month in key for key in list(members_keys)]
+
+        self.dlg.memberComboBox_2.clear()
+        self.dlg.memberComboBox_2.addItems(list(compress(members_keys, bool_list)))
 
     def dimensionChange(self):
         """
@@ -612,23 +658,40 @@ class WAPlugin:
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.getMonthsAvailable()
+                self.getMonthsAvailable_2()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
                 self.dlg.memberComboBox.show()
+
+                self.dlg.yearFilterComboBox_2.show()
+                self.dlg.monthFilterComboBox_2.show()
+                self.dlg.memberComboBox_2.show()
             elif self.dlg.timeFilterComboBox.currentText() == 'Monthly':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.getMonthsAvailable()
+                self.getMonthsAvailable_2()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
                 self.dlg.memberComboBox.hide()
+
+                self.dlg.yearFilterComboBox_2.show()
+                self.dlg.monthFilterComboBox_2.show()
+                self.dlg.memberComboBox_2.hide()
             else:
                 self.dlg.yearFilterComboBox.hide()
                 self.dlg.monthFilterComboBox.hide()
                 self.dlg.memberComboBox.show()
                 
+                self.dlg.yearFilterComboBox_2.hide()
+                self.dlg.monthFilterComboBox_2.hide()
+                self.dlg.memberComboBox_2.show()
+                
                 self.dlg.memberComboBox.clear()
                 self.dlg.memberComboBox.addItems(members_keys)
+
+                self.dlg.memberComboBox_2.clear()
+                self.dlg.memberComboBox_2.addItems(members_keys)
         except (KeyError) as exception:
                     pass
     
@@ -639,43 +702,54 @@ class WAPlugin:
             raster function of the file manager, then updates the UI in response
             to the result.
         """
-        self.dlg.progressBar.setValue(20)
-        self.dlg.progressLabel.setText ('Downloading Raster')
-        
-        params = dict()
-        params['outputFileName'] = self.dlg.outputRasterName.text()+'_'+self.cube+'.tif'
-        params['cube_code'] = self.cube
-        params['cube_workspaceCode'] = self.workspace
-        params['measures'] = [self.measure]
-        params['dimensions'] = [{
-                                    "code": self.dimension,
-                                    "values": [self.member]
-                                }]
-        if self.dlg.useCanvasCoordCheckBox.checkState():
-            params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
-            params['crs'] = self.getCrs()
-        else:
-            params['coordinates'] = [self.queryCoordinates]
-            params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
-            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs()
 
-        print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
-        print("From SHAPE", params['coordinates'])
+        member_keys = list(self.members.keys())
+        time_start_ind = member_keys.index(self.dlg.memberComboBox.currentText())
+        time_end_ind = member_keys.index(self.dlg.memberComboBox_2.currentText())
+        member_time_frame = [self.members[k] for k in member_keys[time_start_ind:time_end_ind+1]]
+        print("Member Range: ", member_time_frame)
+        print("Member: ", self.member)
 
-        rast_url = self.api2_manag.query_crop_raster(params)
-
-        if not rast_url == None:
-            rast_directory = self.dlg.downloadFolderExplorer.filePath()
-            self.file_manag.download_raster(rast_url, rast_directory)
+        for i, member_frame in enumerate(member_time_frame):
+            progress_value = 20 + ((i+1)/len(member_time_frame))*60
+            self.dlg.progressBar.setValue(progress_value)
+            self.dlg.progressLabel.setText ('Downloading Raster {}/{}'.format(i, len(member_time_frame)))
             
-            self.dlg.progressBar.setValue(100)
-            self.dlg.progressLabel.setText ('Raster Download Complete')
-            
-            self.listRasterMemory()
-            self.indicatorChange()
-        else:
-            self.dlg.progressBar.setValue(0)
-            self.dlg.progressLabel.setText ('Raster Download Failed')
+            params = dict()
+            params['outputFileName'] = "{}_{}_{}.tif".format(self.dlg.outputRasterName.text(), self.cube, str(member_frame).split(',')[0][1:].replace("-", "_"))
+            print("Save file name: ", params['outputFileName'])
+            params['cube_code'] = self.cube
+            params['cube_workspaceCode'] = self.workspace
+            params['measures'] = [self.measure]
+            params['dimensions'] = [{
+                                        "code": self.dimension,
+                                        "values": [member_frame]
+                                    }]
+            if self.dlg.useCanvasCoordCheckBox.checkState():
+                params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
+                params['crs'] = self.getCrs()
+            else:
+                params['coordinates'] = [self.queryCoordinates]
+                params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
+                params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs()
+
+            print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
+            print("From SHAPE", params['coordinates'])
+
+            rast_url = self.api2_manag.query_crop_raster(params)
+
+            if not rast_url == None:
+                rast_directory = self.dlg.downloadFolderExplorer.filePath()
+                self.file_manag.download_raster(rast_url, rast_directory)
+                
+                self.dlg.progressBar.setValue(100)
+                self.dlg.progressLabel.setText ('Raster Download Complete')
+                
+                self.listRasterMemory()
+                self.indicatorChange()
+            else:
+                self.dlg.progressBar.setValue(0)
+                self.dlg.progressLabel.setText ('Raster Download Failed')
 
 
     def updateRasterFolder(self):
@@ -913,6 +987,10 @@ class WAPlugin:
 
             self.dlg.yearFilterComboBox.currentIndexChanged.connect(self.getMonthsAvailable)
             self.dlg.monthFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
+
+            self.dlg.yearFilterComboBox_2.currentIndexChanged.connect(self.getMonthsAvailable_2)
+            self.dlg.monthFilterComboBox_2.currentIndexChanged.connect(self.updateMembersFiltered_2)
+            self.dlg.memberComboBox_2.currentIndexChanged.connect(self.memberChange_2)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.tabManager.currentChanged.connect(self.tabChange)

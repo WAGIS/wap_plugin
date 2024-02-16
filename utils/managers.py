@@ -439,6 +439,7 @@ class Wapor2APIManager:
             request_json['params']['dimensions'] = params['dimensions']
             request_json['params']['measures'] = params['measures']
 
+            print("Dimensions: ", request_json['params']['dimensions'])
             if params['coordinates'][0] is not None:
                 request_json['params']['shape']['coordinates'] = params['coordinates']
                 request_json['params']['shape']['crs'] = params['crs']
@@ -451,9 +452,9 @@ class Wapor2APIManager:
                 resp_json = requests.post(  self.query_url,
                                             json=request_json,
                                             headers=request_headers).json()
-
                 if resp_json['message']=='OK':
                     job_url = resp_json['response']['links'][0]['href']
+                    print("Links: ", resp_json['response']['links'])
 
                     while True:
                         QApplication.processEvents()
