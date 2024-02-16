@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>548</width>
-    <height>666</height>
+    <height>685</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>20</x>
      <y>10</y>
      <width>511</width>
-     <height>641</height>
+     <height>661</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
@@ -159,7 +159,7 @@
          <rect>
           <x>40</x>
           <y>10</y>
-          <width>271</width>
+          <width>331</width>
           <height>51</height>
          </rect>
         </property>
@@ -171,7 +171,7 @@
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>251</width>
+           <width>267</width>
            <height>22</height>
           </rect>
          </property>
@@ -188,6 +188,9 @@
           </item>
           <item>
            <widget class="QRadioButton" name="wapor3radioButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>WaPOR v3</string>
             </property>
@@ -443,8 +446,8 @@
            <widget class="QLabel" name="catalogHelpLabel">
             <property name="geometry">
              <rect>
-              <x>430</x>
-              <y>0</y>
+              <x>440</x>
+              <y>10</y>
               <width>41</width>
               <height>27</height>
              </rect>
@@ -470,7 +473,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>490</y>
+          <y>510</y>
           <width>475</width>
           <height>81</height>
          </rect>
@@ -527,7 +530,7 @@
           <x>10</x>
           <y>340</y>
           <width>475</width>
-          <height>151</height>
+          <height>161</height>
          </rect>
         </property>
         <property name="title">
@@ -539,7 +542,7 @@
            <x>10</x>
            <y>20</y>
            <width>461</width>
-           <height>121</height>
+           <height>131</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0">
@@ -638,23 +641,47 @@
         <string>WaPOR 3 Catalog</string>
        </attribute>
        <widget class="QComboBox" name="workspace3ComboBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
-          <x>270</x>
-          <y>30</y>
+          <x>70</x>
+          <y>250</y>
           <width>161</width>
           <height>22</height>
          </rect>
         </property>
        </widget>
        <widget class="QComboBox" name="mapsetComboBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
-          <x>270</x>
-          <y>80</y>
+          <x>260</x>
+          <y>250</y>
           <width>161</width>
           <height>22</height>
          </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>70</y>
+          <width>181</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>18</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Coming Soon ...!</string>
         </property>
        </widget>
       </widget>

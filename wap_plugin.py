@@ -708,6 +708,12 @@ class WAPlugin:
         time_end_ind = member_keys.index(self.dlg.memberComboBox_2.currentText())
         member_time_frame = [self.members[k] for k in member_keys[time_start_ind:time_end_ind+1]]
 
+        if len(member_time_frame) == 0:
+            self.dlg.progressBar.setValue(0)
+            self.dlg.progressLabel.setText ('Invalid Time Series. Time until < Time from')
+            print("Time Series invalid: Time from should be greater than time until")
+            return
+
         for i, member_frame in enumerate(member_time_frame):
             progress_value = 20 + ((i+1)/len(member_time_frame))*60
             self.dlg.progressBar.setValue(progress_value)
