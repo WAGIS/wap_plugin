@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>548</width>
-    <height>685</height>
+    <height>691</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>20</x>
      <y>10</y>
      <width>511</width>
-     <height>661</height>
+     <height>671</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
@@ -475,51 +475,73 @@
           <x>10</x>
           <y>510</y>
           <width>475</width>
-          <height>81</height>
+          <height>101</height>
          </rect>
         </property>
         <property name="title">
          <string>Raster Load</string>
         </property>
-        <widget class="QWidget" name="layoutWidget_5">
+        <widget class="QWidget" name="verticalLayoutWidget_4">
          <property name="geometry">
           <rect>
            <x>10</x>
            <y>20</y>
-           <width>451</width>
-           <height>51</height>
+           <width>461</width>
+           <height>71</height>
           </rect>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="4,4,2,1">
+         <layout class="QVBoxLayout" name="verticalLayout_10">
           <item>
-           <widget class="QgsFileWidget" name="rasterFolderExplorer">
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="filter">
-             <string/>
-            </property>
-            <property name="storageMode">
-             <enum>QgsFileWidget::GetDirectory</enum>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_28">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Browse</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QgsFileWidget" name="rasterFolderExplorer">
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="filter">
+               <string/>
+              </property>
+              <property name="storageMode">
+               <enum>QgsFileWidget::GetDirectory</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QComboBox" name="rasterMemoryComboBox"/>
-          </item>
-          <item>
-           <widget class="QPushButton" name="loadRasterButton">
-            <property name="text">
-             <string>Load in canvas</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="RasterRefreshButton">
-            <property name="text">
-             <string>Refresh</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,4,2,1">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Available Data</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="rasterMemoryComboBox"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="loadRasterButton">
+              <property name="text">
+               <string>Load in canvas</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="RasterRefreshButton">
+              <property name="text">
+               <string>Refresh</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
