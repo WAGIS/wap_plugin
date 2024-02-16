@@ -27,12 +27,12 @@ class CoordinatesSelectorTool(QgsMapTool):
         -------
 
     """
-    def __init__(self, canvas, label, savePolygonButton):
+    def __init__(self, canvas):
         QgsMapTool.__init__(self, canvas)
         
         self.canvas = canvas    
-        self.label = label    
-        self.savePolygonButton = savePolygonButton
+        # self.label = label    
+        # self.savePolygonButton = savePolygonButton
 
         self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry )
         self.rubberBand.setColor(Qt.red)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>548</width>
-    <height>714</height>
+    <height>666</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>20</x>
      <y>10</y>
      <width>511</width>
-     <height>681</height>
+     <height>641</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
@@ -225,7 +225,7 @@
               <height>281</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0,0">
+            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0">
              <property name="spacing">
               <number>5</number>
              </property>
@@ -438,47 +438,6 @@
                </item>
               </layout>
              </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3,0,2,0">
-               <property name="sizeConstraint">
-                <enum>QLayout::SetDefaultConstraint</enum>
-               </property>
-               <item>
-                <widget class="QLabel" name="outputPathCatalogLabel">
-                 <property name="text">
-                  <string>Output path:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QgsFileWidget" name="downloadFolderExplorer">
-                 <property name="autoFillBackground">
-                  <bool>false</bool>
-                 </property>
-                 <property name="storageMode">
-                  <enum>QgsFileWidget::GetDirectory</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="outputNameCatalogLabel">
-                 <property name="text">
-                  <string>Name:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="outputRasterName"/>
-               </item>
-               <item>
-                <widget class="QLabel" name="outputRasterCubeID">
-                 <property name="text">
-                  <string>.tif</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
             </layout>
            </widget>
            <widget class="QLabel" name="catalogHelpLabel">
@@ -511,9 +470,9 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>530</y>
+          <y>490</y>
           <width>475</width>
-          <height>91</height>
+          <height>81</height>
          </rect>
         </property>
         <property name="title">
@@ -523,7 +482,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>30</y>
+           <y>20</y>
            <width>451</width>
            <height>51</height>
           </rect>
@@ -568,7 +527,7 @@
           <x>10</x>
           <y>340</y>
           <width>475</width>
-          <height>191</height>
+          <height>151</height>
          </rect>
         </property>
         <property name="title">
@@ -580,66 +539,84 @@
            <x>10</x>
            <y>20</y>
            <width>461</width>
-           <height>163</height>
+           <height>121</height>
           </rect>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="2,3,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="0,0">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_10">
-              <item>
-               <widget class="QCheckBox" name="useCanvasCoordCheckBox">
-                <property name="text">
-                 <string>Use Canvas Extent</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2"/>
-              </item>
-              <item>
-               <widget class="QPushButton" name="getEdgesButton">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Get Edges</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="savePolygonButton">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Save Polygon Co-ordinates</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QLabel" name="TestCanvasLabel">
+             <widget class="QRadioButton" name="useCanvasCoordCheckBox">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="text">
-               <string>Waiting . . .</string>
+               <string>Canvas Extent</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="resetToolButton">
-              <property name="enabled">
+             <widget class="QRadioButton" name="shapeFileRadioButton">
+              <property name="text">
+               <string>From Shape File</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_24">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,3,0,2,0">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+            <item>
+             <widget class="QLabel" name="outputPathCatalogLabel">
+              <property name="text">
+               <string>Output path:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QgsFileWidget" name="downloadFolderExplorer">
+              <property name="autoFillBackground">
                <bool>false</bool>
               </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
+              <property name="storageMode">
+               <enum>QgsFileWidget::GetDirectory</enum>
               </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="outputNameCatalogLabel">
               <property name="text">
-               <string>Reset Tool</string>
+               <string>Name:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="outputRasterName"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="outputRasterCubeID">
+              <property name="text">
+               <string>.tif</string>
               </property>
              </widget>
             </item>

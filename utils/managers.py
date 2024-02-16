@@ -454,7 +454,6 @@ class Wapor2APIManager:
                                             headers=request_headers).json()
                 if resp_json['message']=='OK':
                     job_url = resp_json['response']['links'][0]['href']
-                    print("Links: ", resp_json['response']['links'])
 
                     while True:
                         QApplication.processEvents()
