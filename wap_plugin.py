@@ -640,10 +640,7 @@ class WAPlugin:
         else:
             params['coordinates'] = [self.queryCoordinates]
             params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
-            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs()
-
-        print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
-        print("From SHAPE", params['coordinates'])
+            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs().authid()
 
         rast_url = self.api2_manag.query_crop_raster(params)
 
