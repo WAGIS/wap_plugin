@@ -26,7 +26,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
-from qgis.core import QgsRasterLayer
+from qgis.core import QgsRasterLayer, QgsMapLayerProxyModel
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -36,7 +36,7 @@ import os.path
 import os  
 from itertools import compress
 try:
-    from .utils.managers import WaporAPIManager, FileManager, CanvasManager
+    from .utils.managers import Wapor2APIManager, Wapor3APIManager, FileManager, CanvasManager
     from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
     from .utils.tools import CoordinatesSelectorTool
 
@@ -122,7 +122,8 @@ class WAPlugin:
 
         self.rasters_path = "layers"
 
-        self.api_manag = WaporAPIManager()
+        self.api2_manag = Wapor2APIManager()
+        self.api3_manag = Wapor3APIManager()
         self.file_manag = FileManager(self.plugin_dir, self.rasters_path)
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
@@ -241,13 +242,39 @@ class WAPlugin:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def updateWaporParams(self):
+        self.isWapor2 = self.dlg.wapor2radioButton.isChecked()
+
+        box_text = '''<html><head/><body><p>In order to have access to the WaPOR 
+             v{} resources, you sould provide the API Token associated to your 
+            <a href="{}"><span style=" text-decoration: underline; color:#0000ff
+            ;">account</span></a>. In case you do not have one or do not know 
+            how to get the API Token, please refer to the instructions in our <a 
+            href="{}"><span style=" text-decoration: underline; color:#0000ff;">
+            GitHub Repository</span></a>.</p></body></html>'''
+
+        if self.isWapor2:  
+            v = 2
+            profile_url = 'https://wapor.apps.fao.org/profile'
+            instructions_url = r'https://github.com/WAGIS/wap_plugin/wiki/Login-to-database'
+        else:
+            v = 3
+            profile_url = 'https://data.apps.fao.org/gismgr/web/v2'
+            instructions_url = r'https://github.com/un-fao/FAO-Water-Applications/blob/10a70cda0e0023258bc9152e43a73b6e8e20b669/WaPOR/FAO%20GISMGR%202.0%20-%20API%20Reference.pdf'
+
+        self.dlg.signinDescriptionLabel.setText(box_text.format(v, profile_url, instructions_url))
+        
+
     def signin(self):
         """
             Calls the sign in function of the API manager and updates the UI
             in response to the result.
         """
         self.dlg.signinStateLabel.setText('Signing into your WaPOR profile . . .')
-        connected = self.api_manag.signin(self.dlg.apiTokenTextBox.text())
+        if self.isWapor2:  
+            connected = self.api2_manag.signin(self.dlg.apiTokenTextBox.text())
+        else:
+            connected = self.api3_manag.signin(self.dlg.apiTokenTextBox.text())
 
         if connected:
             self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
@@ -278,7 +305,7 @@ class WAPlugin:
 
         if APIToken is not None:
             self.dlg.signinStateLabel.setText('Loading Token from memory and signing into your WaPOR profile . . .')
-            connected = self.api_manag.signin(APIToken)
+            connected = self.api2_manag.signin(APIToken)
 
             if connected:
                 self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
@@ -296,16 +323,27 @@ class WAPlugin:
 
     def listWorkspaces(self):
         """
-            Calls the pull workspaces function of the API manager and updates 
+            Calls the pull workspaces function of the APIs manager and updates 
             the UI in response to the result.
         """
+
+        ## Uses the API of the WaPOR v2 to list workspaces
         self.dlg.workspaceComboBox.clear()
-        workspaces = self.api_manag.pull_workspaces()
+        workspaces = self.api2_manag.pull_workspaces()
         self.dlg.workspaceComboBox.addItems(workspaces.values())
 
         index = self.dlg.workspaceComboBox.findText('WAPOR_2', QtCore.Qt.MatchFixedString)
         if index >= 0:
             self.dlg.workspaceComboBox.setCurrentIndex(index)
+
+        ## Uses the API of the WaPOR v3 to list workspaces
+        self.dlg.workspace3ComboBox.clear()
+        workspaces = self.api3_manag.pull_workspaces()
+        self.dlg.workspace3ComboBox.addItems(workspaces.values())
+
+        index = self.dlg.workspace3ComboBox.findText('WAPOR_3', QtCore.Qt.MatchFixedString)
+        if index >= 0:
+            self.dlg.workspace3ComboBox.setCurrentIndex(index)
 
     def listRasterMemory(self):
         """
@@ -334,7 +372,7 @@ class WAPlugin:
         """
         QApplication.processEvents()
         self.workspace = self.dlg.workspaceComboBox.currentText()
-        self.cubes, timeOptions, countryOptions, levelOptions = self.api_manag.pull_cubes(self.workspace)
+        self.cubes, timeOptions, countryOptions, levelOptions = self.api2_manag.pull_cubes(self.workspace)
 
         levelOptions.insert(0,'None')
         timeOptions.insert(0,'None')
@@ -346,6 +384,18 @@ class WAPlugin:
         self.dlg.countryFilterComboBox.clear()
         self.dlg.timeFilterComboBox.addItems(timeOptions)
         self.dlg.countryFilterComboBox.addItems(countryOptions)
+
+    def workspace3Change(self):
+        """
+            Detects changes on the workspace3 selection, calls the pull mapsets
+            function of the API3 manager.
+        """
+        QApplication.processEvents()
+        self.workspace3 = self.dlg.workspace3ComboBox.currentText()
+        self.mapsets = self.api3_manag.pull_mapsets(self.workspace3)
+
+        self.dlg.mapsetComboBox.clear()
+        self.dlg.mapsetComboBox.addItems(self.mapsets.keys())
 
     def levelFilterChange(self):
         levelFilterValue = self.dlg.levelFilterComboBox.currentText()
@@ -376,7 +426,7 @@ class WAPlugin:
                             'time':timeFilterValue,
                             'country':countryFilterValue}
                     mode = 'pos'
-                filteredCubes = self.api_manag.filter_cubes(self.cubes, filters, mode)
+                filteredCubes = self.api2_manag.filter_cubes(self.cubes, filters, mode)
                 if not filteredCubes:
                     filteredCubes =['---']
             else:
@@ -450,8 +500,8 @@ class WAPlugin:
         try:
             QApplication.processEvents()
             self.cube = self.cubes[self.dlg.cubeComboBox.currentText()]['id']
-            self.dimensions = self.api_manag.pull_cube_dims(self.workspace,self.cube)
-            self.measures = self.api_manag.pull_cube_meas(self.workspace,self.cube)
+            self.dimensions = self.api2_manag.pull_cube_dims(self.workspace,self.cube)
+            self.measures = self.api2_manag.pull_cube_meas(self.workspace,self.cube)
 
             self.dlg.measureComboBox.clear()
             self.dlg.measureComboBox.addItems(self.measures.keys())
@@ -538,7 +588,7 @@ class WAPlugin:
         try:
             QApplication.processEvents()
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
-            self.members = self.api_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
+            self.members = self.api2_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
             members_keys = self.members.keys()
 
             if self.dlg.timeFilterComboBox.currentText() == 'Dekadal':
@@ -586,12 +636,13 @@ class WAPlugin:
                                 }]
         if self.dlg.useCanvasCoordCheckBox.checkState():
             params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
-            self.queryCrs = self.getCrs()
+            params['crs'] = self.getCrs()
         else:
             params['coordinates'] = [self.queryCoordinates]
-        params['crs'] = self.queryCrs
+            params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
+            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs().authid()
 
-        rast_url = self.api_manag.query_crop_raster(params)
+        rast_url = self.api2_manag.query_crop_raster(params)
 
         if not rast_url == None:
             rast_directory = self.dlg.downloadFolderExplorer.filePath()
@@ -648,7 +699,6 @@ class WAPlugin:
         self.dlg.savePolygonButton.setEnabled(False)
         self.queryCoordinates = self.coord_select_tool.getCoordinatesBuffer()
         self.queryCrs = self.getCrs()
-        print(self.queryCrs)
         self.coord_select_tool.deactivate()
         self.iface.mapCanvas().setMapTool(self.prev_tool)
         if self.queryCoordinates:
@@ -769,7 +819,7 @@ class WAPlugin:
         """
             Updates few things when a tab is changed.
         """
-        if self.dlg.tabManager.currentIndex() == 2:
+        if self.dlg.tabManager.currentIndex() == 3:
             self.indicatorChange()
 
     def getCrs(self):
@@ -805,7 +855,13 @@ class WAPlugin:
             self.dlg.savePolygonButton.setEnabled(False)
             self.dlg.resetToolButton.setEnabled(False)
 
+            self.dlg.shapeLayerComboBox_2.setFilters(QgsMapLayerProxyModel.PolygonLayer)
+
             self.dlg.useCanvasCoordCheckBox.clicked.connect(self.useCanvasCoord)
+
+
+            self.dlg.wapor2radioButton.clicked.connect(self.updateWaporParams)
+            self.dlg.wapor3radioButton.clicked.connect(self.updateWaporParams)
 
             self.dlg.signinButton.clicked.connect(self.signin)
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
@@ -822,6 +878,7 @@ class WAPlugin:
             self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
+            self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
@@ -846,6 +903,7 @@ class WAPlugin:
             self.dlg.savePolygonButton.clicked.connect(self.savePolygon)
             self.dlg.resetToolButton.clicked.connect(self.resetTool)
 
+            self.updateWaporParams()
             self.listWorkspaces()
             self.indicatorChange()
             self.listRasterMemory()

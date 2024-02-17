@@ -60,7 +60,7 @@
              <item>
               <widget class="QLabel" name="signinDescriptionLabel">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to have access to the WaPOR resources you sould provide the API Token associated to your &lt;a href=&quot;https://wapor.apps.fao.org/profile&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;account&lt;/span&gt;&lt;/a&gt;. In case you do not have one or do not know how to get the API Token, please refer to the instructions in our &lt;a href=&quot;https://github.com/WAGIS/wap_plugin/wiki/Login-to-database&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub Repository&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -154,10 +154,52 @@
          </item>
         </layout>
        </widget>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>10</y>
+          <width>271</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>WaPOR Version</string>
+        </property>
+        <widget class="QWidget" name="horizontalLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>251</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QRadioButton" name="wapor2radioButton">
+            <property name="text">
+             <string>WaPOR v2</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="wapor3radioButton">
+            <property name="text">
+             <string>WaPOR v3</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </widget>
       <widget class="QWidget" name="downloadTab">
        <attribute name="title">
-        <string>WaPOR Catalog</string>
+        <string>WaPOR2 Catalog</string>
        </attribute>
        <widget class="QWidget" name="layoutWidget_2">
         <property name="geometry">
@@ -401,7 +443,7 @@
               <x>10</x>
               <y>20</y>
               <width>451</width>
-              <height>154</height>
+              <height>195</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -418,6 +460,9 @@
                     <bool>true</bool>
                    </property>
                   </widget>
+                 </item>
+                 <item>
+                  <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2"/>
                  </item>
                  <item>
                   <widget class="QPushButton" name="getEdgesButton">
@@ -524,6 +569,31 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>WaPOR 3 Catalog</string>
+       </attribute>
+       <widget class="QComboBox" name="workspace3ComboBox">
+        <property name="geometry">
+         <rect>
+          <x>270</x>
+          <y>30</y>
+          <width>161</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="mapsetComboBox">
+        <property name="geometry">
+         <rect>
+          <x>270</x>
+          <y>80</y>
+          <width>161</width>
+          <height>22</height>
+         </rect>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="indicTab">
@@ -750,6 +820,11 @@
    <class>QgsFileWidget</class>
    <extends>QWidget</extends>
    <header>qgsfilewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -1,5 +1,5 @@
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QgsPointXY, QgsWkbTypes
+from qgis.core import QgsPointXY, QgsWkbTypes, QgsCoordinateReferenceSystem, QgsProject, QgsCoordinateTransform
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QColor 
 
@@ -170,3 +170,24 @@ class CoordinatesSelectorTool(QgsMapTool):
         canvScopeCoord.append([xmin,ymin])
 
         return canvScopeCoord
+        
+    def shape2box(self, shape_layer, transform = False, crsDest = None):
+        features = shape_layer.getFeatures()
+        points = list()
+
+        for feature in features:
+            geom = feature.geometry()
+            geomSingleType = QgsWkbTypes.isSingleType(geom.wkbType())
+            if geom.type() == QgsWkbTypes.PolygonGeometry:
+                if geomSingleType:
+                    x = geom.asPolygon()
+                    print("Polygon: ", x)
+                else:
+                    x = geom.asMultiPolygon()
+                    print("MultiPolygon: ", x)
+                    points = [[point.x(), point.y()] for point in x[0][0]]
+                    
+            else:
+                print("Unknown or invalid geometry")
+            print(points)
+            return points

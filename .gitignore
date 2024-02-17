@@ -3,4 +3,3 @@ __pycache__/
 *.tif
 
 *.token
-resources_rc.py
