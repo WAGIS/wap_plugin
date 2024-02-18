@@ -340,13 +340,14 @@
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>90</width>
-                   <height>16777215</height>
+                   <width>70</width>
+                   <height>50</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <family>MS Shell Dlg 2</family>
+                   <family>Segoe UI</family>
+                   <pointsize>8</pointsize>
                    <kerning>true</kerning>
                   </font>
                  </property>
@@ -361,7 +362,13 @@
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../../../../../../../../../Downloads/icons8-info-50.png</normaloff>../../../../../../../../../Downloads/icons8-info-50.png</iconset>
+                   <normaloff>img/icons/icons8-info-50.png</normaloff>img/icons/icons8-info-50.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>15</width>
+                   <height>15</height>
+                  </size>
                  </property>
                  <property name="autoRepeat">
                   <bool>false</bool>
