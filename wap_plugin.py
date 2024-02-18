@@ -376,7 +376,7 @@ class WAPlugin:
         self.cubes, timeOptions, countryOptions, levelOptions = self.api2_manag.pull_cubes(self.workspace)
 
         levelOptions.insert(0,'None')
-        timeOptions.insert(0,'None')
+        # timeOptions.insert(0,'None')
         countryOptions.insert(0,'None')
 
         self.dlg.levelFilterComboBox.clear()
@@ -569,11 +569,33 @@ class WAPlugin:
         self.years_available = sorted(years)
         
         self.dlg.yearFilterComboBox.clear()
+        print("This is printing 2: ")
         self.dlg.yearFilterComboBox.addItems(self.years_available)
 
         self.dlg.yearFilterComboBox_2.clear()
         self.dlg.yearFilterComboBox_2.addItems(self.years_available)
 
+    def getSeasonsAvailable(self, members_keys):
+        """
+            Updates the season available in the given members when the dimension 
+            selected changes
+        """
+        print("Seanson: ", members_keys)
+        self.seasons_available = sorted([key for key in members_keys])
+        self.dlg.seasonalComboBox.clear()
+        self.dlg.seasonalComboBox.addItems(self.seasons_available)
+
+
+    def getSeasonsAvailable_2(self, members_keys):
+        """
+            Updates the season available in the given members when the dimension 
+            selected changes
+        """
+        self.seasons_available = sorted([key for key in members_keys])
+        
+        self.dlg.seasonalComboBox_2.clear()
+        self.dlg.seasonalComboBox_2.addItems(self.seasons_available)
+    
     def getMonthsAvailable(self):
         """
             Detects changes in the year and filters the months available in the 
@@ -653,6 +675,10 @@ class WAPlugin:
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
             self.members = self.api2_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
             members_keys = self.members.keys()
+            
+            self.dlg.seasonalComboBox.hide()
+            self.dlg.seasonalComboBox_2.hide()
+            print("Current Text: ", self.dlg.timeFilterComboBox.currentText())
 
             if self.dlg.timeFilterComboBox.currentText() == 'Dekadal':
                 if len(self.years_available) == 0:
@@ -678,6 +704,30 @@ class WAPlugin:
                 self.dlg.yearFilterComboBox_2.show()
                 self.dlg.monthFilterComboBox_2.show()
                 self.dlg.memberComboBox_2.hide()
+            elif self.dlg.timeFilterComboBox.currentText() == 'Seasonal':
+                self.dlg.memberComboBox.clear()
+                self.dlg.memberComboBox.addItems(members_keys)
+
+                self.dlg.memberComboBox_2.clear()
+                self.dlg.memberComboBox_2.addItems(members_keys)
+
+                self.dimension = self.dimensions['Season']
+                self.members = self.api2_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
+                print("Members: ", self.members.keys())
+                print("Dimensions: ", self.dimension)
+
+                self.getSeasonsAvailable(self.members.keys())
+                self.getSeasonsAvailable_2(self.members.keys())
+
+                self.dlg.yearFilterComboBox.hide()
+                self.dlg.monthFilterComboBox.hide()
+                self.dlg.memberComboBox.show()
+                self.dlg.seasonalComboBox.show()
+                
+                self.dlg.yearFilterComboBox_2.hide()
+                self.dlg.monthFilterComboBox_2.hide()
+                self.dlg.memberComboBox_2.show()
+                self.dlg.seasonalComboBox_2.show()
             else:
                 self.dlg.yearFilterComboBox.hide()
                 self.dlg.monthFilterComboBox.hide()
@@ -1015,11 +1065,13 @@ class WAPlugin:
 
             self.dlg.yearFilterComboBox.currentIndexChanged.connect(self.getMonthsAvailable)
             self.dlg.monthFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
+            self.dlg.seasonalComboBox.currentIndexChanged.connect(self.getSeasonsAvailable)
 
             self.dlg.yearFilterComboBox_2.currentIndexChanged.connect(self.getMonthsAvailable_2)
             self.dlg.monthFilterComboBox_2.currentIndexChanged.connect(self.updateMembersFiltered_2)
             self.dlg.memberComboBox_2.currentIndexChanged.connect(self.memberChange_2)
-
+            self.dlg.seasonalComboBox_2.currentIndexChanged.connect(self.getSeasonsAvailable_2)
+        
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.tabManager.currentChanged.connect(self.tabChange)
 

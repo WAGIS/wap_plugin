@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabManager">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="signinTab">
        <attribute name="title">
@@ -362,7 +362,7 @@
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>img/icons/icons8-info-50.png</normaloff>img/icons/icons8-info-50.png</iconset>
+                   <normaloff>../../../../../../../../../.designer/backup/img/icons/icons8-info-50.png</normaloff>../../../../../../../../../.designer/backup/img/icons/icons8-info-50.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -426,6 +426,9 @@
                <item>
                 <widget class="QComboBox" name="memberComboBox"/>
                </item>
+               <item>
+                <widget class="QComboBox" name="seasonalComboBox"/>
+               </item>
               </layout>
              </item>
              <item>
@@ -445,6 +448,9 @@
                </item>
                <item>
                 <widget class="QComboBox" name="memberComboBox_2"/>
+               </item>
+               <item>
+                <widget class="QComboBox" name="seasonalComboBox_2"/>
                </item>
               </layout>
              </item>
