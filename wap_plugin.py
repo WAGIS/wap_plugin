@@ -579,16 +579,8 @@ class WAPlugin:
             Detects changes in the year and filters the months available in the 
             members of the cube for a give time dimensions
         """
-        year = self.dlg.yearFilterComboBox.currentText()
-        members_keys = self.members.keys()
-
-        months = set()
-        for key in members_keys:
-            ym = key.split(' ')[0]
-            if ym.split('-')[0] == year:
-                months.add(ym.split('-')[1])
-
-        self.months_available = sorted(months)
+        self.months_available = self._process_months(self.members.keys(),
+                                                     self.dlg.yearFilterComboBox.currentText())
 
         self.dlg.monthFilterComboBox.clear()
         self.dlg.monthFilterComboBox.addItems(self.months_available)
@@ -599,20 +591,21 @@ class WAPlugin:
             Detects changes in the year and filters the months available in the 
             members of the cube for a give time dimensions
         """
-        year = self.dlg.yearFilterComboBoxUntil.currentText()
-        members_keys = self.members.keys()
+        self.months_available = self._process_months(self.members.keys(),
+                                                     self.dlg.yearFilterComboBoxUntil.currentText())
 
+        self.dlg.monthFilterComboBoxUntil.clear()
+        self.dlg.monthFilterComboBoxUntil.addItems(self.months_available)
+        self.updateMembersFilteredUntil()
+
+    def _process_months(self, members_keys, year):
         months = set()
         for key in members_keys:
             ym = key.split(' ')[0]
             if ym.split('-')[0] == year:
                 months.add(ym.split('-')[1])
 
-        self.months_available = sorted(months)
-
-        self.dlg.monthFilterComboBoxUntil.clear()
-        self.dlg.monthFilterComboBoxUntil.addItems(self.months_available)
-        self.updateMembersFilteredUntil()
+        return sorted(months)
 
     def updateMembersFiltered(self):
         """
@@ -729,7 +722,7 @@ class WAPlugin:
                                         "values": [member_frame]
                                     }]
 
-            if self.dlg.useCanvasCoordCheckBox.isChecked():
+            if self.dlg.useCanvasCoordRadioButton.isChecked():
                 params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
                 params['crs'] = self.getCrs()
             else:
@@ -747,13 +740,13 @@ class WAPlugin:
                 self.file_manag.download_raster(rast_url, rast_directory)
                 
                 self.dlg.progressBar.setValue(100)
-                self.dlg.progressLabel.setText ('Raster Download Complete')
+                self.dlg.progressLabel.setText ('Download {}/{} Complete'.format(i+1, len(member_time_frame)))
                 
                 self.listRasterMemory()
                 self.indicatorChange()
             else:
                 self.dlg.progressBar.setValue(0)
-                self.dlg.progressLabel.setText ('Raster Download Failed')
+                self.dlg.progressLabel.setText ('Download {}/{} Complete'.format(i+1, len(member_time_frame)))
 
 
     def updateRasterFolder(self):
@@ -825,7 +818,7 @@ class WAPlugin:
     #         Detects state of the use canvas checkbox and modifies the behaviour
     #         of the coordinates selector tool
     #     """
-    #     if self.dlg.useCanvasCoordCheckBox.checkState():
+    #     if self.dlg.useCanvasCoordRadioButton.checkState():
     #         self.dlg.getEdgesButton.setEnabled(False)
     #         self.dlg.savePolygonButton.setEnabled(False)
     #         self.dlg.resetToolButton.setEnabled(False)
@@ -932,13 +925,13 @@ class WAPlugin:
     
     def enableFromShapeFileOption(self):
         """
-            Enbale option to select a shape file from the available layers
+            Enable option to select a shape file from the available layers
         """
         self.dlg.shapeLayerComboBox_2.setEnabled(True)
 
     def enableFromCanvasExtent(self):
         """
-            Enbale option to select a shape file from the available layers
+            Enable option to select a shape file from the available layers
         """
         self.dlg.shapeLayerComboBox_2.setEnabled(False)
 
@@ -970,9 +963,9 @@ class WAPlugin:
             # self.dlg.savePolygonButton.clicked.connect(self.savePolygon)
             # self.dlg.resetToolButton.clicked.connect(self.resetTool)
             
-            # self.dlg.useCanvasCoordCheckBox.clicked.connect(self.useCanvasCoord)
+            # self.dlg.useCanvasCoordRadioButton.clicked.connect(self.useCanvasCoord)
 
-            # self.dlg.useCanvasCoordCheckBox.setChecked(True)
+            # self.dlg.useCanvasCoordRadioButton.setChecked(True)
             """
 
             self.dlg.downloadButton.setEnabled(False)
@@ -1003,7 +996,7 @@ class WAPlugin:
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
-            self.dlg.DetailsLink.clicked.connect(self.showDetails)
+            self.dlg.detailsLink.clicked.connect(self.showDetails)
 
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
@@ -1029,7 +1022,7 @@ class WAPlugin:
             self.dlg.calculateButton.clicked.connect(self.calculateIndicator)
 
             self.dlg.shapeFileRadioButton.clicked.connect(self.enableFromShapeFileOption)
-            self.dlg.useCanvasCoordCheckBox.clicked.connect(self.enableFromCanvasExtent)
+            self.dlg.useCanvasCoordRadioButton.clicked.connect(self.enableFromCanvasExtent)
 
             self.updateWaporParams()
             self.listWorkspaces()

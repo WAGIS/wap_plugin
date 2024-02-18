@@ -325,7 +325,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCommandLinkButton" name="DetailsLink">
+                <widget class="QCommandLinkButton" name="detailsLink">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -578,7 +578,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="0,0">
             <item>
-             <widget class="QRadioButton" name="useCanvasCoordCheckBox">
+             <widget class="QRadioButton" name="useCanvasCoordRadioButton">
               <property name="enabled">
                <bool>true</bool>
               </property>
