@@ -662,7 +662,7 @@ class Wapor2APIManager:
     
     def pull_cube_info(self, workspace, cube):
         """
-            Pulls all the relavant information about the cube
+            Pulls all the relevant information about the cube
             ...
             Parameters
             ----------

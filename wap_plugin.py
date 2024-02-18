@@ -551,12 +551,12 @@ class WAPlugin:
         except (KeyError) as exception:
             pass
         
-    def memberChange_2(self):
+    def memberChangeUntil(self):
         """
             Detects changes on the member selection and storages it in memory.
         """
         try:
-            self.member_2 = self.members[self.dlg.memberComboBox_2.currentText()]
+            self.member_until = self.members[self.dlg.memberComboBoxUntil.currentText()]
         except (KeyError) as exception:
             pass
 
@@ -571,8 +571,8 @@ class WAPlugin:
         self.dlg.yearFilterComboBox.clear()
         self.dlg.yearFilterComboBox.addItems(self.years_available)
 
-        self.dlg.yearFilterComboBox_2.clear()
-        self.dlg.yearFilterComboBox_2.addItems(self.years_available)
+        self.dlg.yearFilterComboBoxUntil.clear()
+        self.dlg.yearFilterComboBoxUntil.addItems(self.years_available)
 
     def getMonthsAvailable(self):
         """
@@ -594,12 +594,12 @@ class WAPlugin:
         self.dlg.monthFilterComboBox.addItems(self.months_available)
         self.updateMembersFiltered()
 
-    def getMonthsAvailable_2(self):
+    def getMonthsAvailableUntil(self):
         """
             Detects changes in the year and filters the months available in the 
             members of the cube for a give time dimensions
         """
-        year = self.dlg.yearFilterComboBox_2.currentText()
+        year = self.dlg.yearFilterComboBoxUntil.currentText()
         members_keys = self.members.keys()
 
         months = set()
@@ -610,9 +610,9 @@ class WAPlugin:
 
         self.months_available = sorted(months)
 
-        self.dlg.monthFilterComboBox_2.clear()
-        self.dlg.monthFilterComboBox_2.addItems(self.months_available)
-        self.updateMembersFiltered_2()
+        self.dlg.monthFilterComboBoxUntil.clear()
+        self.dlg.monthFilterComboBoxUntil.addItems(self.months_available)
+        self.updateMembersFilteredUntil()
 
     def updateMembersFiltered(self):
         """
@@ -628,19 +628,19 @@ class WAPlugin:
         self.dlg.memberComboBox.clear()
         self.dlg.memberComboBox.addItems(list(compress(members_keys, bool_list)))
 
-    def updateMembersFiltered_2(self):
+    def updateMembersFilteredUntil(self):
         """
             Detects changes in the year and month and filters the members of the
             cube
         """
         members_keys = self.members.keys()
         
-        year = self.dlg.yearFilterComboBox_2.currentText()
-        month = self.dlg.monthFilterComboBox_2.currentText()
+        year = self.dlg.yearFilterComboBoxUntil.currentText()
+        month = self.dlg.monthFilterComboBoxUntil.currentText()
         bool_list = [year in key and '-'+month in key for key in list(members_keys)]
 
-        self.dlg.memberComboBox_2.clear()
-        self.dlg.memberComboBox_2.addItems(list(compress(members_keys, bool_list)))
+        self.dlg.memberComboBoxUntil.clear()
+        self.dlg.memberComboBoxUntil.addItems(list(compress(members_keys, bool_list)))
 
     def dimensionChange(self):
         """
@@ -658,40 +658,40 @@ class WAPlugin:
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.getMonthsAvailable()
-                self.getMonthsAvailable_2()
+                self.getMonthsAvailableUntil()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
                 self.dlg.memberComboBox.show()
 
-                self.dlg.yearFilterComboBox_2.show()
-                self.dlg.monthFilterComboBox_2.show()
-                self.dlg.memberComboBox_2.show()
+                self.dlg.yearFilterComboBoxUntil.show()
+                self.dlg.monthFilterComboBoxUntil.show()
+                self.dlg.memberComboBoxUntil.show()
             elif self.dlg.timeFilterComboBox.currentText() == 'Monthly':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.getMonthsAvailable()
-                self.getMonthsAvailable_2()
+                self.getMonthsAvailableUntil()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
                 self.dlg.memberComboBox.hide()
 
-                self.dlg.yearFilterComboBox_2.show()
-                self.dlg.monthFilterComboBox_2.show()
-                self.dlg.memberComboBox_2.hide()
+                self.dlg.yearFilterComboBoxUntil.show()
+                self.dlg.monthFilterComboBoxUntil.show()
+                self.dlg.memberComboBoxUntil.hide()
             else:
                 self.dlg.yearFilterComboBox.hide()
                 self.dlg.monthFilterComboBox.hide()
                 self.dlg.memberComboBox.show()
                 
-                self.dlg.yearFilterComboBox_2.hide()
-                self.dlg.monthFilterComboBox_2.hide()
-                self.dlg.memberComboBox_2.show()
+                self.dlg.yearFilterComboBoxUntil.hide()
+                self.dlg.monthFilterComboBoxUntil.hide()
+                self.dlg.memberComboBoxUntil.show()
                 
                 self.dlg.memberComboBox.clear()
                 self.dlg.memberComboBox.addItems(members_keys)
 
-                self.dlg.memberComboBox_2.clear()
-                self.dlg.memberComboBox_2.addItems(members_keys)
+                self.dlg.memberComboBoxUntil.clear()
+                self.dlg.memberComboBoxUntil.addItems(members_keys)
         except (KeyError) as exception:
                     pass
     
@@ -705,7 +705,7 @@ class WAPlugin:
 
         member_keys = list(self.members.keys())
         time_start_ind = member_keys.index(self.dlg.memberComboBox.currentText())
-        time_end_ind = member_keys.index(self.dlg.memberComboBox_2.currentText())
+        time_end_ind = member_keys.index(self.dlg.memberComboBoxUntil.currentText())
         member_time_frame = [self.members[k] for k in member_keys[time_start_ind:time_end_ind+1]]
 
         if len(member_time_frame) == 0:
@@ -1016,9 +1016,9 @@ class WAPlugin:
             self.dlg.yearFilterComboBox.currentIndexChanged.connect(self.getMonthsAvailable)
             self.dlg.monthFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
 
-            self.dlg.yearFilterComboBox_2.currentIndexChanged.connect(self.getMonthsAvailable_2)
-            self.dlg.monthFilterComboBox_2.currentIndexChanged.connect(self.updateMembersFiltered_2)
-            self.dlg.memberComboBox_2.currentIndexChanged.connect(self.memberChange_2)
+            self.dlg.yearFilterComboBoxUntil.currentIndexChanged.connect(self.getMonthsAvailableUntil)
+            self.dlg.monthFilterComboBoxUntil.currentIndexChanged.connect(self.updateMembersFilteredUntil)
+            self.dlg.memberComboBoxUntil.currentIndexChanged.connect(self.memberChangeUntil)
 
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.tabManager.currentChanged.connect(self.tabChange)

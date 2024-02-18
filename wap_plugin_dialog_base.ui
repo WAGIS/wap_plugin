@@ -438,13 +438,13 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="yearFilterComboBox_2"/>
+                <widget class="QComboBox" name="yearFilterComboBoxUntil"/>
                </item>
                <item>
-                <widget class="QComboBox" name="monthFilterComboBox_2"/>
+                <widget class="QComboBox" name="monthFilterComboBoxUntil"/>
                </item>
                <item>
-                <widget class="QComboBox" name="memberComboBox_2"/>
+                <widget class="QComboBox" name="memberComboBoxUntil"/>
                </item>
               </layout>
              </item>
