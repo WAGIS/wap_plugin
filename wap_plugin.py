@@ -23,20 +23,21 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QDate, QTime, QDateTime, Qt
 from qgis.PyQt.QtGui import QIcon 
-from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox
+from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox, QTableWidgetItem
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
-from qgis.core import QgsRasterLayer
+from qgis.core import QgsRasterLayer, QgsMapLayerProxyModel
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .wap_plugin_dialog import WAPluginDialog
+from .wap_plugin_data_details import WAPluginDataDetails
 import os.path
 import os  
 from itertools import compress
 try:
-    from .utils.managers import WaporAPIManager, FileManager, CanvasManager
+    from .utils.managers import Wapor2APIManager, Wapor3APIManager, FileManager, CanvasManager
     from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
     from .utils.tools import CoordinatesSelectorTool
 
@@ -122,7 +123,8 @@ class WAPlugin:
 
         self.rasters_path = "layers"
 
-        self.api_manag = WaporAPIManager()
+        self.api2_manag = Wapor2APIManager()
+        self.api3_manag = Wapor3APIManager()
         self.file_manag = FileManager(self.plugin_dir, self.rasters_path)
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
@@ -241,13 +243,39 @@ class WAPlugin:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def updateWaporParams(self):
+        self.isWapor2 = self.dlg.wapor2radioButton.isChecked()
+
+        box_text = '''<html><head/><body><p>In order to have access to the WaPOR 
+             v{} resources, you sould provide the API Token associated to your 
+            <a href="{}"><span style=" text-decoration: underline; color:#0000ff
+            ;">account</span></a>. In case you do not have one or do not know 
+            how to get the API Token, please refer to the instructions in our <a 
+            href="{}"><span style=" text-decoration: underline; color:#0000ff;">
+            GitHub Repository</span></a>.</p></body></html>'''
+
+        if self.isWapor2:  
+            v = 2
+            profile_url = 'https://wapor.apps.fao.org/profile'
+            instructions_url = r'https://github.com/WAGIS/wap_plugin/wiki/Login-to-database'
+        else:
+            v = 3
+            profile_url = 'https://data.apps.fao.org/gismgr/web/v2'
+            instructions_url = r'https://github.com/un-fao/FAO-Water-Applications/blob/10a70cda0e0023258bc9152e43a73b6e8e20b669/WaPOR/FAO%20GISMGR%202.0%20-%20API%20Reference.pdf'
+
+        self.dlg.signinDescriptionLabel.setText(box_text.format(v, profile_url, instructions_url))
+        
+
     def signin(self):
         """
             Calls the sign in function of the API manager and updates the UI
             in response to the result.
         """
         self.dlg.signinStateLabel.setText('Signing into your WaPOR profile . . .')
-        connected = self.api_manag.signin(self.dlg.apiTokenTextBox.text())
+        if self.isWapor2:  
+            connected = self.api2_manag.signin(self.dlg.apiTokenTextBox.text())
+        else:
+            connected = self.api3_manag.signin(self.dlg.apiTokenTextBox.text())
 
         if connected:
             self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
@@ -278,7 +306,7 @@ class WAPlugin:
 
         if APIToken is not None:
             self.dlg.signinStateLabel.setText('Loading Token from memory and signing into your WaPOR profile . . .')
-            connected = self.api_manag.signin(APIToken)
+            connected = self.api2_manag.signin(APIToken)
 
             if connected:
                 self.dlg.signinStateLabel.setText('API Token confirmed, access granted!!!')
@@ -296,16 +324,27 @@ class WAPlugin:
 
     def listWorkspaces(self):
         """
-            Calls the pull workspaces function of the API manager and updates 
+            Calls the pull workspaces function of the APIs manager and updates 
             the UI in response to the result.
         """
+
+        ## Uses the API of the WaPOR v2 to list workspaces
         self.dlg.workspaceComboBox.clear()
-        workspaces = self.api_manag.pull_workspaces()
+        workspaces = self.api2_manag.pull_workspaces()
         self.dlg.workspaceComboBox.addItems(workspaces.values())
 
         index = self.dlg.workspaceComboBox.findText('WAPOR_2', QtCore.Qt.MatchFixedString)
         if index >= 0:
             self.dlg.workspaceComboBox.setCurrentIndex(index)
+
+        ## Uses the API of the WaPOR v3 to list workspaces
+        self.dlg.workspace3ComboBox.clear()
+        workspaces = self.api3_manag.pull_workspaces()
+        self.dlg.workspace3ComboBox.addItems(workspaces.values())
+
+        index = self.dlg.workspace3ComboBox.findText('WAPOR_3', QtCore.Qt.MatchFixedString)
+        if index >= 0:
+            self.dlg.workspace3ComboBox.setCurrentIndex(index)
 
     def listRasterMemory(self):
         """
@@ -316,7 +355,7 @@ class WAPlugin:
         self.tif_files = self.file_manag.list_rasters(rasterFolder)
         self.dlg.rasterMemoryComboBox.clear()
         self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
-    
+
     def listRasterCalcMemory(self):
         """
             Calls the list rasters function of the file manager to get the rasters
@@ -334,11 +373,15 @@ class WAPlugin:
         """
         QApplication.processEvents()
         self.workspace = self.dlg.workspaceComboBox.currentText()
-        self.cubes, timeOptions, countryOptions, levelOptions = self.api_manag.pull_cubes(self.workspace)
+        self.cubes, timeOptions, countryOptions, levelOptions = self.api2_manag.pull_cubes(self.workspace)
 
         levelOptions.insert(0,'None')
         timeOptions.insert(0,'None')
         countryOptions.insert(0,'None')
+
+        """ Added temorarily. TODO: Fix download of seasonal data """
+        if 'Seasonal' in timeOptions:
+            timeOptions.remove('Seasonal')
 
         self.dlg.levelFilterComboBox.clear()
         self.dlg.levelFilterComboBox.addItems(levelOptions)
@@ -346,6 +389,18 @@ class WAPlugin:
         self.dlg.countryFilterComboBox.clear()
         self.dlg.timeFilterComboBox.addItems(timeOptions)
         self.dlg.countryFilterComboBox.addItems(countryOptions)
+
+    def workspace3Change(self):
+        """
+            Detects changes on the workspace3 selection, calls the pull mapsets
+            function of the API3 manager.
+        """
+        QApplication.processEvents()
+        self.workspace3 = self.dlg.workspace3ComboBox.currentText()
+        self.mapsets = self.api3_manag.pull_mapsets(self.workspace3)
+
+        self.dlg.mapsetComboBox.clear()
+        self.dlg.mapsetComboBox.addItems(self.mapsets.keys())
 
     def levelFilterChange(self):
         levelFilterValue = self.dlg.levelFilterComboBox.currentText()
@@ -376,7 +431,7 @@ class WAPlugin:
                             'time':timeFilterValue,
                             'country':countryFilterValue}
                     mode = 'pos'
-                filteredCubes = self.api_manag.filter_cubes(self.cubes, filters, mode)
+                filteredCubes = self.api2_manag.filter_cubes(self.cubes, filters, mode)
                 if not filteredCubes:
                     filteredCubes =['---']
             else:
@@ -440,6 +495,22 @@ class WAPlugin:
         else:
             self.dlg.outputIndicName.setEnabled(True)
 
+    def showDetails(self):
+        """
+            Open Details window and print data
+        """
+        self.details_dlg.dataTableWidget.setColumnWidth(0, 200)
+        self.details_dlg.dataTableWidget.setColumnWidth(1, 450)
+        self.info = self.api2_manag.pull_cube_info(self.workspace, self.cube)
+
+        row = 0
+        self.details_dlg.dataTableWidget.setRowCount(len(self.info))
+        for info_ele in self.info:
+            self.details_dlg.dataTableWidget.setItem(row, 0, QTableWidgetItem(info_ele['type']))
+            self.details_dlg.dataTableWidget.setItem(row, 1, QTableWidgetItem(info_ele['details']))
+            self.details_dlg.dataTableWidget.resizeRowToContents(row)
+            row += 1
+        self.details_dlg.show()
 
     def cubeChange(self):
         """
@@ -450,8 +521,8 @@ class WAPlugin:
         try:
             QApplication.processEvents()
             self.cube = self.cubes[self.dlg.cubeComboBox.currentText()]['id']
-            self.dimensions = self.api_manag.pull_cube_dims(self.workspace,self.cube)
-            self.measures = self.api_manag.pull_cube_meas(self.workspace,self.cube)
+            self.dimensions = self.api2_manag.pull_cube_dims(self.workspace,self.cube)
+            self.measures = self.api2_manag.pull_cube_meas(self.workspace,self.cube)
 
             self.dlg.measureComboBox.clear()
             self.dlg.measureComboBox.addItems(self.measures.keys())
@@ -483,7 +554,16 @@ class WAPlugin:
             self.member = self.members[self.dlg.memberComboBox.currentText()]
         except (KeyError) as exception:
             pass
-    
+        
+    def memberChangeUntil(self):
+        """
+            Detects changes on the member selection and storages it in memory.
+        """
+        try:
+            self.member_until = self.members[self.dlg.memberComboBoxUntil.currentText()]
+        except (KeyError) as exception:
+            pass
+
     def getYearsAvailable(self, members_keys):
         """
             Updates the year available in the given members when the dimension 
@@ -495,25 +575,41 @@ class WAPlugin:
         self.dlg.yearFilterComboBox.clear()
         self.dlg.yearFilterComboBox.addItems(self.years_available)
 
+        self.dlg.yearFilterComboBoxUntil.clear()
+        self.dlg.yearFilterComboBoxUntil.addItems(self.years_available)
+
     def getMonthsAvailable(self):
         """
             Detects changes in the year and filters the months available in the 
             members of the cube for a give time dimensions
         """
-        year = self.dlg.yearFilterComboBox.currentText()
-        members_keys = self.members.keys()
+        self.months_available = self._process_months(self.members.keys(),
+                                                     self.dlg.yearFilterComboBox.currentText())
 
+        self.dlg.monthFilterComboBox.clear()
+        self.dlg.monthFilterComboBox.addItems(self.months_available)
+        self.updateMembersFiltered()
+
+    def getMonthsAvailableUntil(self):
+        """
+            Detects changes in the year and filters the months available in the 
+            members of the cube for a give time dimensions
+        """
+        self.months_available = self._process_months(self.members.keys(),
+                                                     self.dlg.yearFilterComboBoxUntil.currentText())
+
+        self.dlg.monthFilterComboBoxUntil.clear()
+        self.dlg.monthFilterComboBoxUntil.addItems(self.months_available)
+        self.updateMembersFilteredUntil()
+
+    def _process_months(self, members_keys, year):
         months = set()
         for key in members_keys:
             ym = key.split(' ')[0]
             if ym.split('-')[0] == year:
                 months.add(ym.split('-')[1])
 
-        self.months_available = sorted(months)
-
-        self.dlg.monthFilterComboBox.clear()
-        self.dlg.monthFilterComboBox.addItems(self.months_available)
-        self.updateMembersFiltered()
+        return sorted(months)
 
     def updateMembersFiltered(self):
         """
@@ -529,6 +625,20 @@ class WAPlugin:
         self.dlg.memberComboBox.clear()
         self.dlg.memberComboBox.addItems(list(compress(members_keys, bool_list)))
 
+    def updateMembersFilteredUntil(self):
+        """
+            Detects changes in the year and month and filters the members of the
+            cube
+        """
+        members_keys = self.members.keys()
+        
+        year = self.dlg.yearFilterComboBoxUntil.currentText()
+        month = self.dlg.monthFilterComboBoxUntil.currentText()
+        bool_list = [year in key and '-'+month in key for key in list(members_keys)]
+
+        self.dlg.memberComboBoxUntil.clear()
+        self.dlg.memberComboBoxUntil.addItems(list(compress(members_keys, bool_list)))
+
     def dimensionChange(self):
         """
             Detects changes on the dimension selection, calls the pull members
@@ -538,30 +648,47 @@ class WAPlugin:
         try:
             QApplication.processEvents()
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
-            self.members = self.api_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
+            self.members = self.api2_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
             members_keys = self.members.keys()
 
             if self.dlg.timeFilterComboBox.currentText() == 'Dekadal':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.getMonthsAvailable()
+                self.getMonthsAvailableUntil()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
                 self.dlg.memberComboBox.show()
+
+                self.dlg.yearFilterComboBoxUntil.show()
+                self.dlg.monthFilterComboBoxUntil.show()
+                self.dlg.memberComboBoxUntil.show()
             elif self.dlg.timeFilterComboBox.currentText() == 'Monthly':
                 if len(self.years_available) == 0:
                     self.getYearsAvailable(members_keys)
                 self.getMonthsAvailable()
+                self.getMonthsAvailableUntil()
                 self.dlg.yearFilterComboBox.show()
                 self.dlg.monthFilterComboBox.show()
                 self.dlg.memberComboBox.hide()
+
+                self.dlg.yearFilterComboBoxUntil.show()
+                self.dlg.monthFilterComboBoxUntil.show()
+                self.dlg.memberComboBoxUntil.hide()
             else:
                 self.dlg.yearFilterComboBox.hide()
                 self.dlg.monthFilterComboBox.hide()
                 self.dlg.memberComboBox.show()
                 
+                self.dlg.yearFilterComboBoxUntil.hide()
+                self.dlg.monthFilterComboBoxUntil.hide()
+                self.dlg.memberComboBoxUntil.show()
+                
                 self.dlg.memberComboBox.clear()
                 self.dlg.memberComboBox.addItems(members_keys)
+
+                self.dlg.memberComboBoxUntil.clear()
+                self.dlg.memberComboBoxUntil.addItems(members_keys)
         except (KeyError) as exception:
                     pass
     
@@ -572,39 +699,58 @@ class WAPlugin:
             raster function of the file manager, then updates the UI in response
             to the result.
         """
-        self.dlg.progressBar.setValue(20)
-        self.dlg.progressLabel.setText ('Downloading Raster')
+        member_keys = list(self.members.keys())
+        time_start_ind = member_keys.index(self.dlg.memberComboBox.currentText())
+        time_end_ind = member_keys.index(self.dlg.memberComboBoxUntil.currentText())
+        member_time_frame = [self.members[k] for k in member_keys[time_start_ind:time_end_ind+1]]
+
+        if len(member_time_frame) == 0:
+            self.dlg.progressBar.setValue(0)
+            self.dlg.progressLabel.setText ('Invalid Time Series. Time until < Time from')
+            print("Time Series invalid: Time from should be greater than time until")
+            return
         
         params = dict()
-        params['outputFileName'] = self.dlg.outputRasterName.text()+'_'+self.cube+'.tif'
         params['cube_code'] = self.cube
         params['cube_workspaceCode'] = self.workspace
         params['measures'] = [self.measure]
-        params['dimensions'] = [{
-                                    "code": self.dimension,
-                                    "values": [self.member]
-                                }]
-        if self.dlg.useCanvasCoordCheckBox.checkState():
+        if self.dlg.useCanvasCoordRadioButton.isChecked():
             params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
-            self.queryCrs = self.getCrs()
+            params['crs'] = self.getCrs()
         else:
             params['coordinates'] = [self.queryCoordinates]
-        params['crs'] = self.queryCrs
+            params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
+            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs().authid()
 
-        rast_url = self.api_manag.query_crop_raster(params)
+        for i, member_frame in enumerate(member_time_frame):
+            progress_value = 20 + ((i+1)/len(member_time_frame))*60
+            self.dlg.progressBar.setValue(progress_value)
+            self.dlg.progressLabel.setText ('Downloading Raster {}/{}'.format(i+1, len(member_time_frame)))
+            
+            params['outputFileName'] = "{}_{}_{}.tif".format(self.dlg.outputRasterName.text(), self.cube, str(member_frame).split(',')[0][1:].replace("-", "_"))
 
-        if not rast_url == None:
-            rast_directory = self.dlg.downloadFolderExplorer.filePath()
-            self.file_manag.download_raster(rast_url, rast_directory)
+            params['dimensions'] = [{
+                                        "code": self.dimension,
+                                        "values": [member_frame]
+                                    }]
             
-            self.dlg.progressBar.setValue(100)
-            self.dlg.progressLabel.setText ('Raster Download Complete')
-            
-            self.listRasterMemory()
-            self.indicatorChange()
-        else:
-            self.dlg.progressBar.setValue(0)
-            self.dlg.progressLabel.setText ('Raster Download Failed')
+            print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
+            print("From SHAPE", params['coordinates'])
+
+            rast_url = self.api2_manag.query_crop_raster(params)
+
+            if not rast_url == None:
+                rast_directory = self.dlg.downloadFolderExplorer.filePath()
+                self.file_manag.download_raster(rast_url, rast_directory)
+                
+                self.dlg.progressBar.setValue(100)
+                self.dlg.progressLabel.setText ('Download {}/{} Complete'.format(i+1, len(member_time_frame)))
+                
+                self.listRasterMemory()
+                self.indicatorChange()
+            else:
+                self.dlg.progressBar.setValue(0)
+                self.dlg.progressLabel.setText ('Download {}/{} Complete'.format(i+1, len(member_time_frame)))
 
 
     def updateRasterFolder(self):
@@ -627,60 +773,63 @@ class WAPlugin:
         raster_name = self.dlg.rasterMemoryComboBox.currentText()
         self.canv_manag.add_rast(raster_name)
 
-    def selectCoordinatesTool(self):
-        """
-            Changes the active tool of Qgis to the coordinates selection tool 
-            and storages the previous tool.
-        """
-        self.dlg.getEdgesButton.setEnabled(False)
-        self.dlg.resetToolButton.setEnabled(True)
-        self.prev_tool = self.iface.mapCanvas().mapTool()
-        self.coord_select_tool.activate()
-        self.iface.mapCanvas().setMapTool(self.coord_select_tool)
-    
-    def savePolygon(self):
-        """
-            Closes the polygon generated by the coordinates selection tool, saves
-            its coordinates in a local list, records the active CRS reference,
-            restores the previous tool used in Qgis and  updates the UI in 
-            response to the resulting polygon.
-        """
-        self.dlg.savePolygonButton.setEnabled(False)
-        self.queryCoordinates = self.coord_select_tool.getCoordinatesBuffer()
-        self.queryCrs = self.getCrs()
-        print(self.queryCrs)
-        self.coord_select_tool.deactivate()
-        self.iface.mapCanvas().setMapTool(self.prev_tool)
-        if self.queryCoordinates:
-            self.dlg.TestCanvasLabel.setText ('The polygon selected has {} edges'.format(len(self.queryCoordinates)-1))
-        else:
-            self.dlg.TestCanvasLabel.setText ('Polygon not valid.')
+    """ Deprecated feature. Replaced this feature to import shape from a shape file"""
+    # def selectCoordinatesTool(self):
+    #     """
+    #         Changes the active tool of Qgis to the coordinates selection tool 
+    #         and storages the previous tool.
+    #     """
+    #     self.dlg.getEdgesButton.setEnabled(False)
+    #     self.dlg.resetToolButton.setEnabled(True)
+    #     self.prev_tool = self.iface.mapCanvas().mapTool()
+    #     self.coord_select_tool.activate()
+    #     self.iface.mapCanvas().setMapTool(self.coord_select_tool)
 
-    def resetTool(self):
-        """ 
-            Cleans the polygon and the CRS reference from the local memory and
-            updates the UI.
-        """
-        self.coord_select_tool.reset()
-        self.queryCoordinates = None
-        self.queryCrs = None
-        self.dlg.TestCanvasLabel.setText ('Coordinates cleared, using default ones . . .')
-        self.dlg.getEdgesButton.setEnabled(True)
-        self.dlg.resetToolButton.setEnabled(False)
+    """ Deprecated feature. Replaced this feature to import shape from a shape file"""
+    # def savePolygon(self):
+    #     """
+    #         Closes the polygon generated by the coordinates selection tool, saves
+    #         its coordinates in a local list, records the active CRS reference,
+    #         restores the previous tool used in Qgis and  updates the UI in 
+    #         response to the resulting polygon.
+    #     """
+    #     self.dlg.savePolygonButton.setEnabled(False)
+    #     self.queryCoordinates = self.coord_select_tool.getCoordinatesBuffer()
+    #     self.queryCrs = self.getCrs()
+    #     self.coord_select_tool.deactivate()
+    #     self.iface.mapCanvas().setMapTool(self.prev_tool)
+    #     if self.queryCoordinates:
+    #         self.dlg.TestCanvasLabel.setText ('The polygon selected has {} edges'.format(len(self.queryCoordinates)-1))
+    #     else:
+    #         self.dlg.TestCanvasLabel.setText ('Polygon not valid.')
 
-    def useCanvasCoord(self):
-        """
-            Detects state of the use canvas checkbox and modifies the behaviour
-            of the coordinates selector tool
-        """
-        if self.dlg.useCanvasCoordCheckBox.checkState():
-            self.dlg.getEdgesButton.setEnabled(False)
-            self.dlg.savePolygonButton.setEnabled(False)
-            self.dlg.resetToolButton.setEnabled(False)
-        else:
-            self.dlg.getEdgesButton.setEnabled(True)
-            self.dlg.savePolygonButton.setEnabled(True)
-            self.dlg.resetToolButton.setEnabled(True)
+    """ Deprecated feature. Replaced this feature to import shape from a shape file"""
+    # def resetTool(self):
+    #     """ 
+    #         Cleans the polygon and the CRS reference from the local memory and
+    #         updates the UI.
+    #     """
+    #     self.coord_select_tool.reset()
+    #     self.queryCoordinates = None
+    #     self.queryCrs = None
+    #     self.dlg.TestCanvasLabel.setText ('Coordinates cleared, using default ones . . .')
+    #     self.dlg.getEdgesButton.setEnabled(True)
+    #     self.dlg.resetToolButton.setEnabled(False)
+
+    """ Deprecated feature. Replaced this feature to import shape from a shape file"""
+    # def useCanvasCoord(self):
+    #     """
+    #         Detects state of the use canvas checkbox and modifies the behaviour
+    #         of the coordinates selector tool
+    #     """
+    #     if self.dlg.useCanvasCoordRadioButton.checkState():
+    #         self.dlg.getEdgesButton.setEnabled(False)
+    #         self.dlg.savePolygonButton.setEnabled(False)
+    #         self.dlg.resetToolButton.setEnabled(False)
+    #     else:
+    #         self.dlg.getEdgesButton.setEnabled(True)
+    #         self.dlg.savePolygonButton.setEnabled(True)
+    #         self.dlg.resetToolButton.setEnabled(True)
     
     def checkIndicatorRequirements(self):
         """
@@ -769,7 +918,7 @@ class WAPlugin:
         """
             Updates few things when a tab is changed.
         """
-        if self.dlg.tabManager.currentIndex() == 2:
+        if self.dlg.tabManager.currentIndex() == 3:
             self.indicatorChange()
 
     def getCrs(self):
@@ -777,6 +926,18 @@ class WAPlugin:
             Returns the active CRS reference in Qgis.
         """
         return self.iface.mapCanvas().mapSettings().destinationCrs().authid()
+    
+    def enableFromShapeFileOption(self):
+        """
+            Enable option to select a shape file from the available layers
+        """
+        self.dlg.shapeLayerComboBox_2.setEnabled(True)
+
+    def enableFromCanvasExtent(self):
+        """
+            Enable option to select a shape file from the available layers
+        """
+        self.dlg.shapeLayerComboBox_2.setEnabled(False)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -785,6 +946,7 @@ class WAPlugin:
         if self.first_start == True:
             self.first_start = False
             self.dlg = WAPluginDialog()
+            self.details_dlg = WAPluginDataDetails()
             
             # self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.dlg.setFixedSize(self.dlg.size())
@@ -793,19 +955,33 @@ class WAPlugin:
 
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
 
-            self.coord_select_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
+            self.coord_select_tool = CoordinatesSelectorTool(self.iface.mapCanvas())
+            """ # Deprecated feature. Replaced this feature to import shape from a shape file
+            # self.coord_select_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
                                                            self.dlg.TestCanvasLabel,
                                                            self.dlg.savePolygonButton)
+            # self.dlg.savePolygonButton.setEnabled(False)
+            # self.dlg.resetToolButton.setEnabled(False)
+
+            # self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)
+            # self.dlg.savePolygonButton.clicked.connect(self.savePolygon)
+            # self.dlg.resetToolButton.clicked.connect(self.resetTool)
+            
+            # self.dlg.useCanvasCoordRadioButton.clicked.connect(self.useCanvasCoord)
+
+            # self.dlg.useCanvasCoordRadioButton.setChecked(True)
+            """
 
             self.dlg.downloadButton.setEnabled(False)
             self.dlg.calculateButton.setEnabled(False)
 
             self.dlg.saveTokenButton.setEnabled(False)
-            
-            self.dlg.savePolygonButton.setEnabled(False)
-            self.dlg.resetToolButton.setEnabled(False)
+            self.dlg.shapeLayerComboBox_2.setEnabled(False)
 
-            self.dlg.useCanvasCoordCheckBox.clicked.connect(self.useCanvasCoord)
+            self.dlg.shapeLayerComboBox_2.setFilters(QgsMapLayerProxyModel.PolygonLayer)
+
+            self.dlg.wapor2radioButton.clicked.connect(self.updateWaporParams)
+            self.dlg.wapor3radioButton.clicked.connect(self.updateWaporParams)
 
             self.dlg.signinButton.clicked.connect(self.signin)
             self.dlg.saveTokenButton.clicked.connect(self.saveToken)
@@ -822,7 +998,10 @@ class WAPlugin:
             self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
+            self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
+            self.dlg.detailsLink.clicked.connect(self.showDetails)
+
             self.dlg.dimensionComboBox.currentIndexChanged.connect(self.dimensionChange)
             self.dlg.memberComboBox.currentIndexChanged.connect(self.memberChange)
             self.dlg.measureComboBox.currentIndexChanged.connect(self.measureChange)
@@ -834,6 +1013,10 @@ class WAPlugin:
             self.dlg.yearFilterComboBox.currentIndexChanged.connect(self.getMonthsAvailable)
             self.dlg.monthFilterComboBox.currentIndexChanged.connect(self.updateMembersFiltered)
 
+            self.dlg.yearFilterComboBoxUntil.currentIndexChanged.connect(self.getMonthsAvailableUntil)
+            self.dlg.monthFilterComboBoxUntil.currentIndexChanged.connect(self.updateMembersFilteredUntil)
+            self.dlg.memberComboBoxUntil.currentIndexChanged.connect(self.memberChangeUntil)
+
             self.dlg.indicatorListComboBox.currentIndexChanged.connect(self.indicatorChange)
             self.dlg.tabManager.currentChanged.connect(self.tabChange)
 
@@ -842,17 +1025,16 @@ class WAPlugin:
         
             self.dlg.calculateButton.clicked.connect(self.calculateIndicator)
 
-            self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)
-            self.dlg.savePolygonButton.clicked.connect(self.savePolygon)
-            self.dlg.resetToolButton.clicked.connect(self.resetTool)
+            self.dlg.shapeFileRadioButton.clicked.connect(self.enableFromShapeFileOption)
+            self.dlg.useCanvasCoordRadioButton.clicked.connect(self.enableFromCanvasExtent)
 
+            self.updateWaporParams()
             self.listWorkspaces()
             self.indicatorChange()
             self.listRasterMemory()
 
             self.queryCoordinates = None
             self.queryCrs = None
-            self.dlg.useCanvasCoordCheckBox.setChecked(True)
 
         # show the dialog
         self.dlg.show()
@@ -866,4 +1048,4 @@ class WAPlugin:
         else:
             # Clean up when closing
             self.iface.mapCanvas().setMapTool(self.prev_tool)
-            self.resetTool()
+            # self.resetTool()
