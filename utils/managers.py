@@ -624,6 +624,8 @@ class Wapor2APIManager:
                     else:
                         addFlag = False
                         break
+                if 'Seasonal' == cube_dict['time']:
+                    addFlag = False
                 if addFlag:   
                     filteredCubes.append(cube_key)
                     
