@@ -439,6 +439,7 @@ class Wapor2APIManager:
             request_json['params']['dimensions'] = params['dimensions']
             request_json['params']['measures'] = params['measures']
 
+            print("Dimensions: ", request_json['params']['dimensions'])
             if params['coordinates'][0] is not None:
                 request_json['params']['shape']['coordinates'] = params['coordinates']
                 request_json['params']['shape']['crs'] = params['crs']
@@ -451,7 +452,6 @@ class Wapor2APIManager:
                 resp_json = requests.post(  self.query_url,
                                             json=request_json,
                                             headers=request_headers).json()
-
                 if resp_json['message']=='OK':
                     job_url = resp_json['response']['links'][0]['href']
 
@@ -624,6 +624,9 @@ class Wapor2APIManager:
                     else:
                         addFlag = False
                         break
+                """ Below two lines are added temorarily. TODO: Fix download of seasonal data """
+                if 'Seasonal' == cube_dict['time']:
+                    addFlag = False
                 if addFlag:   
                     filteredCubes.append(cube_key)
                     
@@ -659,6 +662,33 @@ class Wapor2APIManager:
             # raise Exception("Query [info_cube] error, no internet connection or timeout")
         else:
             return cube_resp['caption'], cube_resp['description']
+    
+    def pull_cube_info(self, workspace, cube):
+        """
+            Pulls all the relevant information about the cube
+            ...
+            Parameters
+            ----------
+            workspace : String
+                Workspace code to which the cube belongs.
+            cube : String
+                Cube code from which the query will pull the dimensions.
+        """   
+        info_list = list()
+        cubes_url = self.catalog_url+'workspaces/{}/cubes/{}'.format(workspace,cube)
+        try:
+            resp_ele = requests.get(cubes_url, self.payload, timeout=self.time_out).json()
+        except (requests.ConnectionError, requests.Timeout) as exception:
+            print(exception)
+
+        info_list.append({"type": "Caption", "details": resp_ele['response']['caption']})
+        info_list.append({"type": "Description", "details": resp_ele['response']['description']})
+
+        additional_info = resp_ele['response']['additionalInfo']  
+        for info_key, info_value in additional_info.items():
+            info_list.append({"type": info_key, "details": info_value})
+        
+        return info_list
 
     def pull_cube_dims(self, workspace, cube):
         """
