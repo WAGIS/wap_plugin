@@ -382,7 +382,6 @@ class WAPlugin:
         """ Added temorarily. TODO: Fix download of seasonal data """
         if 'Seasonal' in timeOptions:
             timeOptions.remove('Seasonal')
-        print("TIME OPTIONS: ", timeOptions)
 
         self.dlg.levelFilterComboBox.clear()
         self.dlg.levelFilterComboBox.addItems(levelOptions)
@@ -710,30 +709,31 @@ class WAPlugin:
             self.dlg.progressLabel.setText ('Invalid Time Series. Time until < Time from')
             print("Time Series invalid: Time from should be greater than time until")
             return
+        
+        params = dict()
+        params['cube_code'] = self.cube
+        params['cube_workspaceCode'] = self.workspace
+        params['measures'] = [self.measure]
+        if self.dlg.useCanvasCoordRadioButton.isChecked():
+            params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
+            params['crs'] = self.getCrs()
+        else:
+            params['coordinates'] = [self.queryCoordinates]
+            params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
+            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs().authid()
 
         for i, member_frame in enumerate(member_time_frame):
             progress_value = 20 + ((i+1)/len(member_time_frame))*60
             self.dlg.progressBar.setValue(progress_value)
             self.dlg.progressLabel.setText ('Downloading Raster {}/{}'.format(i+1, len(member_time_frame)))
             
-            params = dict()
             params['outputFileName'] = "{}_{}_{}.tif".format(self.dlg.outputRasterName.text(), self.cube, str(member_frame).split(',')[0][1:].replace("-", "_"))
-            params['cube_code'] = self.cube
-            params['cube_workspaceCode'] = self.workspace
-            params['measures'] = [self.measure]
+
             params['dimensions'] = [{
                                         "code": self.dimension,
                                         "values": [member_frame]
                                     }]
-
-            if self.dlg.useCanvasCoordRadioButton.isChecked():
-                params['coordinates'] = [self.coord_select_tool.getCanvasScopeCoord()]
-                params['crs'] = self.getCrs()
-            else:
-                params['coordinates'] = [self.queryCoordinates]
-                params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
-                params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs().authid()
-
+            
             print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
             print("From SHAPE", params['coordinates'])
 
