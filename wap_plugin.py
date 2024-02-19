@@ -695,7 +695,6 @@ class WAPlugin:
             raster function of the file manager, then updates the UI in response
             to the result.
         """
-
         member_keys = list(self.members.keys())
         time_start_ind = member_keys.index(self.dlg.memberComboBox.currentText())
         time_end_ind = member_keys.index(self.dlg.memberComboBoxUntil.currentText())
