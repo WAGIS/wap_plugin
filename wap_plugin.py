@@ -379,6 +379,11 @@ class WAPlugin:
         timeOptions.insert(0,'None')
         countryOptions.insert(0,'None')
 
+        """ Added temorarily. TODO: Fix download of seasonal data """
+        if 'Seasonal' in timeOptions:
+            timeOptions.remove('Seasonal')
+        print("TIME OPTIONS: ", timeOptions)
+
         self.dlg.levelFilterComboBox.clear()
         self.dlg.levelFilterComboBox.addItems(levelOptions)
         self.dlg.timeFilterComboBox.clear()

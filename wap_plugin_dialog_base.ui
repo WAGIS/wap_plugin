@@ -335,19 +335,22 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>40</height>
+                   <height>30</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>70</width>
-                   <height>50</height>
+                   <height>60</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
                    <family>Segoe UI</family>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
+                   <bold>false</bold>
+                   <underline>false</underline>
                    <kerning>true</kerning>
                   </font>
                  </property>
