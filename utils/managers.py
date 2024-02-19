@@ -624,6 +624,7 @@ class Wapor2APIManager:
                     else:
                         addFlag = False
                         break
+                """ Below two lines are added temorarily. TODO: Fix download of seasonal data """
                 if 'Seasonal' == cube_dict['time']:
                     addFlag = False
                 if addFlag:   
