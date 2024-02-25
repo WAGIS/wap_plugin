@@ -181,13 +181,10 @@ class CoordinatesSelectorTool(QgsMapTool):
             if geom.type() == QgsWkbTypes.PolygonGeometry:
                 if geomSingleType:
                     x = geom.asPolygon()
-                    print("Polygon: ", x)
                 else:
                     x = geom.asMultiPolygon()
-                    print("MultiPolygon: ", x)
                     points = [[point.x(), point.y()] for point in x[0][0]]
                     
             else:
                 print("Unknown or invalid geometry")
-            print(points)
             return points
