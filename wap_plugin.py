@@ -521,21 +521,6 @@ class WAPlugin:
             self.dimensions = self.api2_manag.pull_cube_dims(self.workspace,self.cube)
             self.measures = self.api2_manag.pull_cube_meas(self.workspace,self.cube)
 
-            # if len(self.dimensions) > 2:
-            #     QMessageBox.information(None, "High dimension cube", '''<html>
-            #     <head/><body><p>The cube [<b>{} {}</b>] has a higher dimmension
-            #     than expected. Please report this as an issue in our repo
-            #     <a href="https://github.com/WAGIS/wap_plugin"><span style=" text
-            #     -decoration: underline; color: #0000ff;">GitHub Repository
-            #     </span></a>.<br><br></p></body></html>
-            #     '''.format(self.dlg.cubeComboBox.currentText(), self.cube))
-            #     self.dlg.outputRasterCubeID.setText('---')
-
-            # print('Cube ', self.dlg.cubeComboBox.currentText())
-            # if 'Season' in self.dlg.cubeComboBox.currentText():
-            #     print('Dimensions ', self.dimensions)
-            #     print('Measures ', self.measures)  
-
             if 'Season' in self.dimensions:
                 self.dimensions.pop('Year', None)
 

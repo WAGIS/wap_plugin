@@ -630,6 +630,9 @@ class Wapor2APIManager:
                     else:
                         addFlag = False
                         break
+                """ Below two lines are added temorarily. TODO: Fix download of Phenology data """
+                if 'phenology' in str(cube_key).lower():
+                    addFlag = False
                 if addFlag:   
                     filteredCubes.append(cube_key)
                     
