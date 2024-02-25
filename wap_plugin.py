@@ -379,9 +379,6 @@ class WAPlugin:
         timeOptions.insert(0,'None')
         countryOptions.insert(0,'None')
 
-        """ Added temorarily. TODO: Fix download of seasonal data """
-        if 'Seasonal' in timeOptions:
-            timeOptions.remove('Seasonal')
 
         self.dlg.levelFilterComboBox.clear()
         self.dlg.levelFilterComboBox.addItems(levelOptions)
@@ -524,16 +521,22 @@ class WAPlugin:
             self.dimensions = self.api2_manag.pull_cube_dims(self.workspace,self.cube)
             self.measures = self.api2_manag.pull_cube_meas(self.workspace,self.cube)
 
-            self.dlg.measureComboBox.clear()
-            self.dlg.measureComboBox.addItems(self.measures.keys())
+            if 'Season' in self.dimensions:
+                self.dimensions.pop('Year', None)
+
             self.dlg.dimensionComboBox.clear()
             self.dlg.dimensionComboBox.addItems(self.dimensions.keys())
+            self.dlg.measureComboBox.clear()
+            self.dlg.measureComboBox.addItems(self.measures.keys())
+
             if self.cube:
                 self.dlg.outputRasterCubeID.setText('_'+self.cube+'.tif')
             else:
                 self.dlg.outputRasterCubeID.setText('---')
                 
         except (KeyError) as exception:
+            if not self.dlg.cubeComboBox.currentText() == '' and not None: 
+                print('Key not found in cubeChange: ', self.dlg.cubeComboBox.currentText())
             pass
 
     def measureChange(self):
@@ -544,6 +547,8 @@ class WAPlugin:
         try:
             self.measure = self.measures[self.dlg.measureComboBox.currentText()]
         except (KeyError) as exception:
+            if not self.dlg.measureComboBox.currentText() == '' and not None: 
+                print('Key not found in measureChange: ', self.dlg.measureComboBox.currentText())
             pass
 
     def memberChange(self):
@@ -553,6 +558,8 @@ class WAPlugin:
         try:
             self.member = self.members[self.dlg.memberComboBox.currentText()]
         except (KeyError) as exception:
+            if not self.dlg.memberComboBox.currentText() == '' and not None: 
+                print('Key not found in memberChange: ', self.dlg.memberComboBox.currentText())
             pass
         
     def memberChangeUntil(self):
@@ -562,6 +569,8 @@ class WAPlugin:
         try:
             self.member_until = self.members[self.dlg.memberComboBoxUntil.currentText()]
         except (KeyError) as exception:
+            if not self.dlg.memberComboBoxUntil.currentText() == '' and not None: 
+                print('Key not found in memberChangeUntil: ', self.dlg.memberComboBoxUntil.currentText())
             pass
 
     def getYearsAvailable(self, members_keys):
@@ -583,11 +592,11 @@ class WAPlugin:
             Detects changes in the year and filters the months available in the 
             members of the cube for a give time dimensions
         """
-        self.months_available = self._process_months(self.members.keys(),
+        months_available = self._process_months(self.members.keys(),
                                                      self.dlg.yearFilterComboBox.currentText())
 
         self.dlg.monthFilterComboBox.clear()
-        self.dlg.monthFilterComboBox.addItems(self.months_available)
+        self.dlg.monthFilterComboBox.addItems(months_available)
         self.updateMembersFiltered()
 
     def getMonthsAvailableUntil(self):
@@ -595,11 +604,11 @@ class WAPlugin:
             Detects changes in the year and filters the months available in the 
             members of the cube for a give time dimensions
         """
-        self.months_available = self._process_months(self.members.keys(),
+        months_available = self._process_months(self.members.keys(),
                                                      self.dlg.yearFilterComboBoxUntil.currentText())
 
         self.dlg.monthFilterComboBoxUntil.clear()
-        self.dlg.monthFilterComboBoxUntil.addItems(self.months_available)
+        self.dlg.monthFilterComboBoxUntil.addItems(months_available)
         self.updateMembersFilteredUntil()
 
     def _process_months(self, members_keys, year):
@@ -616,28 +625,37 @@ class WAPlugin:
             Detects changes in the year and month and filters the members of the
             cube
         """
-        members_keys = self.members.keys()
-        
-        year = self.dlg.yearFilterComboBox.currentText()
-        month = self.dlg.monthFilterComboBox.currentText()
-        bool_list = [year in key and '-'+month in key for key in list(members_keys)]
+        if any('Season' in member for member in self.members):
+            self.dlg.memberComboBox.clear()
+            self.dlg.memberComboBox.addItems(self.members.keys())
+        else:
+            members_available = self._process_members(self.members.keys(),
+                                                    self.dlg.yearFilterComboBox.currentText(),
+                                                    self.dlg.monthFilterComboBox.currentText())
 
-        self.dlg.memberComboBox.clear()
-        self.dlg.memberComboBox.addItems(list(compress(members_keys, bool_list)))
+            self.dlg.memberComboBox.clear()
+            self.dlg.memberComboBox.addItems(members_available)
 
     def updateMembersFilteredUntil(self):
         """
             Detects changes in the year and month and filters the members of the
             cube
         """
-        members_keys = self.members.keys()
-        
-        year = self.dlg.yearFilterComboBoxUntil.currentText()
-        month = self.dlg.monthFilterComboBoxUntil.currentText()
+        if any('Season' in member for member in self.members):
+            self.dlg.memberComboBoxUntil.clear()
+            self.dlg.memberComboBoxUntil.addItems(self.members.keys())
+        else:
+            members_available = self._process_members(self.members.keys(),
+                                                    self.dlg.yearFilterComboBoxUntil.currentText(),
+                                                    self.dlg.monthFilterComboBoxUntil.currentText())
+
+            self.dlg.memberComboBoxUntil.clear()
+            self.dlg.memberComboBoxUntil.addItems(members_available)
+
+    def _process_members(self, members_keys, year, month):
         bool_list = [year in key and '-'+month in key for key in list(members_keys)]
 
-        self.dlg.memberComboBoxUntil.clear()
-        self.dlg.memberComboBoxUntil.addItems(list(compress(members_keys, bool_list)))
+        return sorted(list(compress(members_keys, bool_list)))
 
     def dimensionChange(self):
         """
@@ -648,7 +666,9 @@ class WAPlugin:
         try:
             QApplication.processEvents()
             self.dimension = self.dimensions[self.dlg.dimensionComboBox.currentText()]
-            self.members = self.api2_manag.pull_cube_dim_membs(self.workspace,self.cube,self.dimension)
+            self.members = self.api2_manag.pull_cube_dim_membs(self.workspace,  
+                                                               self.cube,
+                                                               self.dimension)
             members_keys = self.members.keys()
 
             if self.dlg.timeFilterComboBox.currentText() == 'Dekadal':
@@ -675,6 +695,18 @@ class WAPlugin:
                 self.dlg.yearFilterComboBoxUntil.show()
                 self.dlg.monthFilterComboBoxUntil.show()
                 self.dlg.memberComboBoxUntil.hide()
+            elif self.dlg.timeFilterComboBox.currentText() == 'Seasonal':
+                self.seas_members = self.api2_manag.pull_cube_dim_membs(self.workspace,
+                                                              self.cube,
+                                                              'YEAR')
+                self.getYearsAvailable(self.seas_members.keys())
+                self.dlg.yearFilterComboBox.show()
+                self.dlg.monthFilterComboBox.hide()
+                self.dlg.memberComboBox.show()
+
+                self.dlg.yearFilterComboBoxUntil.show()
+                self.dlg.monthFilterComboBoxUntil.hide()
+                self.dlg.memberComboBoxUntil.show()
             else:
                 self.dlg.yearFilterComboBox.hide()
                 self.dlg.monthFilterComboBox.hide()
@@ -690,8 +722,14 @@ class WAPlugin:
                 self.dlg.memberComboBoxUntil.clear()
                 self.dlg.memberComboBoxUntil.addItems(members_keys)
         except (KeyError) as exception:
-                    pass
+            if not self.dlg.dimensionComboBox.currentText() == "" and not None: 
+                print('Key not found in dimensionChange: ', self.dlg.dimensionComboBox.currentText())
+            pass
     
+    def cancelCroppedRaster(self):
+        self.cancelDownload = True
+        self.dlg.progressLabel.setText('Cancelling the download. Unfinished job')
+
     def downloadCroppedRaster(self):
         """
             Construct the parameters needed to download a cropped raster, the URL
@@ -699,12 +737,29 @@ class WAPlugin:
             raster function of the file manager, then updates the UI in response
             to the result.
         """
-        member_keys = list(self.members.keys())
-        time_start_ind = member_keys.index(self.dlg.memberComboBox.currentText())
-        time_end_ind = member_keys.index(self.dlg.memberComboBoxUntil.currentText())
-        member_time_frame = [self.members[k] for k in member_keys[time_start_ind:time_end_ind+1]]
+        if self.dlg.timeFilterComboBox.currentText() == 'Seasonal':
+            seas_members_keys = list(self.seas_members.keys())
+            year_start_ind = seas_members_keys.index(self.dlg.yearFilterComboBox.currentText())
+            year_end_ind = seas_members_keys.index(self.dlg.yearFilterComboBoxUntil.currentText())
+            years2crop = [self.seas_members[year_ind] for year_ind in seas_members_keys[year_start_ind:year_end_ind+1]]
 
-        if len(member_time_frame) == 0:
+            member_keys = list(self.members.keys())
+            season_start_ind = member_keys.index(self.dlg.memberComboBox.currentText())
+            season_end_ind = member_keys.index(self.dlg.memberComboBoxUntil.currentText())
+
+            temp = [(year, sea) for year in years2crop for sea in sorted(self.members.values())]
+            dimensions2crop_tuple = temp[season_start_ind:((year_end_ind-year_start_ind)*2+season_end_ind+1)]
+            dimensions2crop = [[{"code": 'YEAR', "values": [year]},
+                                {"code": 'SEASON', "values": [season]}] for year, season in dimensions2crop_tuple]
+        else:
+            member_keys = list(self.members.keys())
+            time_start_ind = member_keys.index(self.dlg.memberComboBox.currentText())
+            time_end_ind = member_keys.index(self.dlg.memberComboBoxUntil.currentText())
+            member_time_frame = [self.members[k] for k in member_keys[time_start_ind:time_end_ind+1]]
+            dimensions2crop = [[{"code": self.dimension,
+                                 "values": [member_frame]}] for member_frame in member_time_frame]
+
+        if len(dimensions2crop) == 0:
             self.dlg.progressBar.setValue(0)
             self.dlg.progressLabel.setText ('Invalid Time Series. Time until < Time from')
             print("Time Series invalid: Time from should be greater than time until")
@@ -722,35 +777,50 @@ class WAPlugin:
             params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
             params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs().authid()
 
-        for i, member_frame in enumerate(member_time_frame):
-            progress_value = 20 + ((i+1)/len(member_time_frame))*60
-            self.dlg.progressBar.setValue(progress_value)
-            self.dlg.progressLabel.setText ('Downloading Raster {}/{}'.format(i+1, len(member_time_frame)))
-            
-            params['outputFileName'] = "{}_{}_{}.tif".format(self.dlg.outputRasterName.text(), self.cube, str(member_frame).split(',')[0][1:].replace("-", "_"))
+        self.dlg.cancelButton.setEnabled(True)
 
-            params['dimensions'] = [{
-                                        "code": self.dimension,
-                                        "values": [member_frame]
-                                    }]
+        for i, dimensions_payload in enumerate(dimensions2crop):
+            member_frame = dimensions_payload[0]["values"][0] if len(dimensions_payload) == 1 \
+                else dimensions_payload[1]["values"][0] + dimensions_payload[0]["values"][0] 
+            
+            print(member_frame)
+            progress_value = 20 + ((i+1)/len(dimensions2crop))*60
+            self.dlg.progressBar.setValue(progress_value)
+            self.dlg.progressLabel.setText ('Downloading Raster {}/{}'.format(i+1, len(dimensions2crop)))
+            
+            params['outputFileName'] = "{}_{}_{}.tif".format(self.dlg.outputRasterName.text(),
+                                                             self.cube, str(member_frame).split(',')[0].replace("-", "_").replace("[", "_"))
+            print(member_frame)
+            print(params['outputFileName'])
+            
+            params['dimensions'] = dimensions_payload
             
             print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
             print("From SHAPE", params['coordinates'])
 
-            rast_url = self.api2_manag.query_crop_raster(params)
+            rast_url = self.api2_manag.query_crop_raster(params, self.dlg.downloadButton)
 
             if not rast_url == None:
                 rast_directory = self.dlg.downloadFolderExplorer.filePath()
                 self.file_manag.download_raster(rast_url, rast_directory)
                 
                 self.dlg.progressBar.setValue(100)
-                self.dlg.progressLabel.setText ('Download {}/{} Complete'.format(i+1, len(member_time_frame)))
+                self.dlg.progressLabel.setText('Download {}/{} Complete'.format(i+1, len(dimensions2crop)))
                 
                 self.listRasterMemory()
                 self.indicatorChange()
             else:
                 self.dlg.progressBar.setValue(0)
-                self.dlg.progressLabel.setText ('Download {}/{} Complete'.format(i+1, len(member_time_frame)))
+                self.dlg.progressLabel.setText('Download {}/{} Complete'.format(i+1, len(dimensions2crop)))
+
+            if self.cancelDownload:
+                self.dlg.progressBar.setValue(0)
+                self.dlg.progressLabel.setText('Download {}/{} Complete. Cancelled by user'.format(i+1, len(dimensions2crop)))
+                break
+        
+        self.cancelDownload = False
+        self.dlg.downloadButton.setEnabled(True)
+        self.dlg.cancelButton.setEnabled(False)
 
 
     def updateRasterFolder(self):
@@ -973,6 +1043,7 @@ class WAPlugin:
             """
 
             self.dlg.downloadButton.setEnabled(False)
+            self.dlg.cancelButton.setEnabled(False)
             self.dlg.calculateButton.setEnabled(False)
 
             self.dlg.saveTokenButton.setEnabled(False)
@@ -991,6 +1062,7 @@ class WAPlugin:
             self.dlg.rasterFolderCalcExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
+            self.dlg.cancelButton.clicked.connect(self.cancelCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
 
@@ -1035,6 +1107,8 @@ class WAPlugin:
 
             self.queryCoordinates = None
             self.queryCrs = None
+            self.cancelDownload = False
+
 
         # show the dialog
         self.dlg.show()

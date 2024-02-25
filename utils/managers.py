@@ -401,7 +401,7 @@ class Wapor2APIManager:
             self.connected = False
         return self.connected
 
-    def query_crop_raster(self, params):
+    def query_crop_raster(self, params, downloadButton):
         """
             Performs de crop and download raster query from the WaPOR v2 platform 
             using a dictionary with the parameters of the operation.
@@ -428,6 +428,8 @@ class Wapor2APIManager:
                     List of points that defines the polygon of the raster.
                 shape['crs'] : String
                     Reference system to define de coordinates.
+            downloadButton : QT.Button
+                Download button to disable multiple requests.
         """
         if not self.isConnected():
             raise Exception("Query [crop_raster] error, no WaPOR v2 connection")
@@ -454,12 +456,14 @@ class Wapor2APIManager:
                                             headers=request_headers).json()
                 if resp_json['message']=='OK':
                     job_url = resp_json['response']['links'][0]['href']
+                    downloadButton.setEnabled(False)
 
                     while True:
                         QApplication.processEvents()
                         response = requests.get(job_url)
                         resp_json=response.json()
-                        print(resp_json['response']['status'])
+                        # NOTE: Uncomment if needed to check status
+                        # print(resp_json['response']['status'])
                         if resp_json['response']['status']=='COMPLETED':
                             rast_url = resp_json['response']['output']['downloadUrl']
                             return rast_url
@@ -581,9 +585,11 @@ class Wapor2APIManager:
                 values_dict = {'id':cube_value,'time':None, 'country':None, 'level':cube_level}
                 levelOptions.add(cube_level)
 
+                # import json
                 # info =  self.get_info_cube(workspace, cube_value)
                 # print(json.dumps(info, indent=2))
                 # input()
+                
                 if workspace == 'WAPOR_2':
                     if 'clipped' in cube_key:
                         keys2remove.append(cube_key)
@@ -624,8 +630,8 @@ class Wapor2APIManager:
                     else:
                         addFlag = False
                         break
-                """ Below two lines are added temorarily. TODO: Fix download of seasonal data """
-                if 'Seasonal' == cube_dict['time']:
+                """ Below two lines are added temorarily. TODO: Fix download of Phenology data """
+                if 'phenology' in str(cube_key).lower():
                     addFlag = False
                 if addFlag:   
                     filteredCubes.append(cube_key)
