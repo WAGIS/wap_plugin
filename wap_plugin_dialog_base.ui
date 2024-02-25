@@ -574,7 +574,7 @@
            <x>10</x>
            <y>20</y>
            <width>461</width>
-           <height>131</height>
+           <height>134</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0">
@@ -658,11 +658,22 @@
            </layout>
           </item>
           <item>
-           <widget class="QPushButton" name="downloadButton">
-            <property name="text">
-             <string>Download</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_25">
+            <item>
+             <widget class="QPushButton" name="downloadButton">
+              <property name="text">
+               <string>Download</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="cancelButton">
+              <property name="text">
+               <string>Cancel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
