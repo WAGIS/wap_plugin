@@ -36,6 +36,10 @@ from .wap_plugin_data_details import WAPluginDataDetails
 import os.path
 import os  
 from itertools import compress
+
+from osgeo import gdalconst
+from osgeo import gdal
+
 try:
     from .utils.managers import Wapor2APIManager, Wapor3APIManager, FileManager, CanvasManager
     from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
@@ -125,6 +129,10 @@ class WAPlugin:
 
         self.api2_manag = Wapor2APIManager()
         self.api3_manag = Wapor3APIManager()
+
+        self.ws2Initialized = False
+        self.ws3Initialized = False
+
         self.file_manag = FileManager(self.plugin_dir, self.rasters_path)
         self.canv_manag = CanvasManager(self.iface, self.plugin_dir, self.rasters_path)
         
@@ -328,23 +336,36 @@ class WAPlugin:
             the UI in response to the result.
         """
 
-        ## Uses the API of the WaPOR v2 to list workspaces
-        self.dlg.workspaceComboBox.clear()
-        workspaces = self.api2_manag.pull_workspaces()
-        self.dlg.workspaceComboBox.addItems(workspaces.values())
+        if self.dlg.tabManager.currentIndex() == 1 and not self.ws2Initialized:
+            ## Uses the API of the WaPOR v2 to list workspaces
+            self.dlg.progressBar.setValue(0)
+            self.dlg.progressLabel.setText ('Fetching data from GISMGR 2 ...')
+            self.dlg.workspaceComboBox.clear()
+            workspaces = self.api2_manag.pull_workspaces()
+            self.dlg.workspaceComboBox.addItems(workspaces.values())
 
-        index = self.dlg.workspaceComboBox.findText('WAPOR_2', QtCore.Qt.MatchFixedString)
-        if index >= 0:
-            self.dlg.workspaceComboBox.setCurrentIndex(index)
+            index = self.dlg.workspaceComboBox.findText('WAPOR_2', QtCore.Qt.MatchFixedString)
+            if index >= 0:
+                self.dlg.workspaceComboBox.setCurrentIndex(index)
+            
+            self.ws2Initialized = True
+            self.dlg.progressBar.setValue(100)
+            self.dlg.progressLabel.setText ('Data from GISMGR 2 ready!')
 
-        ## Uses the API of the WaPOR v3 to list workspaces
-        self.dlg.workspace3ComboBox.clear()
-        workspaces = self.api3_manag.pull_workspaces()
-        self.dlg.workspace3ComboBox.addItems(workspaces.values())
+        if self.dlg.tabManager.currentIndex() == 2  and not self.ws3Initialized:
+            ## Uses the API of the WaPOR v3 to list workspaces
+            self.dlg.progressBar.setValue(0)
+            self.dlg.progressLabel.setText ('Fetching data from GISMGR 3 ...')
+            self.dlg.workspace3ComboBox.clear()
+            workspaces = self.api3_manag.pull_workspaces()
+            self.dlg.workspace3ComboBox.addItems(workspaces.values())
 
-        index = self.dlg.workspace3ComboBox.findText('WAPOR_3', QtCore.Qt.MatchFixedString)
-        if index >= 0:
-            self.dlg.workspace3ComboBox.setCurrentIndex(index)
+            index = self.dlg.workspace3ComboBox.findText('WAPOR-3', QtCore.Qt.MatchFixedString)
+            if index >= 0:
+                self.dlg.workspace3ComboBox.setCurrentIndex(index)
+            self.ws3Initialized = True
+            self.dlg.progressBar.setValue(100)
+            self.dlg.progressLabel.setText ('Data from GISMGR 3 ready!')
 
     def listRasterMemory(self):
         """
@@ -399,6 +420,27 @@ class WAPlugin:
         self.dlg.mapsetComboBox.clear()
         self.dlg.mapsetComboBox.addItems(self.mapsets.keys())
 
+    def mapsetChange(self):
+        """
+            Detects changes on the mapset selection, calls the pull rasters
+            function of the API3 manager.
+        """
+        try:
+            QApplication.processEvents()
+            self.mapset = self.mapsets[self.dlg.mapsetComboBox.currentText()]
+            self.rasters = self.api3_manag.pull_raster(self.workspace3, self.mapset)
+
+            self.dlg.rasterComboBox.clear()
+            self.dlg.rasterComboBox.addItems(self.rasters.keys())
+                
+        except (KeyError) as exception:
+            if not self.dlg.cubeComboBox.currentText() == '' and not None: 
+                print('Key not found in cubeChange: ', self.dlg.cubeComboBox.currentText())
+            pass
+
+    def rasterChange(self):
+        self.dlg.outputRasterCubeID_2.setText('_'+self.dlg.rasterComboBox.currentText()+'.tif')
+        
     def levelFilterChange(self):
         levelFilterValue = self.dlg.levelFilterComboBox.currentText()
         if levelFilterValue == 'L1' or levelFilterValue == 'L2':
@@ -733,7 +775,7 @@ class WAPlugin:
     def downloadCroppedRaster(self):
         """
             Construct the parameters needed to download a cropped raster, the URL
-            and calls the query crop raster of the API manager and the download 
+            and calls the query crop raster of the API 2 manager and the download 
             raster function of the file manager, then updates the UI in response
             to the result.
         """
@@ -821,6 +863,51 @@ class WAPlugin:
         self.cancelDownload = False
         self.dlg.downloadButton.setEnabled(True)
         self.dlg.cancelButton.setEnabled(False)
+
+    def download3CroppedRaster(self):
+        """
+            Construct the parameters needed to download a cropped raster, the URL
+            and calls the query crop raster of the API 3 manager and the download 
+            raster function of the file manager, then updates the UI in response
+            to the result.
+        """
+        self.raster = self.dlg.rasterComboBox.currentText()
+        url = self.rasters[self.raster]
+
+
+        QMessageBox.information(None, "Debug info", '''<html><head/><body>
+        <p>Downloading raster {} from mapset {} and workspace {} with canvas extend 
+        <br>
+        <br>
+        using URL {}
+        </p></body></html>'''.format(self.raster, self.mapset, self.workspace3, url))
+
+        canvas_coord = self.coord_select_tool.getCanvasScopeCoord()
+
+        bounding_box = [canvas_coord[0][0],
+                        canvas_coord[2][1],
+                        canvas_coord[1][0],
+                        canvas_coord[0][1]]
+        
+        print(bounding_box)
+
+        # From CANVAS [[3522551.1452159546, 2696605.2872509854],
+        #               [3743698.616138405, 2696605.2872509854],
+        #               [3743698.616138405, 2760178.8107905677],
+        #               [3522551.1452159546, 2760178.8107905677],
+        #               [3522551.1452159546, 2696605.2872509854]]
+        # bounding_box = [3493421.8139414303, 2798733.0095480806, 3933868.603253438, 2664377.1343514207] #  [ulx, uly, lrx, lry]
+        bands = [1]
+
+        output_filepath = "{}_{}.tif".format(self.dlg.outputRasterName_2.text(),
+                                                self.raster)
+
+        raster_dir = os.path.join(self.dlg.downloadFolderExplorer_2.filePath(),output_filepath)
+        translate_options = gdal.TranslateOptions(projWin=bounding_box, projWinSRS=self.getCrs(), bandList=bands, unscale = True, outputType = gdalconst.GDT_Float64)
+
+        ds = gdal.Translate(raster_dir, f"/vsicurl/{url}", options = translate_options)
+
+        print(ds)
 
 
     def updateRasterFolder(self):
@@ -988,6 +1075,8 @@ class WAPlugin:
         """
             Updates few things when a tab is changed.
         """
+        self.listWorkspaces()
+
         if self.dlg.tabManager.currentIndex() == 3:
             self.indicatorChange()
 
@@ -1008,6 +1097,55 @@ class WAPlugin:
             Enable option to select a shape file from the available layers
         """
         self.dlg.shapeLayerComboBox_2.setEnabled(False)
+
+    def testWAP3(self):
+        import requests
+        from osgeo import gdalconst
+        from osgeo import gdal
+
+        base_url = f"https://data.apps.fao.org/gismgr/api/v2/catalog/workspaces/WAPOR-3/mapsets"
+
+        def collect_responses(url, info = ["code"]):
+            data = {"links": [{"rel": "next", "href": url}]}
+            output = list()
+            while "next" in [x["rel"] for x in data["links"]]:
+                url_ = [x["href"] for x in data["links"] if x["rel"] == "next"][0]
+                response = requests.get(url_)
+                response.raise_for_status()
+                data = response.json()["response"]
+                if isinstance(info, list):
+                    output += [tuple(x.get(y) for y in info) for x in data["items"]]
+                else:
+                    output += data["items"]
+            if isinstance(info, list):
+                output = sorted(output)
+            return output
+
+        mapset_code = "L2-T-D"
+        mapset_url = f"{base_url}/{mapset_code}/rasters"
+        all_rasters = collect_responses(mapset_url, info = ["code", "downloadUrl"])
+        print(all_rasters)
+
+        tif_url = all_rasters[0][1]
+        # From CANVAS [[[3522551.1452159546, 2696605.2872509854],
+        #               [3743698.616138405, 2696605.2872509854],
+        #               [3743698.616138405, 2760178.8107905677],
+        #               [3522551.1452159546, 2760178.8107905677],
+        #               [3522551.1452159546, 2696605.2872509854]]]
+        bounding_box = [3493421.8139414303, 2798733.0095480806, 3933868.603253438, 2664377.1343514207] #  [ulx, uly, lrx, lry]
+        bands = [1]
+        output_filepath = r"example_subset.tif"
+
+        raster_dir = os.path.join(self.dlg.rasterFolderExplorer.filePath(),output_filepath)
+
+        print(self.getCrs())
+        print(type(self.getCrs()))
+
+        translate_options = gdal.TranslateOptions(projWin=bounding_box, projWinSRS=self.getCrs(), bandList=bands, unscale = True, outputType = gdalconst.GDT_Float64)
+
+        ds = gdal.Translate(raster_dir, f"/vsicurl/{tif_url}", options = translate_options)
+
+        print(ds)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -1065,12 +1203,18 @@ class WAPlugin:
             self.dlg.cancelButton.clicked.connect(self.cancelCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
+            # self.dlg.RasterRefreshButton.clicked.connect(self.testWAP3)
+
+            self.dlg.downloadFolderExplorer_2.setFilePath(self.layer_folder_dir)
+            self.dlg.downloadButton_2.clicked.connect(self.download3CroppedRaster)
 
             self.dlg.rasterFolderExplorer.fileChanged.connect(self.updateRasterFolder)
             self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
+            self.dlg.mapsetComboBox.currentIndexChanged.connect(self.mapsetChange)
+            self.dlg.rasterComboBox.currentIndexChanged.connect(self.rasterChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
             self.dlg.detailsLink.clicked.connect(self.showDetails)
 
@@ -1101,7 +1245,6 @@ class WAPlugin:
             self.dlg.useCanvasCoordRadioButton.clicked.connect(self.enableFromCanvasExtent)
 
             self.updateWaporParams()
-            self.listWorkspaces()
             self.indicatorChange()
             self.listRasterMemory()
 

@@ -186,9 +186,11 @@ class Wapor3APIManager:
                 url = resp['response']['links'][-1]['href'] if resp['response']['links'][-1]['rel'] == 'next' else None
             return listing
         except (requests.ConnectionError, requests.Timeout) as exception:
+            print('requests.ConnectionError, requests.Timeout')
             print(exception)
             return None
         except (KeyError) as exception:
+            print('KeyError')
             print(exception)
             return {'---':None}
 
@@ -248,9 +250,46 @@ class Wapor3APIManager:
         if mapsets_dict is None:
             self.showInternetMsg()
             return {}
-            # raise Exception("Query [pull_cubes] error, no internet connection or timeout")
         else:
             return mapsets_dict
+        
+    def query_rasters(self, url):
+        """
+            Performs de listing of the rasters to get all the information from its
+            URL TODO to be completed.
+
+            ...
+            Parameters
+            ----------
+            params : url
+                URL of the raster to get listed from the query.
+        """
+        try:
+            listing = dict()
+            while url is not None:
+                resp = requests.get(url,timeout=self.time_out).json()
+                for elem in resp['response']['items']:
+                    listing[elem['code']] = elem['downloadUrl']
+                url = resp['response']['links'][-1]['href'] if resp['response']['links'][-1]['rel'] == 'next' else None
+            return listing
+        except (requests.ConnectionError, requests.Timeout) as exception:
+            print('requests.ConnectionError, requests.Timeout')
+            print(exception)
+            return None
+        except (KeyError) as exception:
+            print('KeyError')
+            print(exception)
+            return {'---':None}
+        
+    def pull_raster(self, workspace, mapset):
+        rasters_url = self.catalog_url+'workspaces/{}/mapsets/{}/rasters'.format(workspace, mapset)
+        
+        rasters_dict = self.query_rasters(rasters_url)
+        if rasters_dict is None:
+            self.showInternetMsg()
+            return {}
+        else:
+            return rasters_dict
 
 class Wapor2APIManager:
     """
