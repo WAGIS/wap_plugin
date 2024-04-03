@@ -281,7 +281,7 @@ class Wapor3APIManager:
             print(exception)
             return {'---':None}
         
-    def pull_raster(self, workspace, mapset):
+    def pull_rasters(self, workspace, mapset):
         rasters_url = self.catalog_url+'workspaces/{}/mapsets/{}/rasters'.format(workspace, mapset)
         
         rasters_dict = self.query_rasters(rasters_url)
