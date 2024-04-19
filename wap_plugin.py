@@ -37,6 +37,11 @@ import os.path
 import os  
 from itertools import compress
 
+import tempfile
+import json
+from shapely.geometry import mapping
+from shapely.wkt import loads
+
 from osgeo import gdalconst
 from osgeo import gdal
 
@@ -47,7 +52,8 @@ except ModuleNotFoundError as e:
     pip.main(['install', 'wapordl'])
     print('Module [{}] required and not found please install it'.format(e.name))
     QMessageBox.information(None, "Module import error", '''<html><head/><body>
-    <p>Module [<b>{}</b>] required and not found. It was installed automatically.
+    <p>Module [<b>{}</b>] required and not found. Tried install it automatically.
+    If they are not installed, please install them manually.
     <br>
     <br>
     Closing the plugin with System Exit . . .</p></body></html>'''.format(e.name))
@@ -346,8 +352,24 @@ class WAPlugin:
             Calls the pull workspaces function of the APIs manager and updates 
             the UI in response to the result.
         """
+        if self.dlg.tabManager.currentIndex() == 1  and not self.ws2Initialized:
+            ## Uses the API of the WaPOR v2 to list workspaces
+            self.dlg.progressBar.setValue(10)
+            self.dlg.progressLabel.setText ('Fetching data from GISMGR 2 ...')
+            self.dlg.workspaceComboBox.clear()
+            workspaces = self.api2_manag.pull_workspaces()
+            self.dlg.workspaceComboBox.addItems(workspaces.values())
+            self.dlg.workspaceComboBox.setEnabled(True)
 
-        if self.dlg.tabManager.currentIndex() == 2  and not self.ws3Initialized:
+            index = self.dlg.workspaceComboBox.findText('WAPOR-3', QtCore.Qt.MatchFixedString)
+            if index >= 0:
+                self.dlg.workspaceComboBox.setCurrentIndex(index)
+            self.ws2Initialized = True
+            self.dlg.progressBar.setValue(100)
+            self.dlg.progressLabel.setText ('Data from GISMGR 2 ready!')
+            self.dlg.downloadButton.setEnabled(True)
+
+        elif self.dlg.tabManager.currentIndex() == 2  and not self.ws3Initialized:
             ## Uses the API of the WaPOR v3 to list workspaces
             self.dlg.progressBar.setValue(10)
             self.dlg.progressLabel.setText ('Fetching data from GISMGR 3 ...')
@@ -369,10 +391,16 @@ class WAPlugin:
             Calls the list rasters function of the file manager and updates 
             the UI in response to the result.
         """
-        rasterFolder = self.dlg.rasterFolderExplorer.filePath()
-        self.tif_files = self.file_manag.list_rasters(rasterFolder)
-        self.dlg.rasterMemoryComboBox.clear()
-        self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
+        if self.dlg.tabManager.currentIndex() == 1:
+            rasterFolder = self.dlg.rasterFolderExplorer.filePath()
+            self.tif_files = self.file_manag.list_rasters(rasterFolder)
+            self.dlg.rasterMemoryComboBox.clear()
+            self.dlg.rasterMemoryComboBox.addItems(self.tif_files.keys())
+        elif self.dlg.tabManager.currentIndex() == 2:
+            rasterFolder = self.dlg.rasterFolderExplorer_2.filePath()
+            self.tif_files = self.file_manag.list_rasters(rasterFolder)
+            self.dlg.rasterMemoryComboBox_2.clear()
+            self.dlg.rasterMemoryComboBox_2.addItems(self.tif_files.keys())
 
     def listRasterCalcMemory(self):
         """
@@ -873,7 +901,7 @@ class WAPlugin:
             raster function of the file manager, then updates the UI in response
             to the result.
         """
-        if self.dlg.useCanvasCoordRadioButton.isChecked():
+        if self.dlg.useCanvasCoordRadioButton_2.isChecked():
 
             url = self.rasters[self.raster]
             canvas_coord = self.coord_select_tool.getCanvasScopeCoord()
@@ -907,11 +935,6 @@ class WAPlugin:
             self.dlg.progressLabel.setText (f'Downloaded Raster {self.raster}')
 
         else:
-
-            import tempfile
-            import json
-            from shapely.geometry import mapping
-            from shapely.wkt import loads
 
             # Create a temporary directory using the tempfile module
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -964,9 +987,11 @@ class WAPlugin:
 
 
     def updateRasterFolder(self):
-        rasterFolder = self.dlg.rasterFolderExplorer.filePath()
+        if self.dlg.tabManager.currentIndex() == 1:
+            rasterFolder = self.dlg.rasterFolderExplorer.filePath()
+        elif self.dlg.tabManager.currentIndex() == 2:
+            rasterFolder = self.dlg.rasterFolderExplorer_2.filePath()
         self.canv_manag.set_rasters_dir(rasterFolder)
-
         self.listRasterMemory()
 
         self.dlg.rasterFolderCalcExplorer.setFilePath(rasterFolder)
@@ -980,68 +1005,34 @@ class WAPlugin:
         """
             Calls the add raster function of the canvas manager.
         """
-        raster_name = self.dlg.rasterMemoryComboBox.currentText()
+        if self.dlg.tabManager.currentIndex() == 1:
+            raster_name = self.dlg.rasterMemoryComboBox.currentText()
+        elif self.dlg.tabManager.currentIndex() == 2:
+            raster_name = self.dlg.rasterMemoryComboBox_2.currentText()
         self.canv_manag.add_rast(raster_name)
-
-    """ Deprecated feature. Replaced this feature to import shape from a shape file"""
-    # def selectCoordinatesTool(self):
-    #     """
-    #         Changes the active tool of Qgis to the coordinates selection tool 
-    #         and storages the previous tool.
-    #     """
-    #     self.dlg.getEdgesButton.setEnabled(False)
-    #     self.dlg.resetToolButton.setEnabled(True)
-    #     self.prev_tool = self.iface.mapCanvas().mapTool()
-    #     self.coord_select_tool.activate()
-    #     self.iface.mapCanvas().setMapTool(self.coord_select_tool)
-
-    """ Deprecated feature. Replaced this feature to import shape from a shape file"""
-    # def savePolygon(self):
-    #     """
-    #         Closes the polygon generated by the coordinates selection tool, saves
-    #         its coordinates in a local list, records the active CRS reference,
-    #         restores the previous tool used in Qgis and  updates the UI in 
-    #         response to the resulting polygon.
-    #     """
-    #     self.dlg.savePolygonButton.setEnabled(False)
-    #     self.queryCoordinates = self.coord_select_tool.getCoordinatesBuffer()
-    #     self.queryCrs = self.getCrs()
-    #     self.coord_select_tool.deactivate()
-    #     self.iface.mapCanvas().setMapTool(self.prev_tool)
-    #     if self.queryCoordinates:
-    #         self.dlg.TestCanvasLabel.setText ('The polygon selected has {} edges'.format(len(self.queryCoordinates)-1))
-    #     else:
-    #         self.dlg.TestCanvasLabel.setText ('Polygon not valid.')
-
-    """ Deprecated feature. Replaced this feature to import shape from a shape file"""
-    # def resetTool(self):
-    #     """ 
-    #         Cleans the polygon and the CRS reference from the local memory and
-    #         updates the UI.
-    #     """
-    #     self.coord_select_tool.reset()
-    #     self.queryCoordinates = None
-    #     self.queryCrs = None
-    #     self.dlg.TestCanvasLabel.setText ('Coordinates cleared, using default ones . . .')
-    #     self.dlg.getEdgesButton.setEnabled(True)
-    #     self.dlg.resetToolButton.setEnabled(False)
+        
 
     def useCanvasCoord(self):
         """
-            Detects state of the use canvas checkbox and modifies the behaviour
-            of the coordinates selector tool
+            TODO
         """
-        print("test")
-        if self.dlg.useCanvasCoordRadioButton.isChecked():
-            self.dlg.rasterComboBox.setEnabled(True)
-            self.dlg.initDateEdit.setEnabled(False)
-            self.dlg.endDateEdit.setEnabled(False)
-            self.dlg.shapeLayerComboBox_2.setEnabled(False)
-        else:
-            self.dlg.rasterComboBox.setEnabled(False)
-            self.dlg.initDateEdit.setEnabled(True)
-            self.dlg.endDateEdit.setEnabled(True)
-            self.dlg.shapeLayerComboBox_2.setEnabled(True)
+        if self.dlg.tabManager.currentIndex() == 1:
+            if self.dlg.useCanvasCoordRadioButton.isChecked():
+                self.dlg.shapeLayerComboBox.setEnabled(False)
+            else:
+                self.dlg.shapeLayerComboBox.setEnabled(True)
+
+        elif self.dlg.tabManager.currentIndex() == 2:
+            if self.dlg.useCanvasCoordRadioButton_2.isChecked():
+                self.dlg.rasterComboBox.setEnabled(True)
+                self.dlg.initDateEdit.setEnabled(False)
+                self.dlg.endDateEdit.setEnabled(False)
+                self.dlg.shapeLayerComboBox_2.setEnabled(False)
+            else:
+                self.dlg.rasterComboBox.setEnabled(False)
+                self.dlg.initDateEdit.setEnabled(True)
+                self.dlg.endDateEdit.setEnabled(True)
+                self.dlg.shapeLayerComboBox_2.setEnabled(True)
     
     def checkIndicatorRequirements(self):
         """
@@ -1153,55 +1144,6 @@ class WAPlugin:
         """
         self.dlg.shapeLayerComboBox_2.setEnabled(False)
 
-    def testWAP3(self):
-        import requests
-        from osgeo import gdalconst
-        from osgeo import gdal
-
-        base_url = f"https://data.apps.fao.org/gismgr/api/v2/catalog/workspaces/WAPOR-3/mapsets"
-
-        def collect_responses(url, info = ["code"]):
-            data = {"links": [{"rel": "next", "href": url}]}
-            output = list()
-            while "next" in [x["rel"] for x in data["links"]]:
-                url_ = [x["href"] for x in data["links"] if x["rel"] == "next"][0]
-                response = requests.get(url_)
-                response.raise_for_status()
-                data = response.json()["response"]
-                if isinstance(info, list):
-                    output += [tuple(x.get(y) for y in info) for x in data["items"]]
-                else:
-                    output += data["items"]
-            if isinstance(info, list):
-                output = sorted(output)
-            return output
-
-        mapset_code = "L2-T-D"
-        mapset_url = f"{base_url}/{mapset_code}/rasters"
-        all_rasters = collect_responses(mapset_url, info = ["code", "downloadUrl"])
-        print(all_rasters)
-
-        tif_url = all_rasters[0][1]
-        # From CANVAS [[[3522551.1452159546, 2696605.2872509854],
-        #               [3743698.616138405, 2696605.2872509854],
-        #               [3743698.616138405, 2760178.8107905677],
-        #               [3522551.1452159546, 2760178.8107905677],
-        #               [3522551.1452159546, 2696605.2872509854]]]
-        bounding_box = [3493421.8139414303, 2798733.0095480806, 3933868.603253438, 2664377.1343514207] #  [ulx, uly, lrx, lry]
-        bands = [1]
-        output_filepath = r"example_subset.tif"
-
-        raster_dir = os.path.join(self.dlg.rasterFolderExplorer.filePath(),output_filepath)
-
-        print(self.getCrs())
-        print(type(self.getCrs()))
-
-        translate_options = gdal.TranslateOptions(projWin=bounding_box, projWinSRS=self.getCrs(), bandList=bands, unscale = True, outputType = gdalconst.GDT_Float64)
-
-        ds = gdal.Translate(raster_dir, f"/vsicurl/{tif_url}", options = translate_options)
-
-        print(ds)  
-
     def run(self):
         """Run method that performs all the real work"""
         # Create the dialog with elements (after translation) and keep reference
@@ -1211,7 +1153,6 @@ class WAPlugin:
             self.dlg = WAPluginDialog()
             self.details_dlg = WAPluginDataDetails()
             
-            # self.dlg.setWindowFlags(Qt.WindowStaysOnTopHint)
             self.dlg.setFixedSize(self.dlg.size())
 
             self.prev_tool = self.iface.mapCanvas().mapTool()
@@ -1219,21 +1160,6 @@ class WAPlugin:
             self.dlg.indicatorListComboBox.addItems(INDICATORS_INFO.keys())
 
             self.coord_select_tool = CoordinatesSelectorTool(self.iface.mapCanvas())
-            """ # Deprecated feature. Replaced this feature to import shape from a shape file
-            # self.coord_select_tool = CoordinatesSelectorTool(self.iface.mapCanvas(),
-                                                           self.dlg.TestCanvasLabel,
-                                                           self.dlg.savePolygonButton)
-            # self.dlg.savePolygonButton.setEnabled(False)
-            # self.dlg.resetToolButton.setEnabled(False)
-
-            # self.dlg.getEdgesButton.clicked.connect(self.selectCoordinatesTool)
-            # self.dlg.savePolygonButton.clicked.connect(self.savePolygon)
-            # self.dlg.resetToolButton.clicked.connect(self.resetTool)
-            
-            # self.dlg.useCanvasCoordRadioButton.clicked.connect(self.useCanvasCoord)
-
-            # self.dlg.useCanvasCoordRadioButton.setChecked(True)
-            """
 
             self.dlg.downloadButton.setEnabled(False)
             self.dlg.cancelButton.setEnabled(False)
@@ -1242,7 +1168,10 @@ class WAPlugin:
             self.dlg.saveTokenButton.setEnabled(False)
             self.dlg.useCanvasCoordRadioButton.clicked.connect(self.useCanvasCoord)
             self.dlg.useShapeCoordRadioButton.clicked.connect(self.useCanvasCoord)
+            self.dlg.useCanvasCoordRadioButton_2.clicked.connect(self.useCanvasCoord)
+            self.dlg.useShapeCoordRadioButton_2.clicked.connect(self.useCanvasCoord)
 
+            self.dlg.shapeLayerComboBox.setFilters(QgsMapLayerProxyModel.PolygonLayer)
             self.dlg.shapeLayerComboBox_2.setFilters(QgsMapLayerProxyModel.PolygonLayer)
 
             self.dlg.wapor2radioButton.clicked.connect(self.updateWaporParams)
@@ -1253,18 +1182,21 @@ class WAPlugin:
             self.dlg.loadTokenButton.clicked.connect(self.loadToken)
 
             self.dlg.rasterFolderExplorer.setFilePath(self.layer_folder_dir)
+            self.dlg.rasterFolderExplorer_2.setFilePath(self.layer_folder_dir)
             self.dlg.rasterFolderCalcExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
             self.dlg.cancelButton.clicked.connect(self.cancelCroppedRaster)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
+            self.dlg.loadRasterButton_2.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
-            # self.dlg.RasterRefreshButton.clicked.connect(self.testWAP3)
+            self.dlg.RasterRefreshButton_2.clicked.connect(self.listRasterMemory)
 
             self.dlg.downloadFolderExplorer_2.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton_2.clicked.connect(self.download3CroppedRaster)
 
             self.dlg.rasterFolderExplorer.fileChanged.connect(self.updateRasterFolder)
+            self.dlg.rasterFolderExplorer_2.fileChanged.connect(self.updateRasterFolder)
             self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
