@@ -26,7 +26,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QApplication, QMessageBox, QTableWidgetItem
 
 from qgis.analysis import QgsRasterCalculatorEntry, QgsRasterCalculator
-from qgis.core import QgsRasterLayer, QgsMapLayerProxyModel
+from qgis.core import QgsRasterLayer, QgsMapLayerProxyModel, QgsCoordinateReferenceSystem
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -42,11 +42,10 @@ import json
 from shapely.geometry import mapping
 from shapely.wkt import loads
 
-from osgeo import gdalconst
-from osgeo import gdal
+from PyQt5.QtCore import QThread, pyqtSignal
 
 try:
-    import wapordl
+    from .utils.wapordl import wapor_map
 except ModuleNotFoundError as e:
     import pip
     pip.main(['install', 'wapordl'])
@@ -91,6 +90,8 @@ class WAPlugin:
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
+
+        self.threads = []
 
         # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
@@ -373,14 +374,14 @@ class WAPlugin:
             ## Uses the API of the WaPOR v3 to list workspaces
             self.dlg.progressBar.setValue(10)
             self.dlg.progressLabel.setText ('Fetching data from GISMGR 3 ...')
-            self.dlg.workspace3ComboBox.clear()
+            self.dlg.workspace3ComboBox_2.clear()
             workspaces = self.api3_manag.pull_workspaces()
-            self.dlg.workspace3ComboBox.addItems(workspaces.values())
-            self.dlg.workspace3ComboBox.setEnabled(True)
+            self.dlg.workspace3ComboBox_2.addItems(workspaces.values())
+            self.dlg.workspace3ComboBox_2.setEnabled(True)
 
-            index = self.dlg.workspace3ComboBox.findText('WAPOR-3', QtCore.Qt.MatchFixedString)
+            index = self.dlg.workspace3ComboBox_2.findText('WAPOR-3', QtCore.Qt.MatchFixedString)
             if index >= 0:
-                self.dlg.workspace3ComboBox.setCurrentIndex(index)
+                self.dlg.workspace3ComboBox_2.setCurrentIndex(index)
             self.ws3Initialized = True
             self.dlg.progressBar.setValue(100)
             self.dlg.progressLabel.setText ('Data from GISMGR 3 ready!')
@@ -440,7 +441,7 @@ class WAPlugin:
         """
         QApplication.processEvents()
         self.dlg.mapsetComboBox.setEnabled(False)
-        self.workspace3 = self.dlg.workspace3ComboBox.currentText()
+        self.workspace3 = self.dlg.workspace3ComboBox_2.currentText()
         self.mapsets = self.api3_manag.pull_mapsets(self.workspace3)
 
         self.dlg.mapsetComboBox.clear()
@@ -901,39 +902,32 @@ class WAPlugin:
             raster function of the file manager, then updates the UI in response
             to the result.
         """
+
+        init_date = self.dlg.initDateEdit.date().toString("yyyy-MM-dd")
+        end_date = self.dlg.endDateEdit.date().toString("yyyy-MM-dd")
+
+        period = [init_date, end_date]
+
+        print(init_date, end_date)
+
         if self.dlg.useCanvasCoordRadioButton_2.isChecked():
 
             url = self.rasters[self.raster]
             canvas_coord = self.coord_select_tool.getCanvasScopeCoord()
             bounding_box = [canvas_coord[0][0],
-                            canvas_coord[2][1],
+                            canvas_coord[0][1],
                             canvas_coord[1][0],
-                            canvas_coord[0][1]]
+                            canvas_coord[2][1]]
             
             print(bounding_box)
-            # From CANVAS [[3522551.1452159546, 2696605.2872509854],
-            #               [3743698.616138405, 2696605.2872509854],
-            #               [3743698.616138405, 2760178.8107905677],
-            #               [3522551.1452159546, 2760178.8107905677],
-            #               [3522551.1452159546, 2696605.2872509854]]
-            # bounding_box = [3493421.8139414303, 2798733.0095480806, 3933868.603253438, 2664377.1343514207] #  [ulx, uly, lrx, lry]
-            output_filepath = "{}_{}.tif".format(self.dlg.outputRasterName_2.text(),
-                                                self.raster)
-
-            raster_dir = os.path.join(self.dlg.downloadFolderExplorer_2.filePath(),
-                                    output_filepath)
-
-            # Using the gdal translate to download the raster
-            bands = [1]
-            translate_options = gdal.TranslateOptions(projWin=bounding_box, projWinSRS=self.getCrs(), bandList=bands, unscale = True, outputType = gdalconst.GDT_Float64)
+            
+            # Download data
             self.dlg.progressBar.setValue(10)
-            self.dlg.progressLabel.setText (f'Downloading Raster {self.raster}')
-
-            ds = gdal.Translate(raster_dir, f"/vsicurl/{url}", options = translate_options)
-            print(ds)
-            self.dlg.progressBar.setValue(100)
-            self.dlg.progressLabel.setText (f'Downloaded Raster {self.raster}')
-
+            self.dlg.progressLabel.setText (f'Downloading Raster {self.mapset}')
+            fp_a_nc = wapor_map(region=bounding_box, variable=self.mapset,
+                                folder=self.dlg.downloadFolderExplorer_2.filePath(),
+                                period =period, seperate_unscale=True)
+            
         else:
 
             # Create a temporary directory using the tempfile module
@@ -965,25 +959,36 @@ class WAPlugin:
                 with open(geojson_path, "w") as f:
                     json.dump({"type": "FeatureCollection", "features": features}, f)
 
-                init_date = self.dlg.initDateEdit.date().toString("yyyy-MM-dd")
-                end_date = self.dlg.endDateEdit.date().toString("yyyy-MM-dd")
-
-                print(init_date, end_date)
                 print(geojson_path)
-
-                period = [init_date, end_date]
 
                 # Download data
                 self.dlg.progressBar.setValue(10)
                 self.dlg.progressLabel.setText (f'Downloading Raster {self.mapset}')
-                fp_a_nc = wapordl.wapor_map(geojson_path, self.mapset, period,
-                                            self.dlg.downloadFolderExplorer_2.filePath())
+                fp_a_nc = wapor_map(region=geojson_path, variable=self.mapset, folder=self.dlg.downloadFolderExplorer_2.filePath(),
+                                    period =period, seperate_unscale=True)
 
-                self.dlg.progressBar.setValue(100)
-                self.dlg.progressLabel.setText (f'Downloaded Raster {self.raster}')
-                print(fp_a_nc)
+                # thread = DownloadThread(geojson_path, self.mapset,
+                #                         self.dlg.downloadFolderExplorer_2.filePath(),
+                #                         period)
+                # thread.finished.connect(self.handleFinished)
+                # thread.start()
+                # self.threads.append(thread)    
+                    
+        self.dlg.progressBar.setValue(100)
+        self.dlg.progressLabel.setText (f'Downloaded Raster {self.raster}')
                 
         self.listRasterMemory()
+
+    def handleFinished(self, result):
+        # Handle the result of the downloadFromWapordl method here
+        print(result)
+
+    def cancelAllProcesses(self):
+        self.dlg.progressLabel.setText (f'Cancelling all pending processes: {len(self.processes)}')
+
+        pass
+        self.dlg.progressLabel.setText (f'All processes cancelled')
+        self.dlg.progressBar.setValue(100)
 
 
     def updateRasterFolder(self):
@@ -1011,7 +1016,6 @@ class WAPlugin:
             raster_name = self.dlg.rasterMemoryComboBox_2.currentText()
         self.canv_manag.add_rast(raster_name)
         
-
     def useCanvasCoord(self):
         """
             TODO
@@ -1187,6 +1191,7 @@ class WAPlugin:
             self.dlg.downloadFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
             self.dlg.cancelButton.clicked.connect(self.cancelCroppedRaster)
+            self.dlg.cancelButton_2.clicked.connect(self.cancelAllProcesses)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.loadRasterButton_2.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
@@ -1200,7 +1205,7 @@ class WAPlugin:
             self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
-            self.dlg.workspace3ComboBox.currentIndexChanged.connect(self.workspace3Change)
+            self.dlg.workspace3ComboBox_2.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.mapsetComboBox.currentIndexChanged.connect(self.mapsetChange)
             self.dlg.rasterComboBox.currentIndexChanged.connect(self.rasterChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
@@ -1238,6 +1243,10 @@ class WAPlugin:
             self.queryCrs = None
             self.cancelDownload = False
 
+            new_crs = QgsCoordinateReferenceSystem('EPSG:4326')
+            # Set the CRS of the QGIS canvas to the new CRS
+            self.iface.mapCanvas().setDestinationCrs(new_crs)
+
 
         # show the dialog
         self.dlg.show()
@@ -1252,3 +1261,21 @@ class WAPlugin:
             # Clean up when closing
             self.iface.mapCanvas().setMapTool(self.prev_tool)
             # self.resetTool()
+
+class DownloadThread(QThread):
+    finished = pyqtSignal(str)
+
+    def __init__(self, region, mapset, folder, period):
+        super().__init__()
+        self.region = region
+        self.mapset = mapset
+        self.folder = folder
+        self.period = period
+
+    def downloadFromWapordl(self, region, mapset, folder, period):
+        return wapor_map(region=region, variable=mapset, folder=folder,
+                         period =period, seperate_unscale=True)
+
+    def run(self):
+        result = self.downloadFromWapordl(self.region, self.mapset, self.folder, self.period)
+        self.finished.emit(result)
