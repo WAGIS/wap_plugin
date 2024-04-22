@@ -1162,6 +1162,7 @@ class WAPlugin:
             self.dlg = WAPluginDialog()
             self.details_dlg = WAPluginDataDetails()
             self.loading_dlg = WAPluginLoadingWindow()
+            self.loading_dlg.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
             
             self.dlg.setFixedSize(self.dlg.size())
 
