@@ -33,6 +33,7 @@ from .resources import *
 # Import the code for the dialog
 from .wap_plugin_dialog import WAPluginDialog
 from .wap_plugin_data_details import WAPluginDataDetails
+from .wap_plugin_loading_window import WAPluginLoadingWindow
 import os.path
 import os  
 from itertools import compress
@@ -356,7 +357,8 @@ class WAPlugin:
         if self.dlg.tabManager.currentIndex() == 1  and not self.ws2Initialized:
             ## Uses the API of the WaPOR v2 to list workspaces
             self.dlg.progressBar.setValue(10)
-            self.dlg.progressLabel.setText ('Fetching data from GISMGR 2 ...')
+            self.dlg.progressLabel.setText ('Fetching data categories ...')
+            self.loading_dlg.show()
             self.dlg.workspaceComboBox.clear()
             workspaces = self.api2_manag.pull_workspaces()
             self.dlg.workspaceComboBox.addItems(workspaces.values())
@@ -367,13 +369,15 @@ class WAPlugin:
                 self.dlg.workspaceComboBox.setCurrentIndex(index)
             self.ws2Initialized = True
             self.dlg.progressBar.setValue(100)
-            self.dlg.progressLabel.setText ('Data from GISMGR 2 ready!')
+            self.loading_dlg.close()
+            self.dlg.progressLabel.setText ('Loaded data categories!')
             self.dlg.downloadButton.setEnabled(True)
 
         elif self.dlg.tabManager.currentIndex() == 2  and not self.ws3Initialized:
             ## Uses the API of the WaPOR v3 to list workspaces
             self.dlg.progressBar.setValue(10)
-            self.dlg.progressLabel.setText ('Fetching data from GISMGR 3 ...')
+            self.dlg.progressLabel.setText ('Fetching data categories ...')
+            self.loading_dlg.show()
             self.dlg.workspace3ComboBox_2.clear()
             workspaces = self.api3_manag.pull_workspaces()
             self.dlg.workspace3ComboBox_2.addItems(workspaces.values())
@@ -384,7 +388,8 @@ class WAPlugin:
                 self.dlg.workspace3ComboBox_2.setCurrentIndex(index)
             self.ws3Initialized = True
             self.dlg.progressBar.setValue(100)
-            self.dlg.progressLabel.setText ('Data from GISMGR 3 ready!')
+            self.loading_dlg.close()
+            self.dlg.progressLabel.setText ('Loaded data categories!')
             self.dlg.downloadButton_2.setEnabled(True)
 
     def listRasterMemory(self):
@@ -1029,8 +1034,8 @@ class WAPlugin:
         elif self.dlg.tabManager.currentIndex() == 2:
             if self.dlg.useCanvasCoordRadioButton_2.isChecked():
                 self.dlg.rasterComboBox.setEnabled(True)
-                self.dlg.initDateEdit.setEnabled(False)
-                self.dlg.endDateEdit.setEnabled(False)
+                self.dlg.initDateEdit.setEnabled(True)
+                self.dlg.endDateEdit.setEnabled(True)
                 self.dlg.shapeLayerComboBox_2.setEnabled(False)
             else:
                 self.dlg.rasterComboBox.setEnabled(False)
@@ -1156,6 +1161,7 @@ class WAPlugin:
             self.first_start = False
             self.dlg = WAPluginDialog()
             self.details_dlg = WAPluginDataDetails()
+            self.loading_dlg = WAPluginLoadingWindow()
             
             self.dlg.setFixedSize(self.dlg.size())
 
