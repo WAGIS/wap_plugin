@@ -75,7 +75,14 @@ class Wapor3APIManager:
             <p>To interact with the WAPOR database a stable internet connection
             is required, you can still use the offline features.</p></body></html>''')
             return False
-
+    
+    def showServerDownMsg(self):
+            print("The server is down")
+            QMessageBox.information(None, "Server down", '''<html><head/><body>
+            <p>Currently, the database server is facing issues. Please try again
+            by restarting the plugin after some time.</p></body></html>''')
+            return False
+    
     def showCropErrorMsg(self, error_msg):
             print("Completed with errors [Crop raster]")
             QMessageBox.information(None, "Error in crop raster", '''<html><head/><body>
@@ -180,7 +187,12 @@ class Wapor3APIManager:
         try:
             listing = dict()
             while url is not None:
-                resp = requests.get(url,timeout=self.time_out).json()
+                try:
+                    resp = requests.get(url,timeout=self.time_out).json()
+                except:
+                    req_output = requests.get(url,timeout=self.time_out)
+                    print('Connection failed due to {}: {}'.format(req_output.reason, req_output.status_code))
+                    return -1
                 for elem in resp['response']['items']:
                     listing[elem['caption']] = elem['code']
                 url = resp['response']['links'][-1]['href'] if resp['response']['links'][-1]['rel'] == 'next' else None
@@ -222,6 +234,9 @@ class Wapor3APIManager:
             self.showInternetMsg()
             return {}
             # raise Exception("Query [pull_workspaces] error, no internet connection or timeout")
+        elif workspaces_dict == -1:
+            self.showServerDownMsg()
+            return {}
         else:
             return workspaces_dict
         
