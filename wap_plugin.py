@@ -46,7 +46,7 @@ from shapely.wkt import loads
 from PyQt5.QtCore import QThread, pyqtSignal
 
 try:
-    from .utils.wapordl import wapor_map
+    from .utils.wapordl import wapor_map 
 except ModuleNotFoundError as e:
     import pip
     pip.main(['install', 'wapordl'])

@@ -465,10 +465,10 @@ def cog_dl(urls, out_fn, overview = "NONE", warp_kwargs = {}, vrt_options = {"se
     n_urls = len(urls)
 
     # Create waitbar.
-    waitbar = tqdm(desc = f"Downloading {n_urls} COGs", leave = False, total = 100, bar_format='{l_bar}{bar}|')
+    # waitbar = tqdm(desc = f"Downloading {n_urls} COGs", leave = False, total = 100, bar_format='{l_bar}{bar}|')
     # Define callback function for waitbar progress.
-    def _callback_func(info, *args):
-        waitbar.update(info * 100 - waitbar.n)
+    # def _callback_func(info, *args):
+    #     waitbar.update(info * 100 - waitbar.n)
 
     ## Download the data.
     warp_options = gdal.WarpOptions(
@@ -478,12 +478,12 @@ def cog_dl(urls, out_fn, overview = "NONE", warp_kwargs = {}, vrt_options = {"se
         multithread = True,
         targetAlignedPixels = True,
         creationOptions = valid_cos[out_ext],
-        callback = _callback_func,
+        # callback = _callback_func,
         **warp_kwargs,
     )
     warp = gdal.Warp(out_fn, vrt_fn, options = warp_options)
     warp.FlushCache() # NOTE do not remove this.
-    waitbar.close()
+    # waitbar.close()
     nbands = warp.RasterCount
     
     if nbands == n_urls and unit_conversion != "none":

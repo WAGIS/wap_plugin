@@ -1103,7 +1103,7 @@
             <item>
              <widget class="QDateEdit" name="initDateEdit">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="currentSection">
                <enum>QDateTimeEdit::YearSection</enum>
@@ -1137,7 +1137,7 @@
             <item>
              <widget class="QDateEdit" name="endDateEdit">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="displayFormat">
                <string>yyyy-MM-dd</string>
