@@ -804,7 +804,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>240</y>
+          <y>190</y>
           <width>475</width>
           <height>161</height>
          </rect>
@@ -1021,7 +1021,7 @@
           <x>10</x>
           <y>10</y>
           <width>475</width>
-          <height>221</height>
+          <height>171</height>
          </rect>
         </property>
         <property name="title">
@@ -1033,7 +1033,7 @@
            <x>10</x>
            <y>30</y>
            <width>461</width>
-           <height>181</height>
+           <height>131</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1066,24 +1066,6 @@
             </item>
             <item>
              <widget class="QComboBox" name="mapsetComboBox">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_31">
-            <item>
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>Raster</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="rasterComboBox">
               <property name="enabled">
                <bool>false</bool>
               </property>

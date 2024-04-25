@@ -458,25 +458,14 @@ class WAPlugin:
             Detects changes on the mapset selection, calls the pull rasters
             function of the API3 manager.
         """
-        self.dlg.rasterComboBox.setEnabled(False)
         try:
             QApplication.processEvents()
             self.mapset = self.mapsets[self.dlg.mapsetComboBox.currentText()]
-            self.rasters = self.api3_manag.pull_rasters(self.workspace3, self.mapset)
-
-            self.dlg.rasterComboBox.clear()
-            self.dlg.rasterComboBox.addItems(self.rasters.keys())
-                
         except (KeyError) as exception:
             if not self.dlg.cubeComboBox.currentText() == '' and not None: 
                 print('Key not found in cubeChange: ', self.dlg.cubeComboBox.currentText())
             pass
-        self.dlg.rasterComboBox.setEnabled(True)
 
-    def rasterChange(self):
-        self.raster = self.dlg.rasterComboBox.currentText()
-        self.dlg.outputRasterCubeID_2.setText('_'+self.raster+'.tif')
-        
     def levelFilterChange(self):
         levelFilterValue = self.dlg.levelFilterComboBox.currentText()
         if levelFilterValue == 'L1' or levelFilterValue == 'L2':
@@ -917,7 +906,6 @@ class WAPlugin:
 
         if self.dlg.useCanvasCoordRadioButton_2.isChecked():
 
-            url = self.rasters[self.raster]
             canvas_coord = self.coord_select_tool.getCanvasScopeCoord()
             bounding_box = [canvas_coord[0][0],
                             canvas_coord[0][1],
@@ -980,7 +968,7 @@ class WAPlugin:
                 # self.threads.append(thread)    
                     
         self.dlg.progressBar.setValue(100)
-        self.dlg.progressLabel.setText (f'Downloaded Raster {self.raster}')
+        self.dlg.progressLabel.setText (f'Downloaded Rasters of type: {self.mapset}')
                 
         self.listRasterMemory()
 
@@ -1033,12 +1021,10 @@ class WAPlugin:
 
         elif self.dlg.tabManager.currentIndex() == 2:
             if self.dlg.useCanvasCoordRadioButton_2.isChecked():
-                self.dlg.rasterComboBox.setEnabled(True)
                 self.dlg.initDateEdit.setEnabled(True)
                 self.dlg.endDateEdit.setEnabled(True)
                 self.dlg.shapeLayerComboBox_2.setEnabled(False)
             else:
-                self.dlg.rasterComboBox.setEnabled(False)
                 self.dlg.initDateEdit.setEnabled(True)
                 self.dlg.endDateEdit.setEnabled(True)
                 self.dlg.shapeLayerComboBox_2.setEnabled(True)
@@ -1214,7 +1200,6 @@ class WAPlugin:
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
             self.dlg.workspace3ComboBox_2.currentIndexChanged.connect(self.workspace3Change)
             self.dlg.mapsetComboBox.currentIndexChanged.connect(self.mapsetChange)
-            self.dlg.rasterComboBox.currentIndexChanged.connect(self.rasterChange)
             self.dlg.cubeComboBox.currentIndexChanged.connect(self.cubeChange)
             self.dlg.detailsLink.clicked.connect(self.showDetails)
 
