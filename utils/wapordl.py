@@ -520,7 +520,8 @@ def wapor_dl(region, variable,
              overview = "NONE",
              unit_conversion = "none", 
              req_stats = ["minimum", "maximum", "mean"],
-             folder = None):
+             folder = None,
+             file_name = None):
     """_summary_
 
     Parameters
@@ -578,7 +579,7 @@ def wapor_dl(region, variable,
         if not os.path.isfile(region) or os.path.splitext(region)[-1] != ".geojson":
             raise ValueError(f"Geojson file not found.") # NOTE: TESTED
         else:
-            region_code = os.path.split(region)[-1].replace(".geojson", "")
+            region_code = None
             try:
                 with open(region,'r', encoding="utf-8") as f:
                     region_shape = shapely.from_geojson(f.read())
@@ -676,7 +677,7 @@ def wapor_dl(region, variable,
     if folder:
         if not os.path.isdir(folder):
             os.makedirs(folder)
-        warp_fn = os.path.join(folder, f"{region_code}_{variable}_{overview}_{unit_conversion}.tif")
+        warp_fn = os.path.join(folder, f"{file_name}_{variable}.tif")
     else:
         warp_fn = f"/vsimem/{pd.Timestamp.now()}_{region_code}_{variable}_{overview}_{unit_conversion}.tif"
 
@@ -706,7 +707,8 @@ def wapor_dl(region, variable,
 def wapor_map(region, variable, period, folder, 
               unit_conversion = "none",
               overview = "NONE", extension = ".tif", 
-              seperate_unscale = False):
+              seperate_unscale = False,
+              file_name = ""):
 
     ## Check if raw-data will be downloaded.
     if overview != "NONE":
@@ -723,6 +725,7 @@ def wapor_map(region, variable, period, folder,
     ## Call wapor_dl to create a GeoTIFF.
     fp = wapor_dl(region, variable,
                   folder = folder, 
+                  file_name = file_name,
                   period = period,
                   overview = overview,
                   unit_conversion = unit_conversion,

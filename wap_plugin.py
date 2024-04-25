@@ -919,6 +919,7 @@ class WAPlugin:
             self.dlg.progressLabel.setText (f'Downloading Raster {self.mapset}')
             fp_a_nc = wapor_map(region=bounding_box, variable=self.mapset,
                                 folder=self.dlg.downloadFolderExplorer_2.filePath(),
+                                file_name=self.dlg.outputRasterName_2.text(),
                                 period =period, seperate_unscale=True)
             
         else:
@@ -928,7 +929,7 @@ class WAPlugin:
                 layer = self.dlg.shapeLayerComboBox_2.currentLayer()
 
                 # Define the path for the output GeoJSON file within the temporary directory
-                geojson_path = f"{temp_dir}/{self.dlg.outputRasterName_2.text()}.geojson"
+                geojson_path = f"{temp_dir}.geojson"
 
                 # Create a list to store the GeoJSON features
                 features = []
@@ -957,7 +958,9 @@ class WAPlugin:
                 # Download data
                 self.dlg.progressBar.setValue(10)
                 self.dlg.progressLabel.setText (f'Downloading Raster {self.mapset}')
-                fp_a_nc = wapor_map(region=geojson_path, variable=self.mapset, folder=self.dlg.downloadFolderExplorer_2.filePath(),
+                fp_a_nc = wapor_map(region=geojson_path, variable=self.mapset, 
+                                    folder=self.dlg.downloadFolderExplorer_2.filePath(),
+                                    file_name=self.dlg.outputRasterName_2.text(),
                                     period =period, seperate_unscale=True)
 
                 # thread = DownloadThread(geojson_path, self.mapset,
