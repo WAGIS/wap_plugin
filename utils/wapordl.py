@@ -117,7 +117,7 @@ def guess_l3_region(region_shape):
     if number_of_results > 1:
         logging.warning(f"`region` intersects with multiple L3 regions ({l3_regions}), continuing with {l3_region} only.")
     else:
-        logging.info(f"Given `region` matches with `{l3_region}` L3 region.")
+        print(f"Given `region` matches with `{l3_region}` L3 region.")
     
     return l3_region      
 
@@ -411,7 +411,7 @@ def unit_convertor(urls, in_fn, out_fn, unit_conversion, warp, coptions = []):
     logging.debug(f"\nSCALES: {scales}\nOFFSETS: {offsets}")
 
     if all(should_convert) and not all(conversion_is_one):
-        logging.info(f"Converting units from [{source_unit}] to [{source_unit_q}/{unit_conversion}].")
+        print(f"Converting units from [{source_unit}] to [{source_unit_q}/{unit_conversion}].")
         ndv = warp.GetRasterBand(1).GetNoDataValue()
         warp = gdal_calc.Calc(
             calc = calc,
@@ -433,7 +433,7 @@ def unit_convertor(urls, in_fn, out_fn, unit_conversion, warp, coptions = []):
         filen = out_fn
     else:
         if all(conversion_is_one):
-            logging.info(f"Units are already as requested, no conversion needed.")
+            print(f"Units are already as requested, no conversion needed.")
         else:
             logging.warning(f"Couldn't succesfully determine unit conversion factors, keeping original units.")
         for i, (md, _) in enumerate(urls):
@@ -556,12 +556,12 @@ def wapor_dl(region, variable,
             raise ValueError(f"Invalid region code `{region}`, region codes have three capitalized letters.")
         
         if region not in list(L3_BBS.keys()):
-            logging.info(f"Searching bounding-box for `{region}`.")
+            print(f"Searching bounding-box for `{region}`.")
             bb = l3_bounding_boxes(l3_region = region)
             if len(bb) == 0:
                 raise ValueError(f"Unkown L3 region `{region}`.")
             else:
-                logging.info(f"Bounding-box found for `{region}`.")
+                print(f"Bounding-box found for `{region}`.")
                 L3_BBS = {**L3_BBS, **bb}
 
         if level == "L3":
@@ -632,7 +632,7 @@ def wapor_dl(region, variable,
     md["overview"] = overview
     md_urls = [({**date_func(url, tres), **md}, url) for url in urls]
 
-    logging.info(f"Found {len(md_urls)} files for {variable}.")
+    print(f"Found {len(md_urls)} files for {variable}.")
 
     ## Determine required output resolution.
     # NOTE maybe move this to external function (assumes info the same for all urls)
@@ -733,7 +733,7 @@ def wapor_map(region, variable, period, folder,
                   )
 
     if extension == ".tif" and seperate_unscale:
-        logging.info("Splitting single GeoTIFF into multiple unscaled files.")
+        print("Splitting single GeoTIFF into multiple unscaled files.")
         folder = os.path.split(fp)[0]
         ds = gdal.Open(fp)
         number_of_bands = ds.RasterCount
@@ -761,7 +761,7 @@ def wapor_map(region, variable, period, folder,
     elif extension != ".tif":
         if seperate_unscale:
             logging.warning(f"The `seperate` option only works with `.tif` extension, not with `{extension}`.")
-        logging.info(f"Converting from `.tif` to `{extension}`.")
+        print(f"Converting from `.tif` to `{extension}`.")
         toptions = {".nc": {"creationOptions": ["COMPRESS=DEFLATE", "FORMAT=NC4C"]}}
         options = gdal.TranslateOptions(
             **toptions.get(extension, {})

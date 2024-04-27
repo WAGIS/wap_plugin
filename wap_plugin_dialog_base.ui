@@ -1342,6 +1342,9 @@
     </item>
     <item>
      <layout class="QHBoxLayout" name="progressBarLayout">
+      <property name="spacing">
+       <number>80</number>
+      </property>
       <item>
        <widget class="QProgressBar" name="progressBar">
         <property name="value">

@@ -43,21 +43,10 @@ import json
 from shapely.geometry import mapping
 from shapely.wkt import loads
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QObject	
 
-try:
-    from .utils.wapordl import wapor_map 
-except ModuleNotFoundError as e:
-    import pip
-    pip.main(['install', 'wapordl'])
-    print('Module [{}] required and not found please install it'.format(e.name))
-    QMessageBox.information(None, "Module import error", '''<html><head/><body>
-    <p>Module [<b>{}</b>] required and not found. Tried install it automatically.
-    If they are not installed, please install them manually.
-    <br>
-    <br>
-    Closing the plugin with System Exit . . .</p></body></html>'''.format(e.name))
-    quit()
+from .utils.wapordl import wapor_map 
+
 try:
     from .utils.managers import Wapor2APIManager, Wapor3APIManager, FileManager, CanvasManager
     from .utils.indicators import IndicatorCalculator, INDICATORS_INFO
@@ -74,6 +63,52 @@ except ModuleNotFoundError as e:
     <br>
     Closing the plugin with System Exit . . .</p></body></html>'''.format(e.name))
     quit()
+
+
+class WorkerSignals(QObject):
+    '''
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+    - finished
+        Update bar and load rasters workspace
+    - error
+        Set progress bar to 0 and print error
+    - result
+        Not implemented
+    - progress
+        Not implemented
+    '''
+    finished = pyqtSignal(object)
+    result = pyqtSignal(object)
+    progress = pyqtSignal(int)
+    error = pyqtSignal(object)
+
+class DownloadThread(QRunnable):
+
+    def __init__(self, region, mapset, folder, file_name, period):
+        super().__init__()
+        self.region = region
+        self.mapset = mapset
+        self.folder = folder
+        self.file_name = file_name
+        self.period = period
+        self.signals = WorkerSignals()
+
+    def downloadFromWapordl(self, region, mapset, folder, file_name, period):
+        return wapor_map(region=region, variable=mapset, folder=folder,
+                         file_name=file_name, period=period, seperate_unscale=True)
+
+    @pyqtSlot()
+    def run(self):
+        try:
+            print("Thread run")
+            result = self.downloadFromWapordl(self.region, self.mapset, self.folder,
+                                            self.file_name, self.period)
+            self.signals.finished.emit(self.file_name+' '+self.mapset)
+        except Exception as e:
+            print(f"An exception occurred: {e}")
+            self.signals.error.emit(str(e))
 
 class WAPlugin:
     """QGIS Plugin Implementation."""
@@ -92,7 +127,7 @@ class WAPlugin:
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
 
-        self.threads = []
+        self.threadpool = QThreadPool()
 
         # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
@@ -917,10 +952,15 @@ class WAPlugin:
             # Download data
             self.dlg.progressBar.setValue(10)
             self.dlg.progressLabel.setText (f'Downloading Raster {self.mapset}')
-            fp_a_nc = wapor_map(region=bounding_box, variable=self.mapset,
-                                folder=self.dlg.downloadFolderExplorer_2.filePath(),
-                                file_name=self.dlg.outputRasterName_2.text(),
-                                period =period, seperate_unscale=True)
+
+            print('Starting thread')
+            thread = DownloadThread(bounding_box, self.mapset,
+                                    self.dlg.downloadFolderExplorer_2.filePath(),
+                                    self.dlg.outputRasterName_2.text(),
+                                    period)
+            thread.signals.finished.connect(self.thread_complete)
+            thread.signals.error.connect(self.thread_complete)
+            self.threadpool.start(thread)
             
         else:
 
@@ -957,27 +997,25 @@ class WAPlugin:
 
                 # Download data
                 self.dlg.progressBar.setValue(10)
-                self.dlg.progressLabel.setText (f'Downloading Raster {self.mapset}')
-                fp_a_nc = wapor_map(region=geojson_path, variable=self.mapset, 
-                                    folder=self.dlg.downloadFolderExplorer_2.filePath(),
-                                    file_name=self.dlg.outputRasterName_2.text(),
-                                    period =period, seperate_unscale=True)
+                self.dlg.progressLabel.setText (f'Downloading Raster {self.mapset} . . .')
+               
+                print('Starting thread')
+                thread = DownloadThread(geojson_path, self.mapset,
+                                        self.dlg.downloadFolderExplorer_2.filePath(),
+                                        self.dlg.outputRasterName_2.text(),
+                                        period)
+                thread.signals.finished.connect(self.thread_complete)
+                thread.signals.error.connect(self.thread_complete)
+                self.threadpool.start(thread)
 
-                # thread = DownloadThread(geojson_path, self.mapset,
-                #                         self.dlg.downloadFolderExplorer_2.filePath(),
-                #                         period)
-                # thread.finished.connect(self.handleFinished)
-                # thread.start()
-                # self.threads.append(thread)    
-                    
+    def thread_error(self, msg):
+        self.dlg.progressBar.setValue(0)
+        self.dlg.progressLabel.setText (f'Error: {msg}!')
+
+    def thread_complete(self, msg):
         self.dlg.progressBar.setValue(100)
-        self.dlg.progressLabel.setText (f'Downloaded Rasters of type: {self.mapset}')
-                
+        self.dlg.progressLabel.setText (f'Downloaded Raster {msg}!')
         self.listRasterMemory()
-
-    def handleFinished(self, result):
-        # Handle the result of the downloadFromWapordl method here
-        print(result)
 
     def cancelAllProcesses(self):
         self.dlg.progressLabel.setText (f'Cancelling all pending processes: {len(self.processes)}')
@@ -1256,21 +1294,3 @@ class WAPlugin:
             # Clean up when closing
             self.iface.mapCanvas().setMapTool(self.prev_tool)
             # self.resetTool()
-
-class DownloadThread(QThread):
-    finished = pyqtSignal(str)
-
-    def __init__(self, region, mapset, folder, period):
-        super().__init__()
-        self.region = region
-        self.mapset = mapset
-        self.folder = folder
-        self.period = period
-
-    def downloadFromWapordl(self, region, mapset, folder, period):
-        return wapor_map(region=region, variable=mapset, folder=folder,
-                         period =period, seperate_unscale=True)
-
-    def run(self):
-        result = self.downloadFromWapordl(self.region, self.mapset, self.folder, self.period)
-        self.finished.emit(result)
