@@ -45,7 +45,7 @@ from shapely.wkt import loads
 
 from PyQt5.QtCore import pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QObject	
 
-from .utils.wapordl import wapor_map 
+from .utils.wapordl_ext import wapor_map 
 
 try:
     from .utils.managers import Wapor2APIManager, Wapor3APIManager, FileManager, CanvasManager
@@ -876,8 +876,8 @@ class WAPlugin:
             params['crs'] = self.getCrs()
         else:
             params['coordinates'] = [self.queryCoordinates]
-            params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox_2.currentLayer())]
-            params['crs'] = self.dlg.shapeLayerComboBox_2.currentLayer().crs().authid()
+            params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox.currentLayer())]
+            params['crs'] = self.dlg.shapeLayerComboBox.currentLayer().crs().authid()
 
         self.dlg.cancelButton.setEnabled(True)
 
