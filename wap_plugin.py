@@ -442,6 +442,11 @@ class WAPlugin:
             self.tif_files = self.file_manag.list_rasters(rasterFolder)
             self.dlg.rasterMemoryComboBox_2.clear()
             self.dlg.rasterMemoryComboBox_2.addItems(self.tif_files.keys())
+        elif self.dlg.tabManager.currentIndex() == 3:
+            rasterFolder = self.dlg.rasterFolderExplorer_3.filePath()
+            self.tif_files = self.file_manag.list_rasters(rasterFolder)
+            self.dlg.rasterMemoryComboBox_3.clear()
+            self.dlg.rasterMemoryComboBox_3.addItems(self.tif_files.keys())
 
     def listRasterCalcMemory(self):
         """
@@ -1032,6 +1037,8 @@ class WAPlugin:
             rasterFolder = self.dlg.rasterFolderExplorer.filePath()
         elif self.dlg.tabManager.currentIndex() == 2:
             rasterFolder = self.dlg.rasterFolderExplorer_2.filePath()
+        elif self.dlg.tabManager.currentIndex() == 2:
+            rasterFolder = self.dlg.rasterFolderExplorer_3.filePath()
         self.canv_manag.set_rasters_dir(rasterFolder)
         self.listRasterMemory()
 
@@ -1050,6 +1057,8 @@ class WAPlugin:
             raster_name = self.dlg.rasterMemoryComboBox.currentText()
         elif self.dlg.tabManager.currentIndex() == 2:
             raster_name = self.dlg.rasterMemoryComboBox_2.currentText()
+        elif self.dlg.tabManager.currentIndex() == 3:
+            raster_name = self.dlg.rasterMemoryComboBox_3.currentText()
         self.canv_manag.add_rast(raster_name)
         
     def useCanvasCoord(self):
@@ -1223,6 +1232,7 @@ class WAPlugin:
 
             self.dlg.rasterFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.rasterFolderExplorer_2.setFilePath(self.layer_folder_dir)
+            self.dlg.rasterFolderExplorer_3.setFilePath(self.layer_folder_dir)
             self.dlg.rasterFolderCalcExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadFolderExplorer.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton.clicked.connect(self.downloadCroppedRaster)
@@ -1230,14 +1240,17 @@ class WAPlugin:
             self.dlg.cancelButton_2.clicked.connect(self.cancelAllProcesses)
             self.dlg.loadRasterButton.clicked.connect(self.loadRaster)
             self.dlg.loadRasterButton_2.clicked.connect(self.loadRaster)
+            self.dlg.loadRasterButton_3.clicked.connect(self.loadRaster)
             self.dlg.RasterRefreshButton.clicked.connect(self.listRasterMemory)
             self.dlg.RasterRefreshButton_2.clicked.connect(self.listRasterMemory)
+            self.dlg.RasterRefreshButton_3.clicked.connect(self.listRasterMemory)
 
             self.dlg.downloadFolderExplorer_2.setFilePath(self.layer_folder_dir)
             self.dlg.downloadButton_2.clicked.connect(self.download3CroppedRaster)
 
             self.dlg.rasterFolderExplorer.fileChanged.connect(self.updateRasterFolder)
             self.dlg.rasterFolderExplorer_2.fileChanged.connect(self.updateRasterFolder)
+            self.dlg.rasterFolderExplorer_3.fileChanged.connect(self.updateRasterFolder)
             self.dlg.rasterFolderCalcExplorer.fileChanged.connect(self.updateRasterFolderCalc)
 
             self.dlg.workspaceComboBox.currentIndexChanged.connect(self.workspaceChange)
