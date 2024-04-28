@@ -879,6 +879,9 @@ class WAPlugin:
             params['coordinates'] = [self.coord_select_tool.shape2box(self.dlg.shapeLayerComboBox.currentLayer())]
             params['crs'] = self.dlg.shapeLayerComboBox.currentLayer().crs().authid()
 
+        params['outputFilePrefix'] = self.dlg.outputRasterName.text()
+        params['rast_directory'] = self.dlg.downloadFolderExplorer.filePath()
+
         self.dlg.cancelButton.setEnabled(True)
 
         for i, dimensions_payload in enumerate(dimensions2crop):
@@ -889,13 +892,13 @@ class WAPlugin:
             progress_value = 20 + ((i+1)/len(dimensions2crop))*60
             self.dlg.progressBar.setValue(progress_value)
             self.dlg.progressLabel.setText ('Downloading Raster {}/{}'.format(i+1, len(dimensions2crop)))
-            
-            params['outputFileName'] = "{}_{}_{}.tif".format(self.dlg.outputRasterName.text(),
-                                                             self.cube, str(member_frame).split(',')[0].replace("-", "_").replace("[", "_"))
+                
+            params['outputFileName'] = "{}_{}_{}.tif".format(params['outputFilePrefix'],
+                                                             params['cube_code'], str(member_frame).split(',')[0].replace("-", "_").replace("[", "_"))
+            params['dimensions'] = dimensions_payload
+
             print(member_frame)
             print(params['outputFileName'])
-            
-            params['dimensions'] = dimensions_payload
             
             print("From CANVAS", [self.coord_select_tool.getCanvasScopeCoord()])
             print("From SHAPE", params['coordinates'])
@@ -903,8 +906,7 @@ class WAPlugin:
             rast_url = self.api2_manag.query_crop_raster(params, self.dlg.downloadButton)
 
             if not rast_url == None:
-                rast_directory = self.dlg.downloadFolderExplorer.filePath()
-                self.file_manag.download_raster(rast_url, rast_directory)
+                self.file_manag.download_raster(rast_url, params['rast_directory'])
                 
                 self.dlg.progressBar.setValue(100)
                 self.dlg.progressLabel.setText('Download {}/{} Complete'.format(i+1, len(dimensions2crop)))

@@ -1318,7 +1318,7 @@
                <item>
                 <widget class="QLabel" name="outputIndicLabel">
                  <property name="text">
-                  <string>Output vaule:</string>
+                  <string>Output Value:</string>
                  </property>
                 </widget>
                </item>
@@ -1342,9 +1342,6 @@
     </item>
     <item>
      <layout class="QHBoxLayout" name="progressBarLayout">
-      <property name="spacing">
-       <number>80</number>
-      </property>
       <item>
        <widget class="QProgressBar" name="progressBar">
         <property name="value">
