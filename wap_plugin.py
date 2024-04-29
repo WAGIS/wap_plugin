@@ -1091,8 +1091,8 @@ class WAPlugin:
         param1_name = self.dlg.Param1ComboBox.currentText()
         param2_name = self.dlg.Param2ComboBox.currentText()
 
-        if self.indicator_key == 'Equity' or \
-           self.indicator_key == 'Relative Water Deficit':
+        if self.indicator_key == 'Equity':
+        #    self.indicator_key == 'Relative Water Deficit':
             requirementsFlag = True if param1_name != '' else False
         elif self.indicator_key == 'Beneficial Fraction' or \
              self.indicator_key == 'Adequacy' or \
@@ -1131,9 +1131,9 @@ class WAPlugin:
                 
             self.indic_calc.adequacy(param1_name, param2_name, output_name, Kc=param3_name)
             self.canv_manag.add_rast(output_name)
-        elif self.indicator_key == 'Relative Water Deficit':
-            self.indic_calc.relative_water_deficit(param1_name, output_name)
-            self.canv_manag.add_rast(output_name)
+        # elif self.indicator_key == 'Relative Water Deficit':
+        #     self.indic_calc.relative_water_deficit(param1_name, output_name)
+        #     self.canv_manag.add_rast(output_name)
         elif self.indicator_key == 'Overall Consumed Ratio':
             try:
                 param3_name = float(self.dlg.Param3TextBox.text())

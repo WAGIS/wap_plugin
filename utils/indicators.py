@@ -52,7 +52,7 @@ from qgis.PyQt.QtWidgets import QMessageBox
 
 INDICATORS_INFO = {
                     'Equity' : {
-                        'info' : 'equity = 0.1 * (sd_raster / mean_raster) * 100',
+                        'info' : 'equity = (sd_raster / mean_raster) * 100',
                         'rasters' : {
                             'AETI' : 'Actual Evapotranspiration and Interception',
                             'PE' : 'Potential Evapotranspitarion'
@@ -69,13 +69,13 @@ INDICATORS_INFO = {
                         }
                     },
                     'Beneficial Fraction' : {
-                        'info' : 'BF = (Raster_1 / Raster_2)',
+                        'info' : 'BF = (AETI / T)',
                         'rasters' : {
                             'AETI' : 'Actual Evapotranspiration and Interception',
                             'T' : 'Transpiration'
                         },
                         'factors' : {
-                            'Conversion Factor' : '0.1'
+                            # 'Conversion Factor' : '0.1'
                         },
                         'params' : {
                             'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
@@ -84,7 +84,7 @@ INDICATORS_INFO = {
                         }
                     },
                     'Adequacy' : {
-                        'info' : 'AD = (Raster_1 / (Kc * Raster_2))',
+                        'info' : 'AD = (AETI / (Kc * RET))',
                         'rasters' : {
                             'AETI' : 'Actual Evapotranspiration and Interception',
                             'RET' : 'Reference Evapotranspiration'
@@ -98,20 +98,20 @@ INDICATORS_INFO = {
                             'PARAM_3' : 'Kc'
                         }
                     },
-                    'Relative Water Deficit' : {
-                        'info' : 'RWD = 1 - (Raster / ETx)',
-                        'rasters' : {
-                            'AETI' : 'Actual Evapotranspiration and Interception'
-                        },
-                        'factors' : {
-                            'ETx' : '99 percentile of the Raster'
-                        },
-                        'params' : {
-                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
-                            'PARAM_2' : '',
-                            'PARAM_3' : ''
-                        }
-                    },
+                    # 'Relative Water Deficit' : {
+                    #     'info' : 'RWD = 1 - (AETI / ETx)',
+                    #     'rasters' : {
+                    #         'AETI' : 'Actual Evapotranspiration and Interception'
+                    #     },
+                    #     'factors' : {
+                    #         'ETx' : '99 percentile of the Raster'
+                    #     },
+                    #     'params' : {
+                    #         'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                    #         'PARAM_2' : '',
+                    #         'PARAM_3' : ''
+                    #     }
+                    # },
                     'Overall Consumed Ratio' : {
                         'info' : 'OCR = (AETI - PCP) / V_ws',
                         'rasters' : {
