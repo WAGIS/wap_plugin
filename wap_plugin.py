@@ -1037,7 +1037,7 @@ class WAPlugin:
             rasterFolder = self.dlg.rasterFolderExplorer.filePath()
         elif self.dlg.tabManager.currentIndex() == 2:
             rasterFolder = self.dlg.rasterFolderExplorer_2.filePath()
-        elif self.dlg.tabManager.currentIndex() == 2:
+        elif self.dlg.tabManager.currentIndex() == 3:
             rasterFolder = self.dlg.rasterFolderExplorer_3.filePath()
         self.canv_manag.set_rasters_dir(rasterFolder)
         self.listRasterMemory()
