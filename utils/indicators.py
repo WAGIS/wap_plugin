@@ -299,7 +299,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('(ras@1 * 0.1) / ({} * {})'.format('ras@2 * 0.1', str(Kc)),
+        calc = QgsRasterCalculator('(ras@1) / ({} * {})'.format('ras@2', str(Kc)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -348,7 +348,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
         
-        calc = QgsRasterCalculator('1 - (ras@1 * 0.1 / {})'.format(str(ETx)),
+        calc = QgsRasterCalculator('1 - (ras@1 / {})'.format(str(ETx)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -397,7 +397,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - (ras@1 * 0.1 - ras@2 * 0.1) / {}'.format(str(V_ws)),
+        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_ws)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -447,7 +447,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - (ras@1 * 0.1 - ras@2 * 0.1) / {}'.format(str(V_wd)),
+        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_wd)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -498,7 +498,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - ras@1 * 0.1/ (ras@2 * 0.1 + {})'.format(str(V_c)),
+        calc = QgsRasterCalculator('1.0 - ras@1/ (ras@2 + {})'.format(str(V_c)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),

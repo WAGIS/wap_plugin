@@ -1219,6 +1219,13 @@
                </widget>
               </item>
               <item>
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Rasters need to be corrected!</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QComboBox" name="Param1ComboBox">
                 <property name="enabled">
                  <bool>true</bool>
@@ -1233,6 +1240,13 @@
                <widget class="QLabel" name="Param2Label">
                 <property name="text">
                  <string>AETI Raster</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>Rasters need to be corrected!</string>
                 </property>
                </widget>
               </item>
