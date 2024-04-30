@@ -51,23 +51,23 @@ from qgis.PyQt.QtWidgets import QMessageBox
 """
 
 INDICATORS_INFO = {
-                    'Equity' : {
-                        'info' : 'equity = (sd_raster / mean_raster) * 100',
-                        'rasters' : {
-                            'AETI' : 'Actual Evapotranspiration and Interception',
-                            'PE' : 'Potential Evapotranspitarion'
-                            # 'ACB' : 'Name of ACB'
-                        },
-                        'factors' : {
-                            'sd_raster' : 'Standard deviation obtained from the Raster',
-                            'mean_raster' : 'Mean obtained from the Raster'
-                        },
-                        'params' : {
-                            'PARAM_1' : {'label':'AETI or PE', 'type': ['AETI','PE']},
-                            'PARAM_2' : '',
-                            'PARAM_3' : ''
-                        }
-                    },
+                    # 'Equity' : {
+                    #     'info' : 'equity = (sd_raster / mean_raster) * 100',
+                    #     'rasters' : {
+                    #         'AETI' : 'Actual Evapotranspiration and Interception',
+                    #         'PE' : 'Potential Evapotranspitarion'
+                    #         # 'ACB' : 'Name of ACB'
+                    #     },
+                    #     'factors' : {
+                    #         'sd_raster' : 'Standard deviation obtained from the Raster',
+                    #         'mean_raster' : 'Mean obtained from the Raster'
+                    #     },
+                    #     'params' : {
+                    #         'PARAM_1' : {'label':'AETI or PE', 'type': ['AETI','PE']},
+                    #         'PARAM_2' : '',
+                    #         'PARAM_3' : ''
+                    #     }
+                    # },
                     'Beneficial Fraction' : {
                         'info' : 'BF = (AETI / T)',
                         'rasters' : {
