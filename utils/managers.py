@@ -1056,7 +1056,8 @@ class FileManager:
             for raster_type in raster_types:
                 header = os.path.splitext(name)[0]
                 roots = header.split('_')
-                if raster_type in roots:
+                roots_2 = header.split('-')
+                if raster_type in roots or raster_type in roots_2:
                     filteredRasterFiles[name] = path
 
         return filteredRasterFiles
