@@ -1091,9 +1091,9 @@ class WAPlugin:
         param1_name = self.dlg.Param1ComboBox.currentText()
         param2_name = self.dlg.Param2ComboBox.currentText()
 
-        # if self.indicator_key == 'Equity':
-        #    self.indicator_key == 'Relative Water Deficit':
-            # requirementsFlag = True if param1_name != '' else False
+        if self.indicator_key == 'Equity' or \
+           self.indicator_key == 'Relative Water Deficit':
+            requirementsFlag = True if param1_name != '' else False
         if self.indicator_key == 'Beneficial Fraction' or \
              self.indicator_key == 'Adequacy' or \
              self.indicator_key == 'Overall Consumed Ratio' or \
@@ -1116,9 +1116,9 @@ class WAPlugin:
         output_name = self.dlg.outputIndicName.text()+".tif"
         
         print(self.indicator_key)
-        # if self.indicator_key == 'Equity':
-        #     self.indic_calc.equity(raster=param1_name, outLabel=self.dlg.outputIndicValue)
-        if self.indicator_key == 'Beneficial Fraction':
+        if self.indicator_key == 'Equity':
+            self.indic_calc.equity(raster=param1_name, outLabel=self.dlg.outputIndicValue)
+        elif self.indicator_key == 'Beneficial Fraction':
             self.indic_calc.beneficial_fraction(param1_name, param2_name, output_name)
             self.canv_manag.add_rast(output_name)
         elif self.indicator_key == 'Adequacy':

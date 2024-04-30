@@ -68,21 +68,21 @@ INDICATORS_INFO = {
                     #         'PARAM_3' : ''
                     #     }
                     # },
-                    'Beneficial Fraction' : {
-                        'info' : 'BF = (AETI / T)',
-                        'rasters' : {
-                            'AETI' : 'Actual Evapotranspiration and Interception',
-                            'T' : 'Transpiration'
-                        },
-                        'factors' : {
-                            # 'Conversion Factor' : '0.1'
-                        },
-                        'params' : {
-                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
-                            'PARAM_2' : {'label':'T Raster', 'type': ['T']},
-                            'PARAM_3' : ''
-                        }
-                    },
+                    # 'Beneficial Fraction' : {
+                    #     'info' : 'BF = (AETI / T)',
+                    #     'rasters' : {
+                    #         'AETI' : 'Actual Evapotranspiration and Interception',
+                    #         'T' : 'Transpiration'
+                    #     },
+                    #     'factors' : {
+                    #         # 'Conversion Factor' : '0.1'
+                    #     },
+                    #     'params' : {
+                    #         'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                    #         'PARAM_2' : {'label':'T Raster', 'type': ['T']},
+                    #         'PARAM_3' : ''
+                    #     }
+                    # },
                     'Adequacy' : {
                         'info' : 'AD = (AETI / (Kc * RET))',
                         'rasters' : {
