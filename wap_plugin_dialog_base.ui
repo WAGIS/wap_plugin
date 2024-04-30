@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>548</width>
-    <height>691</height>
+    <width>545</width>
+    <height>703</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,12 +19,15 @@
      <x>20</x>
      <y>10</y>
      <width>511</width>
-     <height>671</height>
+     <height>681</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="tabWindowsLayout">
     <item>
      <widget class="QTabWidget" name="tabManager">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -45,7 +48,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_8">
            <property name="title">
-            <string>Token Autentication</string>
+            <string>Token Autentication for WaPOR v2</string>
            </property>
            <widget class="QWidget" name="verticalLayoutWidget_2">
             <property name="geometry">
@@ -90,7 +93,7 @@
              <item>
               <widget class="QLabel" name="signinStateLabel">
                <property name="text">
-                <string>Please sign in to access WaPOR data . . .</string>
+                <string>Please sign in to access WaPOR v2 data. Note: signin not necessary for WaPOR v3</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -155,6 +158,9 @@
         </layout>
        </widget>
        <widget class="QGroupBox" name="groupBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>40</x>
@@ -201,6 +207,9 @@
        </widget>
       </widget>
       <widget class="QWidget" name="downloadTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <attribute name="title">
         <string>WaPOR2 Catalog</string>
        </attribute>
@@ -216,6 +225,9 @@
         <layout class="QVBoxLayout" name="allBoxLayput" stretch="0">
          <item>
           <widget class="QGroupBox" name="rasterSelectionBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="title">
             <string>Raster Download</string>
            </property>
@@ -236,13 +248,20 @@
               <layout class="QHBoxLayout" name="horizontalLayout">
                <item>
                 <widget class="QLabel" name="workspaceLabel">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Workspace:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="workspaceComboBox"/>
+                <widget class="QComboBox" name="workspaceComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -250,6 +269,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="7,1,7">
                <item>
                 <widget class="QLabel" name="label_4">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Level Filter:</string>
                  </property>
@@ -272,7 +294,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="levelFilterComboBox"/>
+                <widget class="QComboBox" name="levelFilterComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -280,13 +306,20 @@
               <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="0,3,3,3">
                <item>
                 <widget class="QLabel" name="timeFilter">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Time Filter:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="timeFilterComboBox"/>
+                <widget class="QComboBox" name="timeFilterComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="QLabel" name="countryFilter">
@@ -302,7 +335,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="countryFilterComboBox"/>
+                <widget class="QComboBox" name="countryFilterComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -319,6 +356,9 @@
                </property>
                <item>
                 <widget class="QLabel" name="cubeLabel">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Raster Type:</string>
                  </property>
@@ -326,6 +366,9 @@
                </item>
                <item>
                 <widget class="QCommandLinkButton" name="detailsLink">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -365,7 +408,7 @@
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>img/icons/icons8-info-50.png</normaloff>img/icons/icons8-info-50.png</iconset>
+                   <normaloff>../../../../../../../../../.designer/backup/img/icons/icons8-info-50.png</normaloff>../../../../../../../../../.designer/backup/img/icons/icons8-info-50.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -379,7 +422,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="cubeComboBox"/>
+                <widget class="QComboBox" name="cubeComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -387,13 +434,20 @@
               <layout class="QHBoxLayout" name="horizontalLayout_6">
                <item>
                 <widget class="QLabel" name="measureLabel">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Measure:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="measureComboBox"/>
+                <widget class="QComboBox" name="measureComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -401,13 +455,20 @@
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
                 <widget class="QLabel" name="dimensionLabel">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Time Interval:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="dimensionComboBox"/>
+                <widget class="QComboBox" name="dimensionComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -415,19 +476,34 @@
               <layout class="QHBoxLayout" name="horizontalLayout_5">
                <item>
                 <widget class="QLabel" name="dimensionMemberLabel">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Time Frame from:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="yearFilterComboBox"/>
+                <widget class="QComboBox" name="yearFilterComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="monthFilterComboBox"/>
+                <widget class="QComboBox" name="monthFilterComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="memberComboBox"/>
+                <widget class="QComboBox" name="memberComboBox">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -435,19 +511,34 @@
               <layout class="QHBoxLayout" name="horizontalLayout_22">
                <item>
                 <widget class="QLabel" name="dimensionMemberLabel_2">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="text">
                   <string>Time Frame until:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="yearFilterComboBoxUntil"/>
+                <widget class="QComboBox" name="yearFilterComboBoxUntil">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="monthFilterComboBoxUntil"/>
+                <widget class="QComboBox" name="monthFilterComboBoxUntil">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="memberComboBoxUntil"/>
+                <widget class="QComboBox" name="memberComboBoxUntil">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -478,6 +569,154 @@
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QGroupBox" name="coordinateSelectionBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>340</y>
+          <width>475</width>
+          <height>161</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Coordinate Selection</string>
+        </property>
+        <widget class="QWidget" name="verticalLayoutWidget_3">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>461</width>
+           <height>131</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_23">
+            <item>
+             <widget class="QRadioButton" name="useCanvasCoordRadioButton">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Canvas Extent</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="useShapeCoordRadioButton">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Shape File</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_30">
+            <item>
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,3,0,2,0">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+            <item>
+             <widget class="QLabel" name="outputPathCatalogLabel">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Output path:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QgsFileWidget" name="downloadFolderExplorer">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="storageMode">
+               <enum>QgsFileWidget::GetDirectory</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="outputNameCatalogLabel">
+              <property name="text">
+               <string>Name:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="outputRasterName">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="outputRasterCubeID">
+              <property name="text">
+               <string>.tif</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_25">
+            <item>
+             <widget class="QPushButton" name="downloadButton">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Download</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="cancelButton">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Cancel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
        <widget class="QGroupBox" name="rasterLoadBox">
         <property name="geometry">
@@ -556,11 +795,16 @@
          </layout>
         </widget>
        </widget>
-       <widget class="QGroupBox" name="coordinateSelectionBox">
+      </widget>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>WaPOR3 Catalog</string>
+       </attribute>
+       <widget class="QGroupBox" name="coordinateSelectionBox_2">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>340</y>
+          <y>190</y>
           <width>475</width>
           <height>161</height>
          </rect>
@@ -568,7 +812,7 @@
         <property name="title">
          <string>Coordinate Selection</string>
         </property>
-        <widget class="QWidget" name="verticalLayoutWidget_3">
+        <widget class="QWidget" name="verticalLayoutWidget_5">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -577,11 +821,11 @@
            <height>134</height>
           </rect>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0">
+         <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,0,0,0">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="0,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_26">
             <item>
-             <widget class="QRadioButton" name="useCanvasCoordRadioButton">
+             <widget class="QRadioButton" name="useCanvasCoordRadioButton_2">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -594,9 +838,12 @@
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="shapeFileRadioButton">
+             <widget class="QRadioButton" name="useShapeCoordRadioButton_2">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="text">
-               <string>From Shape File</string>
+               <string>Shape File</string>
               </property>
              </widget>
             </item>
@@ -612,24 +859,28 @@
              </widget>
             </item>
             <item>
-             <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2"/>
+             <widget class="QgsMapLayerComboBox" name="shapeLayerComboBox_2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,3,0,2,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,3,0,2,0">
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
             <item>
-             <widget class="QLabel" name="outputPathCatalogLabel">
+             <widget class="QLabel" name="outputPathCatalogLabel_2">
               <property name="text">
                <string>Output path:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QgsFileWidget" name="downloadFolderExplorer">
+             <widget class="QgsFileWidget" name="downloadFolderExplorer_2">
               <property name="autoFillBackground">
                <bool>false</bool>
               </property>
@@ -639,17 +890,17 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="outputNameCatalogLabel">
+             <widget class="QLabel" name="outputNameCatalogLabel_2">
               <property name="text">
                <string>Name:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="outputRasterName"/>
+             <widget class="QLineEdit" name="outputRasterName_2"/>
             </item>
             <item>
-             <widget class="QLabel" name="outputRasterCubeID">
+             <widget class="QLabel" name="outputRasterCubeID_2">
               <property name="text">
                <string>.tif</string>
               </property>
@@ -658,16 +909,22 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_25">
+           <layout class="QHBoxLayout" name="horizontalLayout_29">
             <item>
-             <widget class="QPushButton" name="downloadButton">
+             <widget class="QPushButton" name="downloadButton_2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Download</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="cancelButton">
+             <widget class="QPushButton" name="cancelButton_2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Cancel</string>
               </property>
@@ -678,54 +935,211 @@
          </layout>
         </widget>
        </widget>
-      </widget>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>WaPOR 3 Catalog</string>
-       </attribute>
-       <widget class="QComboBox" name="workspace3ComboBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+       <widget class="QGroupBox" name="rasterLoadBox_2">
         <property name="geometry">
          <rect>
-          <x>70</x>
-          <y>250</y>
-          <width>161</width>
-          <height>22</height>
+          <x>10</x>
+          <y>510</y>
+          <width>475</width>
+          <height>101</height>
          </rect>
         </property>
+        <property name="title">
+         <string>Raster Load</string>
+        </property>
+        <widget class="QWidget" name="verticalLayoutWidget_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>461</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_33">
+            <item>
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>Browse</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QgsFileWidget" name="rasterFolderExplorer_2">
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="filter">
+               <string/>
+              </property>
+              <property name="storageMode">
+               <enum>QgsFileWidget::GetDirectory</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="0,4,2,1">
+            <item>
+             <widget class="QLabel" name="label_13">
+              <property name="text">
+               <string>Available Data</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="rasterMemoryComboBox_2"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="loadRasterButton_2">
+              <property name="text">
+               <string>Load in canvas</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="RasterRefreshButton_2">
+              <property name="text">
+               <string>Refresh</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
-       <widget class="QComboBox" name="mapsetComboBox">
+       <widget class="QGroupBox" name="rasterSelectionBox_2">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="geometry">
          <rect>
-          <x>260</x>
-          <y>250</y>
-          <width>161</width>
-          <height>22</height>
+          <x>10</x>
+          <y>10</y>
+          <width>475</width>
+          <height>171</height>
          </rect>
         </property>
-       </widget>
-       <widget class="QLabel" name="label_5">
-        <property name="geometry">
-         <rect>
-          <x>160</x>
-          <y>70</y>
-          <width>181</width>
-          <height>71</height>
-         </rect>
+        <property name="title">
+         <string>Raster Download</string>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>18</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Coming Soon ...!</string>
-        </property>
+        <widget class="QWidget" name="verticalLayoutWidget_6">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>461</width>
+           <height>131</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_27">
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Workspace</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="workspace3ComboBox_2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_32">
+            <item>
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Mapset</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="mapsetComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_35">
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Time Frame from:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDateEdit" name="initDateEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="currentSection">
+               <enum>QDateTimeEdit::YearSection</enum>
+              </property>
+              <property name="displayFormat">
+               <string>yyyy-MM-dd</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+              <property name="date">
+               <date>
+                <year>2022</year>
+                <month>1</month>
+                <day>10</day>
+               </date>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_36">
+            <item>
+             <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>Time Frame until:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDateEdit" name="endDateEdit">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="displayFormat">
+               <string>yyyy-MM-dd</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+              <property name="date">
+               <date>
+                <year>2023</year>
+                <month>9</month>
+                <day>13</day>
+               </date>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="indicTab">
@@ -737,8 +1151,8 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>491</width>
-          <height>541</height>
+          <width>481</width>
+          <height>491</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="8,8,7">
@@ -805,6 +1219,13 @@
                </widget>
               </item>
               <item>
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Rasters need to be corrected!</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QComboBox" name="Param1ComboBox">
                 <property name="enabled">
                  <bool>true</bool>
@@ -819,6 +1240,13 @@
                <widget class="QLabel" name="Param2Label">
                 <property name="text">
                  <string>AETI Raster</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>Rasters need to be corrected!</string>
                 </property>
                </widget>
               </item>
@@ -904,7 +1332,7 @@
                <item>
                 <widget class="QLabel" name="outputIndicLabel">
                  <property name="text">
-                  <string>Output vaule:</string>
+                  <string>Output Value:</string>
                  </property>
                 </widget>
                </item>
@@ -922,6 +1350,83 @@
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QGroupBox" name="rasterLoadBox_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>510</y>
+          <width>481</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Raster Load</string>
+        </property>
+        <widget class="QWidget" name="verticalLayoutWidget_8">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>461</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_13">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_37">
+            <item>
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Browse</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QgsFileWidget" name="rasterFolderExplorer_3">
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="filter">
+               <string/>
+              </property>
+              <property name="storageMode">
+               <enum>QgsFileWidget::GetDirectory</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_38" stretch="0,4,2,1">
+            <item>
+             <widget class="QLabel" name="label_16">
+              <property name="text">
+               <string>Available Data</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="rasterMemoryComboBox_3"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="loadRasterButton_3">
+              <property name="text">
+               <string>Load in canvas</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="RasterRefreshButton_3">
+              <property name="text">
+               <string>Refresh</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
      </widget>
