@@ -75,7 +75,14 @@ class Wapor3APIManager:
             <p>To interact with the WAPOR database a stable internet connection
             is required, you can still use the offline features.</p></body></html>''')
             return False
-
+    
+    def showServerDownMsg(self):
+            print("The server is down")
+            QMessageBox.information(None, "Server down", '''<html><head/><body>
+            <p>Currently, the database server is facing issues. Please try again
+            by restarting the plugin after some time.</p></body></html>''')
+            return False
+    
     def showCropErrorMsg(self, error_msg):
             print("Completed with errors [Crop raster]")
             QMessageBox.information(None, "Error in crop raster", '''<html><head/><body>
@@ -180,15 +187,22 @@ class Wapor3APIManager:
         try:
             listing = dict()
             while url is not None:
-                resp = requests.get(url,timeout=self.time_out).json()
+                try:
+                    resp = requests.get(url,timeout=self.time_out).json()
+                except:
+                    req_output = requests.get(url,timeout=self.time_out)
+                    print('Connection failed due to {}: {}'.format(req_output.reason, req_output.status_code))
+                    return -1
                 for elem in resp['response']['items']:
                     listing[elem['caption']] = elem['code']
                 url = resp['response']['links'][-1]['href'] if resp['response']['links'][-1]['rel'] == 'next' else None
             return listing
         except (requests.ConnectionError, requests.Timeout) as exception:
+            print('requests.ConnectionError, requests.Timeout')
             print(exception)
             return None
         except (KeyError) as exception:
+            print('KeyError')
             print(exception)
             return {'---':None}
 
@@ -220,6 +234,9 @@ class Wapor3APIManager:
             self.showInternetMsg()
             return {}
             # raise Exception("Query [pull_workspaces] error, no internet connection or timeout")
+        elif workspaces_dict == -1:
+            self.showServerDownMsg()
+            return {}
         else:
             return workspaces_dict
         
@@ -248,9 +265,46 @@ class Wapor3APIManager:
         if mapsets_dict is None:
             self.showInternetMsg()
             return {}
-            # raise Exception("Query [pull_cubes] error, no internet connection or timeout")
         else:
             return mapsets_dict
+        
+    def query_rasters(self, url):
+        """
+            Performs de listing of the rasters to get all the information from its
+            URL TODO to be completed.
+
+            ...
+            Parameters
+            ----------
+            params : url
+                URL of the raster to get listed from the query.
+        """
+        try:
+            listing = dict()
+            while url is not None:
+                resp = requests.get(url,timeout=self.time_out).json()
+                for elem in resp['response']['items']:
+                    listing[elem['code']] = elem['downloadUrl']
+                url = resp['response']['links'][-1]['href'] if resp['response']['links'][-1]['rel'] == 'next' else None
+            return listing
+        except (requests.ConnectionError, requests.Timeout) as exception:
+            print('requests.ConnectionError, requests.Timeout')
+            print(exception)
+            return None
+        except (KeyError) as exception:
+            print('KeyError')
+            print(exception)
+            return {'---':None}
+        
+    def pull_rasters(self, workspace, mapset):
+        rasters_url = self.catalog_url+'workspaces/{}/mapsets/{}/rasters'.format(workspace, mapset)
+        
+        rasters_dict = self.query_rasters(rasters_url)
+        if rasters_dict is None:
+            self.showInternetMsg()
+            return {}
+        else:
+            return rasters_dict
 
 class Wapor2APIManager:
     """
@@ -1002,7 +1056,8 @@ class FileManager:
             for raster_type in raster_types:
                 header = os.path.splitext(name)[0]
                 roots = header.split('_')
-                if raster_type in roots:
+                roots_2 = header.split('-')
+                if raster_type in roots or raster_type in roots_2:
                     filteredRasterFiles[name] = path
 
         return filteredRasterFiles
