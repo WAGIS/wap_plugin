@@ -51,31 +51,31 @@ from qgis.PyQt.QtWidgets import QMessageBox
 """
 
 INDICATORS_INFO = {
-                    'Equity' : {
-                        'info' : 'equity = 0.1 * (sd_raster / mean_raster) * 100',
-                        'rasters' : {
-                            'AETI' : 'Actual Evapotranspiration and Interception',
-                            'PE' : 'Potential Evapotranspitarion'
-                            # 'ACB' : 'Name of ACB'
-                        },
-                        'factors' : {
-                            'sd_raster' : 'Standard deviation obtained from the Raster',
-                            'mean_raster' : 'Mean obtained from the Raster'
-                        },
-                        'params' : {
-                            'PARAM_1' : {'label':'AETI or PE', 'type': ['AETI','PE']},
-                            'PARAM_2' : '',
-                            'PARAM_3' : ''
-                        }
-                    },
+                    # 'Equity' : {
+                    #     'info' : 'equity = (sd_raster / mean_raster) * 100',
+                    #     'rasters' : {
+                    #         'AETI' : 'Actual Evapotranspiration and Interception',
+                    #         'PE' : 'Potential Evapotranspitarion'
+                    #         # 'ACB' : 'Name of ACB'
+                    #     },
+                    #     'factors' : {
+                    #         'sd_raster' : 'Standard deviation obtained from the Raster',
+                    #         'mean_raster' : 'Mean obtained from the Raster'
+                    #     },
+                    #     'params' : {
+                    #         'PARAM_1' : {'label':'AETI or PE', 'type': ['AETI','PE']},
+                    #         'PARAM_2' : '',
+                    #         'PARAM_3' : ''
+                    #     }
+                    # },
                     'Beneficial Fraction' : {
-                        'info' : 'BF = (Raster_1 / Raster_2)',
+                        'info' : 'BF = (AETI / T)',
                         'rasters' : {
                             'AETI' : 'Actual Evapotranspiration and Interception',
                             'T' : 'Transpiration'
                         },
                         'factors' : {
-                            'Conversion Factor' : '0.1'
+                            # 'Conversion Factor' : '0.1'
                         },
                         'params' : {
                             'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
@@ -84,7 +84,7 @@ INDICATORS_INFO = {
                         }
                     },
                     'Adequacy' : {
-                        'info' : 'AD = (Raster_1 / (Kc * Raster_2))',
+                        'info' : 'AD = (AETI / (Kc * RET))',
                         'rasters' : {
                             'AETI' : 'Actual Evapotranspiration and Interception',
                             'RET' : 'Reference Evapotranspiration'
@@ -98,20 +98,20 @@ INDICATORS_INFO = {
                             'PARAM_3' : 'Kc'
                         }
                     },
-                    'Relative Water Deficit' : {
-                        'info' : 'RWD = 1 - (Raster / ETx)',
-                        'rasters' : {
-                            'AETI' : 'Actual Evapotranspiration and Interception'
-                        },
-                        'factors' : {
-                            'ETx' : '99 percentile of the Raster'
-                        },
-                        'params' : {
-                            'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
-                            'PARAM_2' : '',
-                            'PARAM_3' : ''
-                        }
-                    },
+                    # 'Relative Water Deficit' : {
+                    #     'info' : 'RWD = 1 - (AETI / ETx)',
+                    #     'rasters' : {
+                    #         'AETI' : 'Actual Evapotranspiration and Interception'
+                    #     },
+                    #     'factors' : {
+                    #         'ETx' : '99 percentile of the Raster'
+                    #     },
+                    #     'params' : {
+                    #         'PARAM_1' : {'label':'AETI Raster', 'type': ['AETI']},
+                    #         'PARAM_2' : '',
+                    #         'PARAM_3' : ''
+                    #     }
+                    # },
                     'Overall Consumed Ratio' : {
                         'info' : 'OCR = (AETI - PCP) / V_ws',
                         'rasters' : {
@@ -201,8 +201,8 @@ class IndicatorCalculator:
         atei_band1 = ds.GetRasterBand(1).ReadAsArray()
         atei_band1 = atei_band1.astype(np.float64)
         atei_band1[atei_band1 == -9999] = float('nan')
-        AETIm   = np.nanmean(atei_band1 * 0.1)
-        AETIsd  = np.nanstd(atei_band1 * 0.1)
+        AETIm   = np.nanmean(atei_band1)
+        AETIsd  = np.nanstd(atei_band1)
 
         equity = (AETIsd / AETIm) * 100
         
@@ -299,7 +299,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('(ras@1 * 0.1) / ({} * {})'.format('ras@2 * 0.1', str(Kc)),
+        calc = QgsRasterCalculator('(ras@1) / ({} * {})'.format('ras@2', str(Kc)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -348,7 +348,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
         
-        calc = QgsRasterCalculator('1 - (ras@1 * 0.1 / {})'.format(str(ETx)),
+        calc = QgsRasterCalculator('1 - (ras@1 / {})'.format(str(ETx)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -397,7 +397,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - (ras@1 * 0.1 - ras@2 * 0.1) / {}'.format(str(V_ws)),
+        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_ws)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -447,7 +447,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - (ras@1 * 0.1 - ras@2 * 0.1) / {}'.format(str(V_wd)),
+        calc = QgsRasterCalculator('1.0 - (ras@1 - ras@2) / {}'.format(str(V_wd)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
@@ -498,7 +498,7 @@ class IndicatorCalculator:
         ras.bandNumber = 1
         entries.append(ras)
 
-        calc = QgsRasterCalculator('1.0 - ras@1 * 0.1/ (ras@2 * 0.1 + {})'.format(str(V_c)),
+        calc = QgsRasterCalculator('1.0 - ras@1/ (ras@2 + {})'.format(str(V_c)),
                                     output_dir,
                                     'GTiff',
                                     ras_atei.extent(),
