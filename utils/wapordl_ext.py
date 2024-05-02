@@ -9,7 +9,7 @@ import logging
 import shapely
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+# from tqdm import tqdm
 from osgeo import gdal, gdalconst
 from osgeo_utils import gdal_calc
 from string import ascii_lowercase, ascii_uppercase
