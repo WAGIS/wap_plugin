@@ -696,7 +696,7 @@
             <item>
              <widget class="QPushButton" name="downloadButton">
               <property name="enabled">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="text">
                <string>Download</string>

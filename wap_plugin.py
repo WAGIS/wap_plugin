@@ -894,7 +894,7 @@ class WAPlugin:
                 else dimensions_payload[1]["values"][0] + dimensions_payload[0]["values"][0] 
             
             print(member_frame)
-            progress_value = 20 + ((i+1)/len(dimensions2crop))*60
+            progress_value = int(20 + ((i+1)/len(dimensions2crop))*60)
             self.dlg.progressBar.setValue(progress_value)
             self.dlg.progressLabel.setText ('Downloading Raster {}/{}'.format(i+1, len(dimensions2crop)))
                 
